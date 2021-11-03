@@ -89,7 +89,7 @@ get_python_inc(),
 '-std=c++17',
 
 '-I', './include',
-'-isystem', 'SDL2',
+'-I', '/usr/include/SDL2',
 ]
 
 # Set this to the absolute path to the folder (NOT the file!) containing the

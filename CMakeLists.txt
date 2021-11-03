@@ -6,6 +6,6 @@ find_package(SDL2 REQUIRED)
 
 include_directories(include ${SDL2_INCLUDE_DIRS})
 
-add_executable(game src/main.cpp)
+add_executable(game src/main.cpp src/platform.cpp src/input.cpp)
 
 target_link_libraries(game ${SDL2_LIBRARIES})

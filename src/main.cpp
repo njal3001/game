@@ -1,24 +1,30 @@
-#include <SDL2/SDL.h>
+#include <iostream>
+#include "platform.h"
 
-int main() {
-    SDL_Init(SDL_INIT_VIDEO);
+int main() 
+{
+    using namespace Engine;
 
-    SDL_Window *window = SDL_CreateWindow(
-        "Hello World!",
-        SDL_WINDOWPOS_UNDEFINED,
-        SDL_WINDOWPOS_UNDEFINED,
-        640,
-        480,
-        0
-    );
+    if (Platform::init())
+    {
+        while (Platform::update())
+        {
+            if (Platform::mouse_button_state(MouseButton::Left).pressed)
+            {
+                std::cout << "Pressed!" << '\n';
+            }
 
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-    SDL_RenderClear(renderer);
-    SDL_RenderPresent(renderer);
+            /* if (Platform::mouse_button_state(MouseButton::Left).released) */
+            /* { */
+            /*     std::cout << "Released!" << '\n'; */
+            /* } */
 
-    SDL_Delay(3000);
+            /* if (Platform::mouse_button_state(MouseButton::Left).down) */
+            /* { */
+            /*     std::cout << "Down!" << '\n'; */
+            /* } */
+        }
+    }
 
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    Platform::shutdown();
 }
