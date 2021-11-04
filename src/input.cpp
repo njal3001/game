@@ -1,12 +1,16 @@
 #include "input.h"
 #include <algorithm>
+#include <iostream>
 
 namespace Engine
 {
-    Input::Input()
+    std::unordered_map<Key, KeyState> Input::g_keyboard;
+    std::unordered_map<MouseButton, MouseButtonState> Input::g_mouse;
+
+    void Input::init()
     {
         KeyState key_start_state = { false, false, false };
-        m_keyboard =
+        g_keyboard =
         {
             { Key::D0, key_start_state },
             { Key::D1, key_start_state },
@@ -14,70 +18,86 @@ namespace Engine
         };
 
         MouseButtonState mb_start_state = { false, false, false };
-        m_mouse =
+        g_mouse =
         {
             { MouseButton::Left, mb_start_state },
             { MouseButton::Right, mb_start_state },
         };
     }
 
+
+    void Input::refresh()
+    {
+        for (auto& [key, state] : g_keyboard)
+        {
+            state.pressed = false;
+            state.released = false;
+        }
+
+        for (auto& [mb, state] : g_mouse)
+        {
+            state.pressed = false;
+            state.released = false;
+        }
+    }
+
     void Input::key_pressed(const Key key)
     {
-        if (m_keyboard.find(key) != m_keyboard.end())
+        if (g_keyboard.find(key) != g_keyboard.end())
         {
-            m_keyboard[key].pressed = true;
-            m_keyboard[key].down = true;
-            m_keyboard[key].released = false;
+            g_keyboard[key].pressed = true;
+            g_keyboard[key].down = true;
+            g_keyboard[key].released = false;
         }
     }
 
 
     void Input::mouse_button_pressed(const MouseButton mb)
     {
-        if (m_mouse.find(mb) != m_mouse.end())
+        if (g_mouse.find(mb) != g_mouse.end())
         {
-            m_mouse[mb].pressed = true;
-            m_mouse[mb].down = true;
-            m_mouse[mb].released = false;
+            g_mouse[mb].pressed = true;
+            g_mouse[mb].down = true;
+            g_mouse[mb].released = false;
         }
     }
 
     void Input::key_released(const Key key)
     {
-        if (m_keyboard.find(key) != m_keyboard.end())
+        if (g_keyboard.find(key) != g_keyboard.end())
         {
-            m_keyboard[key].released = true;
-            m_keyboard[key].down = false;
-            m_keyboard[key].pressed = false;
+            g_keyboard[key].released = true;
+            g_keyboard[key].down = false;
+            g_keyboard[key].pressed = false;
         }
     }
 
     void Input::mouse_button_released(const MouseButton mb)
     {
-        if (m_mouse.find(mb) != m_mouse.end())
+        if (g_mouse.find(mb) != g_mouse.end())
         {
-            m_mouse[mb].released = true;
-            m_mouse[mb].down = false;
-            m_mouse[mb].pressed = false;
+            g_mouse[mb].released = true;
+            g_mouse[mb].down = false;
+            g_mouse[mb].pressed = false;
         }
     }
 
-    KeyState Input::key_state(const Key key) const
+    KeyState Input::key_state(const Key key)
     {
-        if (m_keyboard.find(key) != m_keyboard.end())
+        if (g_keyboard.find(key) != g_keyboard.end())
         {
-            return m_keyboard.at(key);
+            return g_keyboard.at(key);
         }
 
         // TODO: Log warning
         return { false, false, false };
     }
 
-    MouseButtonState Input::mouse_button_state(const MouseButton mb) const 
+    MouseButtonState Input::mouse_button_state(const MouseButton mb)
     {
-        if (m_mouse.find(mb) != m_mouse.end())
+        if (g_mouse.find(mb) != g_mouse.end())
         {
-            return m_mouse.at(mb);
+            return g_mouse.at(mb);
         }
 
         // TODO: Log warning

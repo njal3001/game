@@ -1,5 +1,6 @@
 #include <iostream>
 #include "platform.h"
+#include "input.h"
 
 int main() 
 {
@@ -9,20 +10,15 @@ int main()
     {
         while (Platform::update())
         {
-            if (Platform::mouse_button_state(MouseButton::Left).pressed)
+            if (Input::mouse_button_state(MouseButton::Right).pressed)
             {
                 std::cout << "Pressed!" << '\n';
             }
 
-            /* if (Platform::mouse_button_state(MouseButton::Left).released) */
-            /* { */
-            /*     std::cout << "Released!" << '\n'; */
-            /* } */
-
-            /* if (Platform::mouse_button_state(MouseButton::Left).down) */
-            /* { */
-            /*     std::cout << "Down!" << '\n'; */
-            /* } */
+            if (Input::mouse_button_state(MouseButton::Right).released)
+            {
+                std::cout << "Released!" << '\n';
+            }
         }
     }
 

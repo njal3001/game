@@ -1,15 +1,11 @@
 #include "platform.h"
-#include <SDL2/SDL.h>
 #include <iostream>
 #include "input.h"
 
 namespace Engine
 {
-    namespace {
-        SDL_Window* g_window;
-        SDL_Renderer* g_renderer;
-        Input g_input;
-    }
+    SDL_Window* Platform::g_window;
+    SDL_Renderer* Platform::g_renderer;
 
     bool Platform::init()
     {
@@ -29,11 +25,14 @@ namespace Engine
         SDL_RenderClear(g_renderer);
         SDL_RenderPresent(g_renderer);
 
+        Input::init();
+
         return true;
     }
 
     bool Platform::update()
     {
+        Input::refresh();
         bool cont = true;
 
         SDL_Event event;
@@ -61,7 +60,7 @@ namespace Engine
                         break;
                 }
 
-                g_input.mouse_button_pressed(mb);
+                Input::mouse_button_pressed(mb);
             }
             else if (event.type == SDL_MOUSEBUTTONUP)
             {
@@ -81,23 +80,13 @@ namespace Engine
                         break;
                 }
 
-                g_input.mouse_button_released(mb);
+                Input::mouse_button_released(mb);
             }
         }
 
         return cont;
     }
 
-
-    KeyState Platform::key_state(const Key key)
-    {
-        return g_input.key_state(key);
-    }
-
-    MouseButtonState Platform::mouse_button_state(const MouseButton mb)
-    {
-        return g_input.mouse_button_state(mb);
-    }
 
     void Platform::shutdown()
     {

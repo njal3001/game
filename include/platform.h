@@ -1,17 +1,19 @@
 #pragma once
-#include "input.h"
+#include <SDL2/SDL.h>
 
 namespace Engine
 {
-    namespace Platform
+    class Platform
     {
-        bool init();
+    private:
+        static SDL_Window* g_window;
+        static SDL_Renderer* g_renderer;
 
-        bool update();
+    public:
+        static bool init();
 
-        KeyState key_state(const Key key);
-        MouseButtonState mouse_button_state(const MouseButton mb);
+        static bool update();
 
-        void shutdown();
-    }
+        static void shutdown();
+    };
 }

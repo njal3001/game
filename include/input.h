@@ -35,20 +35,25 @@ namespace Engine
         
     class Input
     {
+        friend class Platform;
+
     private:
-        std::unordered_map<Key, KeyState> m_keyboard;
-        std::unordered_map<MouseButton, MouseButtonState> m_mouse;
+        static std::unordered_map<Key, KeyState> g_keyboard;
+        static std::unordered_map<MouseButton, MouseButtonState> g_mouse;
 
     public:
-        Input();
+        static void init();
 
-        void key_pressed(const Key key);
-        void mouse_button_pressed(const MouseButton mb);
+        static KeyState key_state(const Key key);
+        static MouseButtonState mouse_button_state(const MouseButton mb);
 
-        void key_released(const Key key);
-        void mouse_button_released(const MouseButton mb);
+    private:
+        static void key_pressed(const Key key);
+        static void mouse_button_pressed(const MouseButton mb);
 
-        KeyState key_state(const Key key) const;
-        MouseButtonState mouse_button_state(const MouseButton mb) const;
+        static void key_released(const Key key);
+        static void mouse_button_released(const MouseButton mb);
+
+        static void refresh();
     };
 }
