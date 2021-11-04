@@ -42,8 +42,6 @@ namespace Engine
         static std::unordered_map<MouseButton, MouseButtonState> g_mouse;
 
     public:
-        static void init();
-
         static KeyState key_state(const Key key);
         static MouseButtonState mouse_button_state(const MouseButton mb);
 

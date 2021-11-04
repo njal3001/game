@@ -1,29 +1,23 @@
 #include "input.h"
 #include <algorithm>
 #include <iostream>
+#include <string>
+#include "log.h"
 
 namespace Engine
 {
-    std::unordered_map<Key, KeyState> Input::g_keyboard;
-    std::unordered_map<MouseButton, MouseButtonState> Input::g_mouse;
-
-    void Input::init()
+    std::unordered_map<Key, KeyState> Input::g_keyboard =
     {
-        KeyState key_start_state = { false, false, false };
-        g_keyboard =
-        {
-            { Key::D0, key_start_state },
-            { Key::D1, key_start_state },
-            { Key::D2, key_start_state },
-        };
+        { Key::D0, { false, false, false } },
+        { Key::D1, { false, false, false } },
+        { Key::D2, { false, false, false } },
+    };
 
-        MouseButtonState mb_start_state = { false, false, false };
-        g_mouse =
-        {
-            { MouseButton::Left, mb_start_state },
-            { MouseButton::Right, mb_start_state },
-        };
-    }
+    std::unordered_map<MouseButton, MouseButtonState> Input::g_mouse =
+    {
+        { MouseButton::Left,  { false, false, false } },
+        { MouseButton::Right, { false, false, false } },
+    };
 
 
     void Input::refresh()
@@ -50,7 +44,6 @@ namespace Engine
             g_keyboard[key].released = false;
         }
     }
-
 
     void Input::mouse_button_pressed(const MouseButton mb)
     {
@@ -89,7 +82,7 @@ namespace Engine
             return g_keyboard.at(key);
         }
 
-        // TODO: Log warning
+        Log::warn("Key " + std::to_string((int)key) + " not mapped");
         return { false, false, false };
     }
 
@@ -100,7 +93,7 @@ namespace Engine
             return g_mouse.at(mb);
         }
 
-        // TODO: Log warning
+        Log::warn("Mouse button " + std::to_string((int)mb) + " not mapped");
         return { false, false, false };
     }
         

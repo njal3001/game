@@ -25,8 +25,6 @@ namespace Engine
         SDL_RenderClear(g_renderer);
         SDL_RenderPresent(g_renderer);
 
-        Input::init();
-
         return true;
     }
 
