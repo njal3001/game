@@ -6,6 +6,9 @@ int main()
 {
     using namespace Engine;
 
+    Input inp;
+    inp.key_state(Key::D0);
+
     if (Platform::init())
     {
         while (Platform::update())
