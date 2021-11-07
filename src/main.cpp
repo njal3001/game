@@ -10,12 +10,12 @@ int main()
     {
         while (Platform::update())
         {
-            if (Input::mouse_button_state(MouseButton::Right).pressed)
+            if (Input::mouse_button_state(MouseButton::Left).pressed)
             {
                 std::cout << "Pressed!" << '\n';
             }
 
-            if (Input::mouse_button_state(MouseButton::Right).released)
+            if (Input::mouse_button_state(MouseButton::Left).released)
             {
                 std::cout << "Released!" << '\n';
             }

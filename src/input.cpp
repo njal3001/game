@@ -77,24 +77,12 @@ namespace Engine
 
     KeyState Input::key_state(const Key key)
     {
-        if (g_keyboard.find(key) != g_keyboard.end())
-        {
-            return g_keyboard.at(key);
-        }
-
-        Log::warn("Key " + std::to_string((int)key) + " not mapped");
-        return { false, false, false };
+        return g_keyboard.at(key);
     }
 
     MouseButtonState Input::mouse_button_state(const MouseButton mb)
     {
-        if (g_mouse.find(mb) != g_mouse.end())
-        {
-            return g_mouse.at(mb);
-        }
-
-        Log::warn("Mouse button " + std::to_string((int)mb) + " not mapped");
-        return { false, false, false };
+        return g_mouse.at(mb);
     }
         
 }

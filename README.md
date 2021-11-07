@@ -6,4 +6,12 @@
 
 ## Input System ##
 * Polling based
+* Read only
+
+## Graphics System ##
+* Texture creation
+* Multiple renderers
+    - Simple Renderer
+    - Batch Renderer
+
 
