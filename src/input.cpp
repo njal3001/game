@@ -6,11 +6,15 @@
 
 namespace Engine
 {
+    // TODO: Find a cleaner way to do this
     std::unordered_map<Key, KeyState> Input::g_keyboard =
     {
-        { Key::D0, { false, false, false } },
-        { Key::D1, { false, false, false } },
-        { Key::D2, { false, false, false } },
+        { Key::Left, { false, false, false } },
+        { Key::Right, { false, false, false } },
+        { Key::Up, { false, false, false } },
+        { Key::Down, { false, false, false } },
+        { Key::C, { false, false, false } },
+        { Key::X, { false, false, false } },
     };
 
     std::unordered_map<MouseButton, MouseButtonState> Input::g_mouse =

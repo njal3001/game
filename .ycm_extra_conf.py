@@ -90,6 +90,7 @@ get_python_inc(),
 
 '-I', './include',
 '-I', '/usr/include/SDL2',
+'-I', '/usr/include/GL',
 ]
 
 # Set this to the absolute path to the folder (NOT the file!) containing the

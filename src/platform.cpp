@@ -49,10 +49,6 @@ namespace Engine
                         mb = MouseButton::Left;
                         break;
 
-                    case SDL_BUTTON_MIDDLE:
-                        mb = MouseButton::Middle;
-                        break;
-
                     case SDL_BUTTON_RIGHT:
                         mb = MouseButton::Right;
                         break;
@@ -67,10 +63,6 @@ namespace Engine
                 {
                     case SDL_BUTTON_LEFT:
                         mb = MouseButton::Left;
-                        break;
-
-                    case SDL_BUTTON_MIDDLE:
-                        mb = MouseButton::Middle;
                         break;
 
                     case SDL_BUTTON_RIGHT:

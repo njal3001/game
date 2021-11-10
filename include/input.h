@@ -6,16 +6,17 @@ namespace Engine
 {
     enum class Key
     {
-        D0 = SDL_SCANCODE_0,
-        D1 = SDL_SCANCODE_1,
-        D2 = SDL_SCANCODE_2,
+        Left = SDL_SCANCODE_LEFT,
+        Right = SDL_SCANCODE_RIGHT,
+        Up = SDL_SCANCODE_UP,
+        Down = SDL_SCANCODE_DOWN,
+        X = SDL_SCANCODE_X,
+        C = SDL_SCANCODE_C,
     };
 
     enum class MouseButton
     {
-        None,
         Left,
-        Middle,
         Right,
     };
 
@@ -38,6 +39,8 @@ namespace Engine
         friend class Platform;
 
     private:
+        static int key_codes[5];
+        static int mouse_button_codes[3];
         static std::unordered_map<Key, KeyState> g_keyboard;
         static std::unordered_map<MouseButton, MouseButtonState> g_mouse;
 

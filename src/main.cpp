@@ -1,13 +1,11 @@
 #include <iostream>
 #include "platform.h"
 #include "input.h"
+#include <GL/glew.h>
 
 int main() 
 {
     using namespace Engine;
-
-    Input inp;
-    inp.key_state(Key::D0);
 
     if (Platform::init())
     {

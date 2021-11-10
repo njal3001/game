@@ -3,7 +3,7 @@ namespace Engine
 {
     namespace Graphics
     {
-        void init();
+        bool init();
         void shutdown();
     }
 }
