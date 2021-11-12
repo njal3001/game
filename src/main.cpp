@@ -1,7 +1,6 @@
 #include <iostream>
 #include "platform.h"
 #include "input.h"
-#include <GL/glew.h>
 
 int main() 
 {

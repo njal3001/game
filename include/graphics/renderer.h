@@ -1,3 +1,4 @@
+#pragma once
 #include <GL/glew.h>
 #include "texture.h"
 #include "maths/vec2.h"

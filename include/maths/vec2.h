@@ -1,3 +1,5 @@
+#pragma once
+
 namespace Engine
 {
     struct Vec2

@@ -1,5 +1,6 @@
 #include "graphics/renderer.h"
 #include <assert.h>
+#include "log.h"
 
 namespace Engine
 {
@@ -56,7 +57,7 @@ namespace Engine
     void Renderer::begin()
     {
         glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
-        m_vertex_map = (VertexData*) glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+        m_vertex_map = (VertexData*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
     }
 
     void Renderer::end()
@@ -73,7 +74,11 @@ namespace Engine
 
     void Renderer::tex(const Texture& texture, const Vec2& pos, const Color color)
     {
-        assert(m_vertex_map);
+        if (!m_vertex_map) 
+        {
+            Log::warn("Trying to render texture without without beginning rendering");
+            return;
+        }
 
     }
 }

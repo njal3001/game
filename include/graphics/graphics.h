@@ -1,4 +1,6 @@
+#pragma once
 #include "renderer.h"
+
 namespace Engine
 {
     namespace Graphics
