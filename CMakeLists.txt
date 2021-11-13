@@ -20,6 +20,7 @@ add_executable(game
     src/graphics/renderer.cpp
     src/graphics/renderer.cpp
     src/graphics/texture.cpp
+    src/graphics/image.cpp
     )
 
 target_link_libraries(game ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})

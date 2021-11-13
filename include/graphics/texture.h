@@ -1,5 +1,6 @@
 #pragma once
 #include <GL/glew.h>
+#include "image.h"
 
 namespace Engine
 {
@@ -12,9 +13,14 @@ namespace Engine
     public:
         // TODO: Add texture format support
         Texture(const unsigned int width, const unsigned int height, const unsigned char* data);
+        Texture(Image& image);
+        ~Texture();
 
-        GLuint get_id() const;
-        GLsizei get_width() const;
-        GLsizei get_height() const;
+        Texture(const Texture& other) = delete;
+        Texture& operator=(const Texture& other) = delete;
+
+        GLuint id() const;
+        GLsizei width() const;
+        GLsizei height() const;
     };
 }

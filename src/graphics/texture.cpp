@@ -6,7 +6,6 @@ namespace Engine
     Texture::Texture(const unsigned int width, const unsigned int height, const unsigned char* data)
         : m_id(0), m_width(width), m_height(height)
     {
-        // TODO: Add logging asserts?
         assert(width > 0 && height > 0);
         
         glGenTextures(1, &m_id);
@@ -16,17 +15,27 @@ namespace Engine
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    GLuint Texture::get_id() const
+    Texture::Texture(Image& image)
+        : Texture(image.width(), image.height(), (unsigned char*)image.pixels())
+    {}
+
+
+    Texture::~Texture()
+    {
+        glDeleteTextures(1, &m_id);
+    }
+
+    GLuint Texture::id() const
     {
         return m_id;
     }
     
-    GLsizei Texture::get_width() const
+    GLsizei Texture::width() const
     {
         return m_width;
     }
     
-    GLsizei Texture::get_height() const
+    GLsizei Texture::height() const
     {
         return m_height;
     }
