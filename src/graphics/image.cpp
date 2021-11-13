@@ -10,7 +10,7 @@ namespace Engine
         int x, y, comp;
         unsigned char* data = stbi_load(filename.c_str(), &x, &y, &comp, 0);
 
-        assert(m_pixels);
+        assert(data);
 
         m_pixels = (Color*)data;
         m_width = x;
