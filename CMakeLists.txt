@@ -16,11 +16,13 @@ add_executable(game
 
     src/maths/vec2.cpp
 
+    src/graphics/graphics.cpp
     src/graphics/color.cpp
     src/graphics/renderer.cpp
     src/graphics/renderer.cpp
     src/graphics/texture.cpp
     src/graphics/image.cpp
+    src/graphics/shader.cpp
     )
 
 target_link_libraries(game ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})

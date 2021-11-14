@@ -49,6 +49,8 @@ namespace Engine
         static MouseButtonState mouse_button_state(const MouseButton mb);
 
     private:
+        Input();
+
         static void key_pressed(const Key key);
         static void mouse_button_pressed(const MouseButton mb);
 

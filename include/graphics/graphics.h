@@ -3,9 +3,19 @@
 
 namespace Engine
 {
-    namespace Graphics
+    class Platform;
+
+    class Graphics
     {
-        bool init();
-        void shutdown();
-    }
+        friend class Platform;
+
+    private:
+        static void* g_context;
+
+    private:
+        Graphics();
+
+        static bool init();
+        static void shutdown();
+    };
 }

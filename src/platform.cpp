@@ -1,11 +1,12 @@
 #include "platform.h"
 #include <iostream>
 #include "input.h"
+#include "log.h"
+#include "graphics/graphics.h"
 
 namespace Engine
 {
-    SDL_Window* Platform::g_window;
-    SDL_Renderer* Platform::g_renderer;
+    SDL_Window* Platform::g_window = nullptr;
 
     bool Platform::init()
     {
@@ -13,17 +14,18 @@ namespace Engine
 
         g_window = SDL_CreateWindow(
             "Hello World!",
-            SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
+            SDL_WINDOWPOS_CENTERED,
+            SDL_WINDOWPOS_CENTERED,
             640,
             480,
-            0
+            SDL_WINDOW_OPENGL
         );
 
-        g_renderer = SDL_CreateRenderer(g_window, -1, SDL_RENDERER_SOFTWARE);
-        SDL_SetRenderDrawColor(g_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-        SDL_RenderClear(g_renderer);
-        SDL_RenderPresent(g_renderer);
+        if (!Graphics::init())
+        {
+            Log::error("Could not initialize Graphics module!");
+            return false;
+        }
 
         return true;
     }
@@ -77,11 +79,32 @@ namespace Engine
         return cont;
     }
 
+    void Platform::present()
+    {
+		SDL_GL_SwapWindow(g_window);
+    }
 
     void Platform::shutdown()
     {
-        SDL_DestroyRenderer(g_renderer);
+        Graphics::shutdown();
         SDL_DestroyWindow(g_window);
         SDL_Quit();
+    }
+
+
+    void* Platform::create_gl_context()
+    {
+        void* context = SDL_GL_CreateContext(g_window);
+        if (!context)
+        {
+            Log::error(SDL_GetError());
+        }
+
+        return context;
+    }
+
+    void Platform::destroy_gl_context(void* context)
+    {
+        SDL_GL_DeleteContext(context);
     }
 }
