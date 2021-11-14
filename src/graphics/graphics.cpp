@@ -1,6 +1,7 @@
 #include "graphics/graphics.h"
 #include "platform.h"
 #include "log.h"
+#include "iostream"
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -39,10 +40,11 @@ namespace Engine
             return false;
         }
 
+        glewInit();
+
         // TODO: Check if debug callback is supported
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        Log::warn("1");
         glDebugMessageCallback(gl_message_callback, nullptr);
 
         return true;

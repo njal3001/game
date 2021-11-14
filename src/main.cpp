@@ -9,14 +9,15 @@ int main()
 
     if (Platform::init())
     {
-        std::cout << "Trying to render" << '\n';
         Renderer renderer;
         while (Platform::update())
         {
-            renderer.rect(Vec2(0,0), Vec2(1, 1), Color(0xFFFFFF));
+            renderer.rect(Vec2(-0.5, -0.5), Vec2(1, 1), Color(255, 255, 255));
             renderer.render();
+            Platform::present();
         }
     }
 
     Platform::shutdown();
+
 }

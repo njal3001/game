@@ -67,7 +67,7 @@ namespace Engine
                  Color c0, Color c1, Color c2);
 
         void push_quad(float px0, float py0, float px1, float py1,
-                float tx0, float ty0, int tex, float tx1, float ty1, 
+                int tex, float tx0, float ty0, float tx1, float ty1, 
                 float tx2, float ty2, float tx3, float ty3, 
                 Color c0, Color c1, Color c2, Color c3);
     };

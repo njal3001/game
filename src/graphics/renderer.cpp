@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <memory>
 #include "log.h"
+#include <iostream>
 
 namespace Engine
 {
@@ -24,31 +25,28 @@ namespace Engine
 
         const std::string default_frag_str =
 		"#version 330\n"
+        "layout (location = 0) out vec4 o_col;\n"
 		"uniform sampler2D u_texture;\n"
 		"in vec2 v_uv;\n"
 		"in vec4 v_col;\n"
-		"out vec4 o_col;\n"
 		"void main(void)\n"
 		"{\n"
-        "   o_col = v_col;\n"
-        "   if (u_texture)\n"
-        "   {\n"
-        "       o_col *= texture(u_texture, v_uv);\n"
-        "   }\n"
+        "   o_col = vec4(1, 1, 1, 1);\n"
+        /* "   if (u_texture)\n" */
+        /* "   {\n" */
+        /* "       o_col *= texture(u_texture, v_uv);\n" */
+        /* "   }\n" */
 		"}";
     }
 
-    std::shared_ptr<Shader> Renderer::m_default_shader;
+    std::shared_ptr<Shader> Renderer::m_default_shader = nullptr;
 
     Renderer::Renderer()
         :  m_vert_index(0), m_ind_p(m_indices)
     {
-        Log::info("1");
-
         // Create vertex array
         glGenVertexArrays(1, &m_vertex_array);
         glBindVertexArray(m_vertex_array);
-
 
         // Create vertex buffer
         glGenBuffers(1, &m_vertex_buffer);
@@ -71,7 +69,7 @@ namespace Engine
 
         // color
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, stride, (const GLvoid*)(pos_offset + uv_offset));
+        glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, stride, (const GLvoid*)(pos_offset + uv_offset));
 
         // Allocate vertex buffer memory
         glBufferData(GL_ARRAY_BUFFER, RENDERER_BUFFER_SIZE, nullptr, GL_DYNAMIC_DRAW);
@@ -127,11 +125,11 @@ namespace Engine
 
         m_index_count += 3;
         m_vertex_count += 3;
-        m_texture_count[tex] += 4;
+        m_texture_count[tex] += 3;
     }
 
     void Renderer::push_quad(float px0, float py0, float px1, float py1,
-            float tx0, float ty0, int tex, float tx1, float ty1, 
+            int tex, float tx0, float ty0, float tx1, float ty1, 
             float tx2, float ty2, float tx3, float ty3, 
             Color c0, Color c1, Color c2, Color c3)
     {
@@ -155,19 +153,19 @@ namespace Engine
 
         m_index_count += 6;
         m_vertex_count += 4;
-        m_texture_count[tex] += 4;
+        m_texture_count[tex] += 6;
     }
 
     void Renderer::tri(const Vec2& pos0, const Vec2& pos1, const Vec2& pos2, const Color color)
     {
-        push_triangle(pos0.x, pos0.y, pos1.x, pos1.y, pos2.x, pos2.y, -1, 0, 0, 0, 0, 0, 0, 
+        push_triangle(pos0.x, pos0.y, pos1.x, pos1.y, pos2.x, pos2.y, 0, 0, 0, 0, 0, 0, 0, 
                 color, color, color);
 
     }
 
     void Renderer::rect(const Vec2& pos, const Vec2& size, const Color color)
     {
-        push_quad(pos.x, pos.y, pos.x + size.x, pos.y + size.y, -1,
+        push_quad(pos.x, pos.y, pos.x + size.x, pos.y + size.y, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, color, color, color, color);
     }
 
@@ -184,7 +182,7 @@ namespace Engine
     void Renderer::render()
     {
         // Sorting indices by texture
-        std::sort(std::begin(m_indices), std::end(m_indices), 
+        std::sort(std::begin(m_indices), std::begin(m_indices) + m_index_count, 
                 [this](const GLushort a, const GLushort b) -> bool
                 {
                    return m_textures[a] < m_textures[b] || (m_textures[a] == m_textures[b] && a < b); 
@@ -192,6 +190,7 @@ namespace Engine
         
         // Upload vertices and indices
         glBindVertexArray(m_vertex_array);
+
         glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer);
 
@@ -216,14 +215,17 @@ namespace Engine
                 continue;
             }
 
+
+            int u_texture = -1;
             // Bind texture if it has one
-            if (tex.first)
+            if (tex.first > 0)
             {
                 glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, tex.first);
+                u_texture = 0;
             }
 
-            m_default_shader->set_uniform_1i("u_texture", tex.first);
+            m_default_shader->set_uniform_1i("u_texture", u_texture);
 
             glDrawElements(GL_TRIANGLES, tex.second, GL_UNSIGNED_SHORT, (void*)(offset * sizeof(GLushort)));
 
@@ -247,5 +249,4 @@ namespace Engine
         m_index_count = 0;
         m_vertex_count = 0;
     }
-
 }
