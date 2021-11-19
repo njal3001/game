@@ -2,8 +2,8 @@
 #include <assert.h>
 #include <algorithm>
 #include <memory>
-#include "log.h"
 #include <iostream>
+#include "log.h"
 
 namespace Engine
 {
@@ -141,14 +141,15 @@ namespace Engine
     }
 
     void Renderer::push_quad(float px0, float py0, float px1, float py1,
+            float px2, float py2, float px3, float py3,
             unsigned int tex, float tx0, float ty0, float tx1, 
             float ty1, float tx2, float ty2, float tx3, float ty3, 
             Color c0, Color c1, Color c2, Color c3)
     {
         make_vertex(px0, py0, tx0, ty0, c0);
-        make_vertex(px0, py1, tx1, ty1, c1);
-        make_vertex(px1, py1, tx2, ty2, c2);
-        make_vertex(px1, py0, tx3, ty3, c3);
+        make_vertex(px1, py1, tx1, ty1, c1);
+        make_vertex(px2, py2, tx2, ty2, c2);
+        make_vertex(px3, py3, tx3, ty3, c3);
 
         *m_index_map = m_vertex_count;
         m_index_map++;
@@ -191,20 +192,20 @@ namespace Engine
     {
         assert(m_vertex_map && m_index_map);
 
-        push_quad(pos.x, pos.y, pos.x + size.x, pos.y + size.y, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, color, color, color, color);
+        push_quad(pos.x, pos.y, pos.x, pos.y + size.y, pos.x + size.x, pos.y + size.y, 
+                pos.x + size.x, pos.y, 0, 0, 0, 0, 0, 0, 0, 0, 0, color, color, color, color);
     }
 
-    void Renderer::tex(const Texture& texture, const Vec2& pos, const Color color)
+    void Renderer::tex(const Texture& texture, const Vec2& pos, const Vec2& size, const Color color)
     {
         assert(m_vertex_map && m_index_map);
         
-        int w = texture.width();
-        int h = texture.height();
+        int w = size.x;
+        int h = size.y;
 
         // TODO: Uvs are probably wrong
-        push_quad(pos.x, pos.y, pos.x + w, pos.y + h, texture.id(),
-                0, 0, 0, 1, 1, 1, 1, 0, color, color, color, color);
+        push_quad(pos.x, pos.y, pos.x, pos.y + h, pos.x + w, pos.y + h, pos.x + w, pos.y,
+                texture.id(), 0, 0, 0, 1, 1, 1, 1, 0, color, color, color, color);
     }
 
     void Renderer::end()
@@ -250,6 +251,8 @@ namespace Engine
                 glBindTexture(GL_TEXTURE_2D, render_pass.texture);
                 u_use_texture = 1;
             }
+
+            std::cout << render_pass.texture << '\n';
 
             // TODO: Add support for multiple textures?
             m_default_shader->set_uniform_1i("u_texture", 0);

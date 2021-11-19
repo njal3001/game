@@ -45,7 +45,12 @@ namespace Engine
             return false;
         }
 
-        glewInit();
+        GLenum err = glewInit();
+        if (err != GLEW_OK)
+        {
+            Log::error((char*)glewGetErrorString(err));
+            return false;
+        }
 
         // TODO: Check if debug callback is supported
         glEnable(GL_DEBUG_OUTPUT);

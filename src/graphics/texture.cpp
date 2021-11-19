@@ -11,7 +11,14 @@ namespace Engine
         glGenTextures(1, &m_id);
 
         glBindTexture(GL_TEXTURE_2D, m_id);
+        
+        // TODO: Pass texture parameters as arguments?
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        // TODO: Pass format as arguments
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 

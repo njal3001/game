@@ -1,5 +1,6 @@
 #include "platform.h"
 #include <iostream>
+#include <assert.h>
 #include "input.h"
 #include "log.h"
 #include "graphics/graphics.h"
@@ -20,6 +21,9 @@ namespace Engine
             480,
             SDL_WINDOW_OPENGL
         );
+
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
         if (!Graphics::init())
         {
@@ -84,13 +88,18 @@ namespace Engine
 		SDL_GL_SwapWindow(g_window);
     }
 
+    std::string Platform::app_path()
+    {
+        const char* path = SDL_GetBasePath();
+        return std::string(path);
+    }
+
     void Platform::shutdown()
     {
         Graphics::shutdown();
         SDL_DestroyWindow(g_window);
         SDL_Quit();
     }
-
 
     void* Platform::create_gl_context()
     {

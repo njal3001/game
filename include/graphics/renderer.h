@@ -55,7 +55,7 @@ namespace Engine
 
         void rect(const Vec2& pos, const Vec2& size, const Color color);
         void tri(const Vec2& pos0, const Vec2& pos1, const Vec2& pos2, const Color color); 
-        void tex(const Texture& texture, const Vec2& pos, const Color color);
+        void tex(const Texture& texture, const Vec2& pos, const Vec2& size, const Color color);
 
     private:
         void make_vertex(float px, float py, float tx, float ty, Color color);
@@ -66,6 +66,7 @@ namespace Engine
                  Color c0, Color c1, Color c2);
 
         void push_quad(float px0, float py0, float px1, float py1,
+                float px2, float py2, float px3, float py3,
                 unsigned int tex, float tx0, float ty0, float tx1, 
                 float ty1, float tx2, float ty2, float tx3, float ty3, 
                 Color c0, Color c1, Color c2, Color c3);

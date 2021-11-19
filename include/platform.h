@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
+#include <string>
 #include "graphics/graphics.h"
 
 namespace Engine
@@ -17,6 +18,8 @@ namespace Engine
         static bool update();
 
         static void present();
+
+        static std::string app_path();
 
         static void shutdown();
 
