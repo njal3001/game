@@ -78,6 +78,11 @@ namespace Engine
         glUniform1i(uniform_location(name), value);
     }
 
+    void Shader::set_uniform_mat4(const GLchar* name, const Mat4x4& value)
+    {
+        glUniformMatrix4fv(uniform_location(name), 1, GL_FALSE, &value.m11);
+    }
+
     GLint Shader::uniform_location(const GLchar* name)
     {
         if (m_uniform_cache.find(name) != m_uniform_cache.end())

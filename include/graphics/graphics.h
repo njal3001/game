@@ -12,6 +12,9 @@ namespace Engine
     private:
         static void* g_context;
 
+    public:
+        static void clear(Color color);
+
     private:
         Graphics();
 

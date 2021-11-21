@@ -1,6 +1,8 @@
+#pragma once
 #include <GL/glew.h>
 #include <string>
 #include <unordered_map>
+#include "maths/mat4x4.h"
 
 namespace Engine
 {
@@ -19,6 +21,7 @@ namespace Engine
         GLuint id() const;
 
         void set_uniform_1i(const GLchar* name, int value);
+        void set_uniform_mat4(const GLchar* name, const Mat4x4& value);
 
     private:
         GLint uniform_location(const GLchar* name);

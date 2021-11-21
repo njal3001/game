@@ -60,6 +60,12 @@ namespace Engine
         return true;
     }
 
+    void Graphics::clear(Color color)
+    {
+        glClearColor(color.r, color.g, color.b, color.a);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
     void Graphics::shutdown()
     {
         Platform::destroy_gl_context(g_context);

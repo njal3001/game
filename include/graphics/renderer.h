@@ -5,6 +5,7 @@
 #include <vector>
 #include "texture.h"
 #include "maths/vec2.h"
+#include "maths/mat4x4.h"
 #include "color.h"
 #include "shader.h"
 
@@ -50,7 +51,7 @@ namespace Engine
         Renderer& operator=(const Renderer& other) = delete;
 
         void begin();
-        void render();
+        void render(const Mat4x4& matrix);
         void end();
 
         void rect(const Vec2& pos, const Vec2& size, const Color color);

@@ -15,6 +15,7 @@ add_executable(game
     src/log.cpp 
 
     src/maths/vec2.cpp
+    src/maths/mat4x4.cpp
 
     src/graphics/graphics.cpp
     src/graphics/color.cpp
