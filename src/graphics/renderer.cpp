@@ -70,7 +70,7 @@ namespace Engine
 
         // color
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, stride, (const GLvoid*)(pos_offset + uv_offset));
+        glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE, stride, (const GLvoid*)(pos_offset + uv_offset));
 
         // Allocate vertex buffer memory
         glBufferData(GL_ARRAY_BUFFER, RENDERER_MAX_VERTICES * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
@@ -205,7 +205,7 @@ namespace Engine
 
         // TODO: Uvs are probably wrong
         push_quad(pos.x, pos.y, pos.x, pos.y + h, pos.x + w, pos.y + h, pos.x + w, pos.y,
-                texture.id(), 0, 0, 0, 1, 1, 1, 1, 0, color, color, color, color);
+                texture.id(), 0, 1, 0, 0, 1, 0, 1, 1, color, color, color, color);
     }
 
     void Renderer::end()
@@ -251,8 +251,6 @@ namespace Engine
                 glBindTexture(GL_TEXTURE_2D, render_pass.texture);
                 u_use_texture = 1;
             }
-
-            std::cout << render_pass.texture << '\n';
 
             // TODO: Add support for multiple textures?
             m_default_shader->set_uniform_1i("u_texture", 0);
