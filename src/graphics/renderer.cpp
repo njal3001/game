@@ -44,7 +44,7 @@ namespace Engine
     std::shared_ptr<Shader> Renderer::m_default_shader = nullptr;
 
     Renderer::Renderer()
-        : m_vertex_count(0), m_vertex_map(nullptr), m_index_map(nullptr)
+        : m_vertex_count(0), m_vertex_map(nullptr), m_index_map(nullptr), m_matrix(Mat3x3::identity)
     {
         // Create vertex array
         glGenVertexArrays(1, &m_vertex_array);
@@ -86,6 +86,8 @@ namespace Engine
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
         glBindVertexArray(0);
+
+        m_matrix_stack.push_back(Mat3x3::identity);
     }
 
     Renderer::~Renderer()
@@ -95,10 +97,40 @@ namespace Engine
         glDeleteVertexArrays(1, &m_vertex_array);
     }
 
+    void Renderer::push_matrix(const Mat3x3& matrix, bool absolute)
+    {
+        if (absolute)
+        {
+            m_matrix = matrix;
+        }
+        else
+        {
+            m_matrix = m_matrix * matrix;
+        }
+
+        m_matrix_stack.push_back(matrix);
+    }
+
+    Mat3x3 Renderer::pop_matrix()
+    {
+        assert(m_matrix_stack.size() > 1);
+
+        Mat3x3 top = m_matrix_stack.back();
+        m_matrix_stack.pop_back();
+        m_matrix = m_matrix_stack.back();
+
+        return top;
+    }
+
+    Mat3x3 Renderer::peek_matrix()
+    {
+        return m_matrix;
+    }
+
     void Renderer::make_vertex(float px, float py, float tx, float ty, Color color)
     {
-        m_vertex_map->pos.x = px;
-        m_vertex_map->pos.y = py;
+        m_vertex_map->pos.x = m_matrix.m11 * px + m_matrix.m21 * py + m_matrix.m31;
+        m_vertex_map->pos.y = m_matrix.m12 * px + m_matrix.m22 * py + m_matrix.m32;
         m_vertex_map->uv.x = tx;
         m_vertex_map->uv.y = ty;
         m_vertex_map->color = color;

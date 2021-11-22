@@ -37,6 +37,6 @@ namespace Engine
         static Mat4x4 create_translation(float x, float y, float z);
         static Mat4x4 create_scale(float x, float y, float z);
 
-        Mat4x4 operator* (const Mat4x4& rhs);
+        Mat4x4 operator* (const Mat4x4& rhs) const;
     };
 }

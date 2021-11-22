@@ -16,6 +16,8 @@ add_executable(game
 
     src/maths/vec2.cpp
     src/maths/mat4x4.cpp
+    src/maths/mat3x3.cpp
+    src/maths/calc.cpp
 
     src/graphics/graphics.cpp
     src/graphics/color.cpp

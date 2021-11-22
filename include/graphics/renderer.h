@@ -6,6 +6,7 @@
 #include "texture.h"
 #include "maths/vec2.h"
 #include "maths/mat4x4.h"
+#include "maths/mat3x3.h"
 #include "color.h"
 #include "shader.h"
 
@@ -41,6 +42,9 @@ namespace Engine
         GLushort* m_index_map;
         std::vector<RenderPass> m_render_passes;
 
+        Mat3x3 m_matrix;
+        std::vector<Mat3x3> m_matrix_stack;
+
         static std::shared_ptr<Shader> m_default_shader;
 
     public:
@@ -49,6 +53,10 @@ namespace Engine
 
         Renderer(const Renderer& other) = delete;
         Renderer& operator=(const Renderer& other) = delete;
+
+        void push_matrix(const Mat3x3& matrix, bool absolute);
+        Mat3x3 pop_matrix();
+        Mat3x3 peek_matrix();
 
         void begin();
         void render(const Mat4x4& matrix);
