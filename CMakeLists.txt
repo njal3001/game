@@ -28,6 +28,7 @@ add_executable(game
     src/graphics/image.cpp
     src/graphics/shader.cpp
     src/graphics/subtexture.cpp
+    src/graphics/font.cpp
     )
 
 target_link_libraries(game ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})

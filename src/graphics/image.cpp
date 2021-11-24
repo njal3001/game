@@ -1,4 +1,4 @@
-#define STB_IMAGE_IMPLEMENTATION // TODO: Might not be the right place for this
+#define STB_IMAGE_IMPLEMENTATION
 #include "third_party/stb_image.h"
 #include "graphics/image.h"
 

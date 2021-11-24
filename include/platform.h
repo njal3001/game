@@ -5,6 +5,13 @@
 
 namespace Engine
 {
+    struct File
+    {
+        std::string path;
+        unsigned int size;
+        char* data;
+    };
+
     class Platform
     {
         friend class Graphics;
@@ -20,6 +27,7 @@ namespace Engine
         static void present();
 
         static std::string app_path();
+        static File read_file(const std::string& file_path);
 
         static void shutdown();
 
