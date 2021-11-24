@@ -13,6 +13,7 @@ namespace Engine
         std::unordered_map<std::string, GLint> m_uniform_cache;
 
     public:
+        // TODO: Add constructor for file path
         Shader(const std::string& vert_str, const std::string& frag_str);
         Shader(const Shader& other) = delete;
         Shader& operator=(const Shader& other) = delete;

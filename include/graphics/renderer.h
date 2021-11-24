@@ -3,12 +3,13 @@
 #include <unordered_map>
 #include <memory>
 #include <vector>
-#include "texture.h"
 #include "maths/vec2.h"
 #include "maths/mat4x4.h"
 #include "maths/mat3x3.h"
-#include "color.h"
-#include "shader.h"
+#include "graphics/texture.h"
+#include "graphics/color.h"
+#include "graphics/shader.h"
+#include "graphics/subtexture.h"
 
 namespace Engine
 {
@@ -17,6 +18,7 @@ namespace Engine
 #define RENDERER_MAX_VERTICES RENDERER_MAX_SPRITES * 4
 #define RENDERER_MAX_INDICES RENDERER_MAX_SPRITES * 6
 
+    // TODO: Add custom shader support. Create mesh struct?
     class Renderer
     {
     private:
@@ -64,7 +66,10 @@ namespace Engine
 
         void rect(const Vec2& pos, const Vec2& size, const Color color);
         void tri(const Vec2& pos0, const Vec2& pos1, const Vec2& pos2, const Color color); 
-        void tex(const Texture& texture, const Vec2& pos, const Vec2& size, const Color color);
+        void tex(const std::shared_ptr<Texture>& texture, const Vec2& pos, const Color color);
+        void tex(const std::shared_ptr<Texture>& texture, const Vec2& pos, const Vec2& scale, const Color color);
+        void tex(const Subtexture& sub, const Vec2& pos, const Color color);
+        void tex(const Subtexture& sub, const Vec2& pos, const Vec2& scale, const Color color);
 
     private:
         void make_vertex(float px, float py, float tx, float ty, Color color);

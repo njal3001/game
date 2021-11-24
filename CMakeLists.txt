@@ -18,7 +18,8 @@ add_executable(game
     src/maths/mat4x4.cpp
     src/maths/mat3x3.cpp
     src/maths/calc.cpp
-
+    src/maths/rect.cpp
+    
     src/graphics/graphics.cpp
     src/graphics/color.cpp
     src/graphics/renderer.cpp
@@ -26,6 +27,7 @@ add_executable(game
     src/graphics/texture.cpp
     src/graphics/image.cpp
     src/graphics/shader.cpp
+    src/graphics/subtexture.cpp
     )
 
 target_link_libraries(game ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})

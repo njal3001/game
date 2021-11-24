@@ -229,16 +229,44 @@ namespace Engine
                 pos.x + size.x, pos.y, 0, 0, 0, 0, 0, 0, 0, 0, 0, color, color, color, color);
     }
 
-    void Renderer::tex(const Texture& texture, const Vec2& pos, const Vec2& size, const Color color)
+    void Renderer::tex(const std::shared_ptr<Texture>& texture, const Vec2& pos, const Color color)
     {
         assert(m_vertex_map && m_index_map);
         
-        int w = size.x;
-        int h = size.y;
+        int w = texture->width();
+        int h = texture->height();
 
-        // TODO: Uvs are probably wrong
         push_quad(pos.x, pos.y, pos.x, pos.y + h, pos.x + w, pos.y + h, pos.x + w, pos.y,
-                texture.id(), 0, 1, 0, 0, 1, 0, 1, 1, color, color, color, color);
+                texture->id(), 0, 1, 0, 0, 1, 0, 1, 1, color, color, color, color);
+    }
+
+    void Renderer::tex(const std::shared_ptr<Texture>& texture, const Vec2& pos, const Vec2& scale, const Color color)
+    {
+        push_matrix(Mat3x3::create_scale(scale), false);
+        tex(texture, pos, color);
+        pop_matrix();
+    }
+
+    void Renderer::tex(const Subtexture& sub, const Vec2& pos, const Color color)
+    {
+        assert(m_vertex_map && m_index_map);
+        
+        Rect src = sub.source();
+        std::array<Vec2, 4> tex_coords = sub.tex_coords();
+
+        push_quad(pos.x, pos.y, pos.x, pos.y + src.h, pos.x + src.w, pos.y + src.h, 
+                pos.x + src.w, pos.y, sub.texture_ref()->id(), 
+                tex_coords[0].x, -tex_coords[0].y, tex_coords[1].x, -tex_coords[1].y, 
+                tex_coords[2].x, -tex_coords[2].y, tex_coords[3].x, -tex_coords[3].y, 
+                color, color, color, color);
+    }
+
+
+    void Renderer::tex(const Subtexture& sub, const Vec2& pos, const Vec2& scale, const Color color)
+    {
+        push_matrix(Mat3x3::create_scale(scale), false);
+        tex(sub, pos, color);
+        pop_matrix();
     }
 
     void Renderer::end()
