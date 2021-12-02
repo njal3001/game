@@ -44,9 +44,10 @@ namespace Engine
                 continue;
             }
 
-            if (!stbtt_IsGlyphEmpty(info, glyph))
+            if (stbtt_IsGlyphEmpty(info, glyph))
             {
-                Log::warn("Glyph (" + std::to_string(glyph) + ") is empty");
+                Log::warn("Glyph (" + std::to_string(glyph) + ") is empty\ncodepoint: " +
+                        std::to_string(codepoint));
                 continue;
             }
 
@@ -61,13 +62,10 @@ namespace Engine
 
             Vec2 offset(offset_x * scale, (float)y0);
 
-            // TODO: Don't like having to create a dummy subtexture here
-            Character ch =
-            {
-                .subtexture = Subtexture(nullptr, Rect()),
-                .advance = advance * scale,
-                .offset = offset,
-            };
+            Character ch;
+            ch.advance = advance * scale,
+            ch.offset = offset,
+            ch.subtexture.set_source(Rect(px, py, w, h));
 
             m_characters[codepoint] = ch;
 
@@ -84,13 +82,16 @@ namespace Engine
                 break;
             }
 
-
             // Get character pixels
             unsigned char* out = &pixels[(int)(py * max_atlas_size + px)];
             stbtt_MakeGlyphBitmap(info, out, w, h, w, scale, scale, glyph);
+        }
 
+        m_atlas = std::make_shared<Texture>(max_atlas_size, max_atlas_size, &pixels[0]);
 
-
+        for (auto& it : m_characters)
+        {
+            it.second.subtexture.set_texture_ref(m_atlas);
         }
     }
 

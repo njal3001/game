@@ -1,0 +1,23 @@
+{
+    "configurations": {
+        "run": {
+            "adapter": "vscode-cpptools",
+            "default": true,
+            "configuration": {
+                "request": "launch",
+                "cwd": "${workspaceRoot}/build",
+                "program": "${workspaceRoot}/build/game",
+                "MIMode": "gdb",
+                "stopOnEntry": false,
+                "console": "integratedTerminal"
+            },
+            "breakpoints": {
+                "exception": {
+                    "raised": "N",
+                    "uncaught": "Y"
+                }
+            }
+        }
+    }
+}
+

@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include <memory>
 #include "maths/vec2.h"
 #include "graphics/texture.h"
 #include "graphics/subtexture.h"
