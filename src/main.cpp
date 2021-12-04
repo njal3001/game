@@ -1,5 +1,6 @@
 #include <iostream>
 #include <memory>
+#include <string>
 #include "platform.h"
 #include "input.h"
 #include "graphics/renderer.h"
@@ -10,7 +11,6 @@ int main()
 {
     using namespace Engine;
 
-
     if (Platform::init())
     {
         Renderer renderer;
@@ -18,7 +18,7 @@ int main()
         Mat4x4 matrix = Mat4x4::create_ortho(0.0f, 8.0f, 0.0f, 8.0f, -1.0f, 1.0f);
         Color clear_color(0, 0, 0, 255);
 
-        //Font font("./kongtext.ttf", CharRange(33, 126), 8);
+        Font font(Platform::app_path() + "/kongtext.ttf", 8);
 
         while (Platform::update())
         {

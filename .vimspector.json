@@ -4,12 +4,13 @@
             "adapter": "vscode-cpptools",
             "default": true,
             "configuration": {
+                "type": "cpp",
                 "request": "launch",
                 "cwd": "${workspaceRoot}/build",
                 "program": "${workspaceRoot}/build/game",
-                "MIMode": "gdb",
-                "stopOnEntry": false,
-                "console": "integratedTerminal"
+                "stopOnEntry": true,
+                "console": "integratedTerminal",
+                "MIMode": "gdb"
             },
             "breakpoints": {
                 "exception": {

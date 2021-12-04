@@ -35,6 +35,7 @@ namespace Engine
 
 
     void* Graphics::g_context = nullptr;
+    FT_Library Graphics::g_font_library = NULL;
 
     bool Graphics::init()
     {
@@ -52,6 +53,15 @@ namespace Engine
             return false;
         }
 
+        if (FT_Init_FreeType(&g_font_library))
+        {
+            Log::error("Could not initialize FreeType");
+            return false;
+        }
+
+        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
         // TODO: Check if debug callback is supported
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -66,8 +76,14 @@ namespace Engine
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
+    FT_Library& Graphics::get_font_lib()
+    {
+        return g_font_library;
+    }
+
     void Graphics::shutdown()
     {
+        FT_Done_FreeType(g_font_library);
         Platform::destroy_gl_context(g_context);
         g_context = nullptr;
     }

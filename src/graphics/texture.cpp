@@ -3,8 +3,8 @@
 
 namespace Engine
 {
-    Texture::Texture(const unsigned int width, const unsigned int height, const unsigned char* data)
-        : m_id(0), m_width(width), m_height(height)
+    Texture::Texture(const unsigned int width, const unsigned int height, const unsigned char* data, const TextureFormat format)
+        : m_id(0), m_width(width), m_height(height), m_format((GLuint)format)
     {
         assert(width > 0 && height > 0);
         
@@ -16,14 +16,13 @@ namespace Engine
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        // TODO: Pass format as arguments
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, m_format, width, height, 0, m_format, GL_UNSIGNED_BYTE, data);
 
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    Texture::Texture(Image& image)
-        : Texture(image.width(), image.height(), (unsigned char*)image.pixels())
+    Texture::Texture(Image& image, const TextureFormat format)
+        : Texture(image.width(), image.height(), (unsigned char*)image.pixels(), format)
     {}
 
 

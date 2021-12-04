@@ -5,8 +5,9 @@ project(game)
 find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(Freetype REQUIRED)
 
-include_directories(include ${SDL2_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
+include_directories(include ${SDL2_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS})
 
 add_executable(game 
     src/main.cpp 
@@ -31,4 +32,4 @@ add_executable(game
     src/graphics/font.cpp
     )
 
-target_link_libraries(game ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
+target_link_libraries(game ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${FREETYPE_LIBRARIES})
