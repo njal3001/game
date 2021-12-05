@@ -6,6 +6,10 @@
 
 namespace Engine
 {
+    Character::Character()
+        : advance(0.0f)
+    {}
+
     Font::Font(const std::string& file_path, const unsigned int height)
         : m_height(height)
     {
@@ -23,7 +27,7 @@ namespace Engine
         unsigned int px = 0;
         unsigned int py = 0;
 
-        for (unsigned char ch = 0; ch < 128; ch++)
+        for (unsigned char ch = 33; ch < 127; ch++)
         {
             if (FT_Load_Char(m_face, ch, FT_LOAD_RENDER))
             {
@@ -33,12 +37,6 @@ namespace Engine
 
             FT_GlyphSlot glyph = m_face->glyph;
             FT_Bitmap bmp = m_face->glyph->bitmap;
-
-            Character character;
-            character.advance = glyph->advance.x;
-            character.offset_x = glyph->bitmap_left;
-            character.offset_y = glyph->bitmap_top;
-            character.subtexture.set_source(Rect(px, py, bmp.width, bmp.rows));
 
             if (px + bmp.width > max_atlas_size)
             {
@@ -54,16 +52,32 @@ namespace Engine
                 break;
             }
 
-            // Get character pixels
-            unsigned char* out = &pixels[(int)(py * max_atlas_size + px)];
-            memcpy(out, bmp.buffer, bmp.rows * bmp.pitch);
+            Log::info(std::to_string(ch) + ": " + std::to_string(glyph->bitmap_top));
+
+            Character character;
+            character.advance = glyph->advance.x >> 6;
+            character.offset = Vec2(glyph->bitmap_left, glyph->bitmap_top);
+            character.subtexture.set_source(Rect(px, py, bmp.width, bmp.rows));
+
+            m_characters[ch] = character;
+
+            // Add character to texture pixels
+            for (unsigned int row = 0; row < bmp.rows; row++)
+            {
+                for (unsigned int col = 0; col < bmp.width; col++)
+                {
+                    pixels[(py + row) * max_atlas_size + px + col] = bmp.buffer[row * bmp.pitch + col];
+                }
+            }
+
+            px += bmp.width;
         }
 
-        m_atlas = std::make_shared<Texture>(max_atlas_size, max_atlas_size, &pixels[0], TextureFormat::R);
+        m_atlas = std::make_shared<Texture>(max_atlas_size, max_atlas_size, (unsigned char*)pixels, TextureFormat::R);
 
-        for (unsigned char ch = 0; ch < 128; ch++)
+        for (auto& it : m_characters)
         {
-            m_characters[ch].subtexture.set_texture_ref(m_atlas);
+            it.second.subtexture.set_texture_ref(m_atlas);
         }
     }
 
@@ -74,12 +88,20 @@ namespace Engine
 
     const Character& Font::get_character(const unsigned char ch) const
     {
-        return m_characters[ch];
+        auto it = m_characters.find(ch);
+        if (it != m_characters.end())
+        {
+            return it->second;
+        }
+
+        static Character empty;
+
+        return empty;
     }
 
     const Character& Font::operator[](const unsigned char ch) const
     {
-        return m_characters[ch];
+        return get_character(ch);
     }
 
     Font::~Font()

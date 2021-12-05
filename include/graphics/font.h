@@ -13,8 +13,9 @@ namespace Engine
     {
         Subtexture subtexture;
         float advance;
-        int offset_x;
-        int offset_y;
+        Vec2 offset;
+
+        Character();
     };
 
     class Font
@@ -22,7 +23,7 @@ namespace Engine
     private:
         FT_Face m_face;
         unsigned int m_height;
-        Character m_characters[128];
+        std::unordered_map<unsigned char, Character> m_characters;
         std::shared_ptr<Texture> m_atlas;
 
     public:

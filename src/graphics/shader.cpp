@@ -1,4 +1,5 @@
 #include "graphics/shader.h"
+#include <assert.h>
 #include "log.h"
 
 namespace Engine
@@ -24,7 +25,7 @@ namespace Engine
         {
             glDeleteShader(vert);
             Log::error(log);
-            return;
+            assert(false);
         }
 
         glShaderSource(frag, 1, &frag_src, NULL);
@@ -37,7 +38,7 @@ namespace Engine
             glDeleteShader(vert);
             glDeleteShader(frag);
             Log::error(log);
-            return;
+            assert(false);
         }
 
         m_id = glCreateProgram();
@@ -57,6 +58,7 @@ namespace Engine
         if (log_length)
         {
             Log::error(log);
+            assert(false);
         }
     }
 

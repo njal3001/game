@@ -10,6 +10,8 @@ namespace Engine
 
         Vec2(float x, float y);
 
+        Vec2(int x, int y);
+
         Vec2 operator +(const Vec2& rhs) const;
         Vec2 operator -(const Vec2& rhs) const;
         Vec2 operator *(const float rhs) const;

@@ -39,9 +39,23 @@ namespace Engine
         "       o_col *= texture(u_texture, v_uv);\n"
         "   }\n"
 		"}";
+
+        // TODO: Should not need dummy u_use_texture uniform
+        const std::string text_frag_str =
+		"#version 330\n"
+        "uniform sampler2D u_texture;\n"
+        "layout(location=0) out vec4 o_col;\n"
+		"uniform int u_use_texture;\n"
+		"in vec2 v_uv;\n"
+		"in vec4 v_col;\n"
+		"void main(void)\n"
+		"{\n"
+        "   o_col = v_col * texture(u_texture, v_uv).x;\n"
+		"}";
     }
 
     std::shared_ptr<Shader> Renderer::m_default_shader = nullptr;
+    std::shared_ptr<Shader> Renderer::m_text_shader = nullptr;
 
     Renderer::Renderer()
         : m_vertex_count(0), m_vertex_map(nullptr), m_index_map(nullptr), m_matrix(Mat3x3::identity)
@@ -88,6 +102,17 @@ namespace Engine
         glBindVertexArray(0);
 
         m_matrix_stack.push_back(Mat3x3::identity);
+
+        // Create shaders
+        if (!m_default_shader)
+        {
+            m_default_shader = std::make_shared<Shader>(default_vert_str, default_frag_str);
+        }
+
+        if (!m_text_shader)
+        {
+            m_text_shader = std::make_shared<Shader>(default_vert_str, text_frag_str);
+        }
     }
 
     Renderer::~Renderer()
@@ -97,7 +122,7 @@ namespace Engine
         glDeleteVertexArrays(1, &m_vertex_array);
     }
 
-    void Renderer::push_matrix(const Mat3x3& matrix, bool absolute)
+    void Renderer::push_matrix(const Mat3x3& matrix, const bool absolute)
     {
         if (absolute)
         {
@@ -127,6 +152,37 @@ namespace Engine
         return m_matrix;
     }
 
+
+    void Renderer::push_shader(const std::shared_ptr<Shader>& shader)
+    {
+        m_shader_stack.push_back(shader);
+        m_shader = shader;
+    }
+
+    std::shared_ptr<Shader> Renderer::peek_shader() const
+    {
+        return m_shader;
+    }
+
+    std::shared_ptr<Shader> Renderer::pop_shader()
+    {
+        assert(m_shader_stack.size() > 0);
+
+        std::shared_ptr<Shader> back = m_shader_stack.back();
+        m_shader_stack.pop_back();
+
+        if (m_shader_stack.size() > 0)
+        {
+            m_shader = m_shader_stack.back();
+        }
+        else
+        {
+            m_shader = nullptr;
+        }
+
+        return back;
+    }
+
     void Renderer::make_vertex(float px, float py, float tx, float ty, Color color)
     {
         m_vertex_map->pos.x = m_matrix.m11 * px + m_matrix.m21 * py + m_matrix.m31;
@@ -139,18 +195,19 @@ namespace Engine
     }
 
 
-    void Renderer::update_render_pass(unsigned int count, unsigned int texture)
+    void Renderer::update_batch(unsigned int count, unsigned int texture)
     {
-        if (m_render_passes.empty() || m_render_passes.back().texture != texture)
+        if (m_batches.empty() || m_batches.back().texture != texture ||m_batches.back().shader != m_shader)
         {
-            m_render_passes.push_back(
+            m_batches.push_back(
             {
-                .texture = texture,
                 .count = 0,
+                .texture = texture,
+                .shader = m_shader,
             });
         }
 
-        m_render_passes.back().count += count;
+        m_batches.back().count += count;
     }
 
     void Renderer::push_triangle(float px0, float py0, float px1, float py1,
@@ -169,7 +226,7 @@ namespace Engine
         *m_index_map = m_vertex_count + 2;
         m_index_map++;
 
-        update_render_pass(3, tex);
+        update_batch(3, tex);
         m_vertex_count += 3;
     }
 
@@ -198,7 +255,7 @@ namespace Engine
         *m_index_map = m_vertex_count;
         m_index_map++;
 
-        update_render_pass(6, tex);
+        update_batch(6, tex);
         m_vertex_count += 4;
     }
 
@@ -256,8 +313,8 @@ namespace Engine
 
         push_quad(pos.x, pos.y, pos.x, pos.y + src.h, pos.x + src.w, pos.y + src.h, 
                 pos.x + src.w, pos.y, sub.texture_ref()->id(), 
-                tex_coords[0].x, -tex_coords[0].y, tex_coords[1].x, -tex_coords[1].y, 
-                tex_coords[2].x, -tex_coords[2].y, tex_coords[3].x, -tex_coords[3].y, 
+                tex_coords[0].x, tex_coords[1].y, tex_coords[1].x, tex_coords[0].y, 
+                tex_coords[2].x, tex_coords[3].y, tex_coords[3].x, tex_coords[2].y, 
                 color, color, color, color);
     }
 
@@ -266,6 +323,37 @@ namespace Engine
     {
         push_matrix(Mat3x3::create_scale(scale), false);
         tex(sub, pos, color);
+        pop_matrix();
+    }
+
+
+    // TODO: Fix transparency on empty pixels
+    void Renderer::str(const Font& font, const std::string& text, const Vec2& pos, const Color color)
+    {
+        assert(m_vertex_map && m_index_map);
+
+        push_shader(m_text_shader);
+
+        Vec2 ch_pos = pos;
+
+        // TODO: Check for newline and space
+        for (const char& ch : text)
+        {
+            const Character& character = font.get_character((unsigned char)ch);
+
+            // TODO: Fix y offset
+            tex(character.subtexture, ch_pos + Vec2(character.offset.x, 0.0f), color);
+
+            ch_pos.x += character.advance;
+        }
+
+        pop_shader();
+    }
+
+    void Renderer::str(const Font& font, const std::string& text, const Vec2& pos, const Vec2& scale, const Color color)
+    {
+        push_matrix(Mat3x3::create_scale(scale), false);
+        str(font, text, pos, color);
         pop_matrix();
     }
 
@@ -291,36 +379,35 @@ namespace Engine
         glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer);
 
-        // Create default shader if it's not created yet
-        if (!m_default_shader)
-        {
-            m_default_shader = std::make_shared<Shader>(default_vert_str, default_frag_str);
-            assert(m_default_shader->id());
-        }
-
-        glUseProgram(m_default_shader->id());
 
         // Perform render passes
         unsigned int offset = 0;
-        for (auto& render_pass : m_render_passes)
+        for (auto& batch : m_batches)
         {
+            if (!batch.shader)
+            {
+                batch.shader = m_default_shader;
+            }
+
+            glUseProgram(batch.shader->id());
+
             int u_use_texture = 0;
             // Bind texture if it has one
-            if (render_pass.texture > 0)
+            if (batch.texture > 0)
             {
                 glActiveTexture(GL_TEXTURE0);
-                glBindTexture(GL_TEXTURE_2D, render_pass.texture);
+                glBindTexture(GL_TEXTURE_2D, batch.texture);
                 u_use_texture = 1;
             }
 
             // TODO: Add support for multiple textures?
-            m_default_shader->set_uniform_mat4("u_matrix", matrix);
-            m_default_shader->set_uniform_1i("u_texture", 0);
-            m_default_shader->set_uniform_1i("u_use_texture", u_use_texture);
+            batch.shader->set_uniform_mat4("u_matrix", matrix);
+            batch.shader->set_uniform_1i("u_texture", 0);
+            batch.shader->set_uniform_1i("u_use_texture", u_use_texture);
 
-            glDrawElements(GL_TRIANGLES, render_pass.count, GL_UNSIGNED_SHORT, (void*)(offset * sizeof(GLushort)));
+            glDrawElements(GL_TRIANGLES, batch.count, GL_UNSIGNED_SHORT, (void*)(offset * sizeof(GLushort)));
 
-            offset += render_pass.count;
+            offset += batch.count;
         }
 
         glUseProgram(0);
@@ -329,6 +416,6 @@ namespace Engine
         glBindVertexArray(0);
 
         m_vertex_count = 0;
-        m_render_passes.clear();
+        m_batches.clear();
     }
 }

@@ -22,4 +22,7 @@ namespace Engine
 
     Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
         : r(r), g(g), b(b), a(a) {}
+
+    const Color Color::white = Color(255, 255, 255);
+    const Color Color::black = Color(0, 0, 0);
 }

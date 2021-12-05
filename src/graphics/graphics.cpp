@@ -2,6 +2,7 @@
 #include "platform.h"
 #include "log.h"
 #include "iostream"
+#include <GL/glew.h>
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN

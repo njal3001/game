@@ -10,6 +10,7 @@
 #include "graphics/color.h"
 #include "graphics/shader.h"
 #include "graphics/subtexture.h"
+#include "graphics/font.h"
 
 namespace Engine
 {
@@ -29,10 +30,11 @@ namespace Engine
             Color color;
         };
 
-        struct RenderPass
+        struct Batch
         {
-            unsigned int texture;
             unsigned int count;
+            unsigned int texture;
+            std::shared_ptr<Shader> shader;
         };
 
         GLuint m_vertex_array;
@@ -42,12 +44,16 @@ namespace Engine
         unsigned int m_vertex_count;
         Vertex* m_vertex_map;
         GLushort* m_index_map;
-        std::vector<RenderPass> m_render_passes;
+        std::vector<Batch> m_batches;
 
         Mat3x3 m_matrix;
         std::vector<Mat3x3> m_matrix_stack;
 
+        std::vector<std::shared_ptr<Shader>> m_shader_stack;
+        std::shared_ptr<Shader> m_shader;
+
         static std::shared_ptr<Shader> m_default_shader;
+        static std::shared_ptr<Shader> m_text_shader;
 
     public:
         Renderer();
@@ -56,9 +62,13 @@ namespace Engine
         Renderer(const Renderer& other) = delete;
         Renderer& operator=(const Renderer& other) = delete;
 
-        void push_matrix(const Mat3x3& matrix, bool absolute);
+        void push_matrix(const Mat3x3& matrix, const bool absolute);
         Mat3x3 pop_matrix();
         Mat3x3 peek_matrix();
+
+        void push_shader(const std::shared_ptr<Shader>& shader);
+        std::shared_ptr<Shader> peek_shader() const;
+        std::shared_ptr<Shader> pop_shader();
 
         void begin();
         void render(const Mat4x4& matrix);
@@ -70,6 +80,8 @@ namespace Engine
         void tex(const std::shared_ptr<Texture>& texture, const Vec2& pos, const Vec2& scale, const Color color);
         void tex(const Subtexture& sub, const Vec2& pos, const Color color);
         void tex(const Subtexture& sub, const Vec2& pos, const Vec2& scale, const Color color);
+        void str(const Font& font, const std::string& text, const Vec2& pos, const Color color);
+        void str(const Font& font, const std::string& text, const Vec2& pos, const Vec2& scale, const Color color);
 
     private:
         void make_vertex(float px, float py, float tx, float ty, Color color);
@@ -85,6 +97,6 @@ namespace Engine
                 float ty1, float tx2, float ty2, float tx3, float ty3, 
                 Color c0, Color c1, Color c2, Color c3);
 
-        void update_render_pass(unsigned int count, unsigned int texture);
+        void update_batch(const unsigned int count, const unsigned int texture);
     };
 }
