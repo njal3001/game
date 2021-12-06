@@ -76,6 +76,8 @@ namespace Engine
 
         void rect(const Vec2& pos, const Vec2& size, const Color color);
         void tri(const Vec2& pos0, const Vec2& pos1, const Vec2& pos2, const Color color); 
+
+        // TODO: Renderer assumes textures are flipped, might need to generalize
         void tex(const std::shared_ptr<Texture>& texture, const Vec2& pos, const Color color);
         void tex(const std::shared_ptr<Texture>& texture, const Vec2& pos, const Vec2& scale, const Color color);
         void tex(const Subtexture& sub, const Vec2& pos, const Color color);

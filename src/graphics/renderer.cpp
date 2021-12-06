@@ -313,8 +313,8 @@ namespace Engine
 
         push_quad(pos.x, pos.y, pos.x, pos.y + src.h, pos.x + src.w, pos.y + src.h, 
                 pos.x + src.w, pos.y, sub.texture_ref()->id(), 
-                tex_coords[0].x, tex_coords[1].y, tex_coords[1].x, tex_coords[0].y, 
-                tex_coords[2].x, tex_coords[3].y, tex_coords[3].x, tex_coords[2].y, 
+                tex_coords[0].x, 1.0f - tex_coords[0].y, tex_coords[1].x, 1.0f - tex_coords[1].y, 
+                tex_coords[2].x, 1.0f - tex_coords[2].y, tex_coords[3].x, 1.0f - tex_coords[3].y, 
                 color, color, color, color);
     }
 
@@ -327,7 +327,6 @@ namespace Engine
     }
 
 
-    // TODO: Fix transparency on empty pixels
     void Renderer::str(const Font& font, const std::string& text, const Vec2& pos, const Color color)
     {
         assert(m_vertex_map && m_index_map);
@@ -336,13 +335,22 @@ namespace Engine
 
         Vec2 ch_pos = pos;
 
-        // TODO: Check for newline and space
-        for (const char& ch : text)
+        const unsigned int height = font.height();
+
+        for (unsigned int i = 0; i < text.size(); i++)
         {
+            if (text[i] == '\n')
+            {
+                ch_pos.y -= height;
+                ch_pos.x = pos.x;
+                continue;
+            }
+
+            const char ch = text.at(i);
+
             const Character& character = font.get_character((unsigned char)ch);
 
-            // TODO: Fix y offset
-            tex(character.subtexture, ch_pos + Vec2(character.offset.x, 0.0f), color);
+            tex(character.subtexture, ch_pos + character.offset, color);
 
             ch_pos.x += character.advance;
         }
@@ -380,7 +388,7 @@ namespace Engine
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer);
 
 
-        // Perform render passes
+        // Render batches
         unsigned int offset = 0;
         for (auto& batch : m_batches)
         {

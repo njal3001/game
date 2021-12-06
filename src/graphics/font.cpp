@@ -1,5 +1,6 @@
 #include "graphics/font.h"
 #include <string>
+#include "maths/calc.h"
 #include "platform.h"
 #include "log.h"
 #include <assert.h>
@@ -22,12 +23,18 @@ namespace Engine
         FT_Set_Pixel_Sizes(m_face, 0, height);
 
         // TODO: Hardcoded for now
-        unsigned int max_atlas_size = 1024;
+        const unsigned char ch_start = 32;
+        const unsigned char ch_end = 127;
+
+        const unsigned int max_atlas_size = 1024;
         unsigned char pixels[max_atlas_size * max_atlas_size];
         unsigned int px = 0;
         unsigned int py = 0;
 
-        for (unsigned char ch = 33; ch < 127; ch++)
+        // Next character that needs to set it's subtexture 
+        unsigned char next_ch_sub = ch_start;
+
+        for (unsigned char ch = ch_start; ch < ch_end; ch++)
         {
             if (FT_Load_Char(m_face, ch, FT_LOAD_RENDER))
             {
@@ -36,48 +43,68 @@ namespace Engine
             }
 
             FT_GlyphSlot glyph = m_face->glyph;
-            FT_Bitmap bmp = m_face->glyph->bitmap;
+            FT_Bitmap* bmp = &m_face->glyph->bitmap;
 
-            if (px + bmp.width > max_atlas_size)
+            if (px + bmp->width > max_atlas_size)
             {
                 py += m_height;
                 px = 0;
             }
 
-            if (py + bmp.rows > max_atlas_size)
+            if (py + bmp->rows > max_atlas_size)
             {
-                // TODO: Create multiple textures instead
-                Log::warn("Max font atlas height of " + std::to_string(max_atlas_size) + 
-                        " reached!");
-                break;
-            }
+                // Buffer has been filled, create texture
+                m_atlas.push_back(std::make_shared<Texture>(max_atlas_size, max_atlas_size, (unsigned char*)pixels, TextureFormat::R));
 
-            Log::info(std::to_string(ch) + ": " + std::to_string(glyph->bitmap_top));
+                for (unsigned char ch_sub = next_ch_sub; ch_sub < ch; ch_sub++)
+                {
+                    m_characters[ch_sub].subtexture.set_texture_ref(m_atlas.back());
+                }
+
+                next_ch_sub = ch;
+
+                px = 0;
+                py = 0;
+            }
 
             Character character;
             character.advance = glyph->advance.x >> 6;
-            character.offset = Vec2(glyph->bitmap_left, glyph->bitmap_top);
-            character.subtexture.set_source(Rect(px, py, bmp.width, bmp.rows));
+            character.offset = Vec2((float)(glyph->metrics.horiBearingX >> 6), 
+                    (float)((glyph->metrics.horiBearingY - glyph->metrics.height) >> 6));
+            
+            // Flipping rect to get correct uvs
+            character.subtexture.set_source(Rect(px, max_atlas_size - py - bmp->rows, bmp->width, bmp->rows));
 
             m_characters[ch] = character;
 
-            // Add character to texture pixels
-            for (unsigned int row = 0; row < bmp.rows; row++)
+            // Add character data to buffer
+            for (unsigned int row = 0; row < bmp->rows; row++)
             {
-                for (unsigned int col = 0; col < bmp.width; col++)
+                for (unsigned int col = 0; col < bmp->width; col++)
                 {
-                    pixels[(py + row) * max_atlas_size + px + col] = bmp.buffer[row * bmp.pitch + col];
+                    pixels[(py + row) * max_atlas_size + px + col] = bmp->buffer[row * bmp->pitch + col];
                 }
             }
 
-            px += bmp.width;
+            px += bmp->width;
         }
 
-        m_atlas = std::make_shared<Texture>(max_atlas_size, max_atlas_size, (unsigned char*)pixels, TextureFormat::R);
-
-        for (auto& it : m_characters)
+        // Create last texture if more left
+        if (next_ch_sub <= ch_end)
         {
-            it.second.subtexture.set_texture_ref(m_atlas);
+            // Reduce texture size to what's needed
+            unsigned int reduced_atlas_y = Calc::next_power2(py + m_height);
+
+            m_atlas.push_back(std::make_shared<Texture>(max_atlas_size, reduced_atlas_y, (unsigned char*)pixels, TextureFormat::R));
+
+            for (unsigned char ch_sub = next_ch_sub; ch_sub < ch_end; ch_sub++)
+            {
+                Character& character = m_characters[ch_sub];
+
+                Rect src = character.subtexture.source();
+                character.subtexture.set_source(Rect(src.x, reduced_atlas_y - (max_atlas_size - src.y), src.w, src.h));
+                character.subtexture.set_texture_ref(m_atlas.back());
+            }
         }
     }
 

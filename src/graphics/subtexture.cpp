@@ -9,6 +9,7 @@ namespace Engine
     Subtexture::Subtexture(const std::shared_ptr<Texture>& texture_ref, const Rect& source)
         : m_texture_ref(texture_ref), m_source(source)
     {
+        update_tex_coords();
     }
 
     void Subtexture::set_texture_ref(const std::shared_ptr<Texture>& texture_ref)
@@ -51,10 +52,17 @@ namespace Engine
         assert(m_source.x >= 0 && m_source.x + m_source.w <= tex_w && 
                 m_source.y >= 0 && m_source.y + m_source.h <= tex_h);
 
-        m_tex_coords[0] = Vec2(m_source.x / tex_w, m_source.y / tex_h);
-        m_tex_coords[1] = Vec2(m_source.x / tex_w, (m_source.y + m_source.h) / tex_h);
-        m_tex_coords[2] = Vec2((m_source.x + m_source.w) / tex_w, 
-                (m_source.y + m_source.h) / tex_h);
-        m_tex_coords[3] = Vec2((m_source.x + m_source.w) / tex_w, m_source.y / tex_h);
+        float sx = 1.0f / (float)tex_w;
+        float sy = 1.0f / (float)tex_h;
+
+        // Half pixel correction
+        float dx = 0.5f / (float)tex_w;
+        float dy = 0.5f / (float)tex_h;
+
+        m_tex_coords[0] = Vec2(m_source.x * sx + dx, m_source.y * sy + dy);
+        m_tex_coords[1] = Vec2(m_source.x * sx + dx, (m_source.y + m_source.h) * sy - dy);
+        m_tex_coords[2] = Vec2((m_source.x + m_source.w) * sx - dx, 
+                (m_source.y + m_source.h) * sy - dy);
+        m_tex_coords[3] = Vec2((m_source.x + m_source.w) * sx - dx, m_source.y * sy + dy);
     }
 }

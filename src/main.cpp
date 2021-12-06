@@ -17,7 +17,8 @@ int main()
 
         Image img(Platform::app_path() + "test_texture.png");
         std::shared_ptr<Texture> texture = std::make_shared<Texture>(img, TextureFormat::RGBA);
-        Subtexture sub(texture, Rect(0.0f, 0.0f, texture->width(), texture->height()));
+        Subtexture sub(texture, Rect(0.0f, 0.0f, 8.0f, 8.0f));
+        Subtexture sub2(texture, Rect(4.0f, 4.0f, 4.0f, 4.0f));
 
         Mat4x4 matrix = Mat4x4::create_ortho(0.0f, 256.0f, 0.0f, 256.0f, -1.0f, 1.0f);
         Color clear_color(0, 0, 0, 255);
@@ -27,8 +28,8 @@ int main()
         while (Platform::update())
         {
             renderer.begin();
-            renderer.tex(texture, Vec2(0.0f, 0.0f), Vec2(30.0f, 30.0f), Color::white);
-            renderer.str(font, "Hello!", Vec2(), Color::white);
+            renderer.tex(sub, Vec2(0.0f, 0.0f), Vec2(32, 32), Color::white);
+            renderer.str(font, "abcd\npqerk!", Vec2(32, 54), Color::white);
             renderer.end();
 
             Graphics::clear(clear_color);

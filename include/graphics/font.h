@@ -2,6 +2,7 @@
 #include <string>
 #include <unordered_map>
 #include <memory>
+#include <vector>
 #include "maths/vec2.h"
 #include "graphics/texture.h"
 #include "graphics/subtexture.h"
@@ -18,13 +19,14 @@ namespace Engine
         Character();
     };
 
+    // TODO: Add kerning support
     class Font
     {
     private:
         FT_Face m_face;
         unsigned int m_height;
         std::unordered_map<unsigned char, Character> m_characters;
-        std::shared_ptr<Texture> m_atlas;
+        std::vector<std::shared_ptr<Texture>> m_atlas;
 
     public:
         Font(const std::string& file_path, const unsigned int height);
