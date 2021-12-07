@@ -20,11 +20,18 @@ namespace Engine
         static SDL_Window* g_window;
 
     public:
+        static const uint64_t ticks_per_ms;
+
+    public:
         static bool init();
 
         static bool update();
 
         static void present();
+
+        static uint64_t ticks();
+
+        static void sleep(uint32_t ms);
 
         static std::string app_path();
         static File read_file(const std::string& file_path);

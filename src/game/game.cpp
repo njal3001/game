@@ -7,9 +7,32 @@
 #include "engine/graphics/renderer.h"
 #include "engine/maths/calc.h"
 #include "engine/graphics/font.h"
+#include "engine/log.h"
 
 namespace Game
 {
+    using namespace Engine;
+
+    Game::Game(const unsigned int target_fps)
+        : m_prev_ticks(0), m_tick_diff(0)
+    {
+        m_tick_delay = (uint64_t)((1000.0f / (float)target_fps) * Platform::ticks_per_ms);
+    }
+
+    void Game::clock()
+    {
+        uint64_t current_ticks = Platform::ticks();
+        m_tick_diff = current_ticks - m_prev_ticks;
+
+        if (m_tick_delay > m_tick_diff)
+        {
+            uint32_t ms = (m_tick_delay - m_tick_diff) / Platform::ticks_per_ms;
+            Platform::sleep(ms);
+        }
+
+        m_prev_ticks = current_ticks;
+    }
+
     void Game::run()
     {
         using namespace Engine;
@@ -32,6 +55,8 @@ namespace Game
 
             while (Platform::update())
             {
+                clock();
+
                 if (Input::key_state (Key::Left).down)                
                 {
                     cam.x -= 1;      
@@ -49,8 +74,6 @@ namespace Game
                 {
                     cam.y += 1;
                 }
-
-                std::cout << cam.x << ", " << cam.y << '\n';
 
                 renderer.push_matrix(Mat3x3::create_translation(-cam));
 

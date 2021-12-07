@@ -9,6 +9,8 @@ namespace Engine
 {
     SDL_Window* Platform::g_window = nullptr;
 
+    const uint64_t Platform::ticks_per_ms = 1000;
+
     bool Platform::init()
     {
         SDL_Init(SDL_INIT_VIDEO);
@@ -94,6 +96,21 @@ namespace Engine
     void Platform::present()
     {
 		SDL_GL_SwapWindow(g_window);
+    }
+
+    uint64_t Platform::ticks()
+    {
+        auto counter = SDL_GetPerformanceCounter();
+        auto freq = (double)SDL_GetPerformanceFrequency();
+        return (uint64_t)(counter * ((ticks_per_ms * 1000) / freq));
+    }
+
+    void Platform::sleep(uint32_t ms)
+    {
+        if (ms > 0)
+        {
+            SDL_Delay(ms);
+        }
     }
 
     std::string Platform::app_path()
