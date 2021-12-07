@@ -11,25 +11,28 @@ include_directories(include ${SDL2_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${FREETYPE
 
 add_executable(game 
     src/main.cpp 
-    src/platform.cpp 
-    src/input.cpp 
-    src/log.cpp 
 
-    src/maths/vec2.cpp
-    src/maths/mat4x4.cpp
-    src/maths/mat3x3.cpp
-    src/maths/calc.cpp
-    src/maths/rect.cpp
+    src/game/game.cpp
+
+    src/engine/platform.cpp 
+    src/engine/input.cpp 
+    src/engine/log.cpp 
+
+    src/engine/maths/vec2.cpp
+    src/engine/maths/mat4x4.cpp
+    src/engine/maths/mat3x3.cpp
+    src/engine/maths/calc.cpp
+    src/engine/maths/rect.cpp
     
-    src/graphics/graphics.cpp
-    src/graphics/color.cpp
-    src/graphics/renderer.cpp
-    src/graphics/renderer.cpp
-    src/graphics/texture.cpp
-    src/graphics/image.cpp
-    src/graphics/shader.cpp
-    src/graphics/subtexture.cpp
-    src/graphics/font.cpp
+    src/engine/graphics/graphics.cpp
+    src/engine/graphics/color.cpp
+    src/engine/graphics/renderer.cpp
+    src/engine/graphics/renderer.cpp
+    src/engine/graphics/texture.cpp
+    src/engine/graphics/image.cpp
+    src/engine/graphics/shader.cpp
+    src/engine/graphics/subtexture.cpp
+    src/engine/graphics/font.cpp
     )
 
 target_link_libraries(game ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${FREETYPE_LIBRARIES})
