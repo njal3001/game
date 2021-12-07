@@ -11,6 +11,12 @@ namespace Engine
     Vec2::Vec2(int x, int y)
             : x((float)x), y((float)y) {}
 
+
+    Vec2 Vec2::operator -() const
+    {
+        return Vec2(-x, -y);
+    }
+
     Vec2 Vec2::operator +(const Vec2& rhs) const
     {
         return Vec2(x + rhs.x, y + rhs.y);

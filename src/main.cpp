@@ -25,8 +25,32 @@ int main()
 
         Font font(Platform::app_path() + "/kongtext.ttf", 32);
 
+        Vec2 cam = Vec2(0.0f, 0.0f);
+
         while (Platform::update())
         {
+            if (Input::key_state (Key::Left).down)                
+            {
+                cam.x -= 1;      
+            }                    
+            else if (Input::key_state(Key::Right).down)
+            {                    
+                cam.x += 1;      
+            }
+
+            if (Input::key_state(Key::Down).down) 
+            {
+                cam.y -= 1;
+            }
+            else if (Input::key_state(Key::Up).down)
+            {
+                cam.y += 1;
+            }
+
+            std::cout << cam.x << ", " << cam.y << '\n';
+
+            renderer.push_matrix(Mat3x3::create_translation(-cam));
+
             renderer.begin();
             renderer.tex(sub, Vec2(0.0f, 0.0f), Vec2(32, 32), Color::white);
             renderer.str(font, "abcd\npqerk!", Vec2(32, 54), Color::white);
@@ -34,6 +58,8 @@ int main()
 
             Graphics::clear(clear_color);
             renderer.render(matrix);
+
+            renderer.pop_matrix();
 
             Platform::present();
         }

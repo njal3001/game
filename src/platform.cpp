@@ -46,6 +46,14 @@ namespace Engine
             {
                 cont = false;
             }
+            else if (event.type == SDL_KEYDOWN)
+            {
+                Input::key_pressed((Key)event.key.keysym.scancode);
+            }
+            else if (event.type == SDL_KEYUP)
+            {
+                Input::key_released((Key)event.key.keysym.scancode);
+            }
             else if (event.type == SDL_MOUSEBUTTONDOWN)
             {
                 MouseButton mb = (MouseButton)-1;

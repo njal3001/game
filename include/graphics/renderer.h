@@ -62,7 +62,7 @@ namespace Engine
         Renderer(const Renderer& other) = delete;
         Renderer& operator=(const Renderer& other) = delete;
 
-        void push_matrix(const Mat3x3& matrix, const bool absolute);
+        void push_matrix(const Mat3x3& matrix, const bool absolute = false);
         Mat3x3 pop_matrix();
         Mat3x3 peek_matrix();
 

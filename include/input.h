@@ -45,6 +45,7 @@ namespace Engine
         static std::unordered_map<MouseButton, MouseButtonState> g_mouse;
 
     public:
+        // TODO: Add axes support
         static KeyState key_state(const Key key);
         static MouseButtonState mouse_button_state(const MouseButton mb);
 

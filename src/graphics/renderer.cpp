@@ -299,7 +299,7 @@ namespace Engine
 
     void Renderer::tex(const std::shared_ptr<Texture>& texture, const Vec2& pos, const Vec2& scale, const Color color)
     {
-        push_matrix(Mat3x3::create_scale(scale), false);
+        push_matrix(Mat3x3::create_scale(scale));
         tex(texture, pos, color);
         pop_matrix();
     }
@@ -321,7 +321,7 @@ namespace Engine
 
     void Renderer::tex(const Subtexture& sub, const Vec2& pos, const Vec2& scale, const Color color)
     {
-        push_matrix(Mat3x3::create_scale(scale), false);
+        push_matrix(Mat3x3::create_scale(scale));
         tex(sub, pos, color);
         pop_matrix();
     }
@@ -360,7 +360,7 @@ namespace Engine
 
     void Renderer::str(const Font& font, const std::string& text, const Vec2& pos, const Vec2& scale, const Color color)
     {
-        push_matrix(Mat3x3::create_scale(scale), false);
+        push_matrix(Mat3x3::create_scale(scale));
         str(font, text, pos, color);
         pop_matrix();
     }
