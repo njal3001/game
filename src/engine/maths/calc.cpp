@@ -3,17 +3,17 @@
 
 namespace Engine
 {
-    float Calc::cos(const float x)
+    float Calc::cos(float x)
     {
         return cosf(x);
     }
 
-    float Calc::sin(const float x)
+    float Calc::sin(float x)
     {
         return sinf(x);  
     }
 
-    float Calc::to_radians(const float angle)
+    float Calc::to_radians(float angle)
     {
         return angle * (M_PI / 180.0f);
     }
@@ -34,5 +34,10 @@ namespace Engine
         v++;
 
         return v;
+    }
+
+    float Calc::sqrt(float x)
+    {
+        return sqrtf(x);
     }
 }

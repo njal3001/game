@@ -5,7 +5,7 @@ namespace Game
     class Game
     {
     private:
-        uint32_t m_tick_delay;
+        uint32_t m_target_ticks;
         uint32_t m_prev_ticks;
         uint32_t m_tick_diff;
 
@@ -14,6 +14,6 @@ namespace Game
         void run();
 
     private:
-        void clock();
+        void limit_fps();
     };
 }

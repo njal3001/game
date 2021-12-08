@@ -4,10 +4,12 @@ namespace Engine
 {
     namespace Calc
     {
-        float cos(const float x);
-        float sin(const float x);
-        float to_radians(const float angle);
+        float cos(float x);
+        float sin(float x);
+        float to_radians(float angle);
 
         unsigned int next_power2(unsigned int v);
+
+        float sqrt(float x);
     }
 }

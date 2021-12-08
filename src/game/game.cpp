@@ -16,17 +16,17 @@ namespace Game
     Game::Game(const unsigned int target_fps)
         : m_prev_ticks(0), m_tick_diff(0)
     {
-        m_tick_delay = (uint64_t)((1000.0f / (float)target_fps) * Platform::ticks_per_ms);
+        m_target_ticks = (uint64_t)((1000.0f / (float)target_fps) * Platform::ticks_per_ms);
     }
 
-    void Game::clock()
+    void Game::limit_fps()
     {
         uint64_t current_ticks = Platform::ticks();
         m_tick_diff = current_ticks - m_prev_ticks;
 
-        if (m_tick_delay > m_tick_diff)
+        if (m_target_ticks > m_tick_diff)
         {
-            uint32_t ms = (m_tick_delay - m_tick_diff) / Platform::ticks_per_ms;
+            uint32_t ms = (m_target_ticks - m_tick_diff) / Platform::ticks_per_ms;
             Platform::sleep(ms);
         }
 
@@ -55,7 +55,7 @@ namespace Game
 
             while (Platform::update())
             {
-                clock();
+                limit_fps();
 
                 if (Input::key_state (Key::Left).down)                
                 {
@@ -65,7 +65,6 @@ namespace Game
                 {                    
                     cam.x += 1;      
                 }
-
                 if (Input::key_state(Key::Down).down) 
                 {
                     cam.y -= 1;

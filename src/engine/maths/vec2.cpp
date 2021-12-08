@@ -1,4 +1,5 @@
 #include "engine/maths/vec2.h"
+#include "engine/maths/calc.h"
 
 namespace Engine
 {
@@ -78,5 +79,27 @@ namespace Engine
     bool Vec2::operator !=(const Vec2& rhs) const
     {
         return x != rhs.x || y != rhs.y;
+    }
+
+    float Vec2::len() const
+    {
+        return Calc::sqrt(x * x + y * y);
+    }
+
+    Vec2 Vec2::norm() const
+    {
+        if (x == 0 && y == 0)
+        {
+            return Vec2();
+        }
+
+        const float l = len();
+
+        return Vec2(x / l, y / l);
+    }
+
+    float Vec2::dot(const Vec2& other) const
+    {
+        return x * other.x + y * other.y;
     }
 }

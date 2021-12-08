@@ -27,5 +27,9 @@ namespace Engine
 
         bool operator ==(const Vec2& rhs) const;
         bool operator !=(const Vec2& rhs) const;
+
+        float len() const;
+        Vec2 norm() const;
+        float dot(const Vec2& other) const;
     };
 }

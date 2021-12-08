@@ -2,7 +2,7 @@
 
 int main() 
 {
-    Game::Game game(60);
+    Game::Game game(144);
 
     game.run();
 }
