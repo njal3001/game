@@ -47,37 +47,50 @@ namespace SB
             Mat4x4 matrix = Mat4x4::create_ortho(scene_size.x, scene_size.w, scene_size.y, scene_size.h, -1.0f, 1.0f);
             Color clear_color(0, 0, 0, 255);
 
-            Circ player = Circ(Vec2(32.0f, 32.0f), 4.0f);
-            Rect obstacle = Rect(32.0f, 32.0f, 32.0f, 32.0f);
+            Circ player = Circ(Vec2(16.0f, 16.0f), 16.0f);
+            Circ obstacle = Circ(Vec2(32.0f, 32.0f), 16.0f);
 
             while (Platform::update())
             {
                 limit_fps();
 
+                Vec2 vel;
+                Vec2 dir;
                 if (Input::key_state (Key::Left).down)                
                 {
-                    player.center.x -= 1;      
+                    dir.x -= 1;      
                 }                    
                 if (Input::key_state(Key::Right).down)
                 {                    
-                    player.center.x += 1;      
+                    dir.x += 1;      
                 }
                 if (Input::key_state(Key::Down).down) 
                 {
-                    player.center.y -= 1;
+                    dir.y -= 1;
                 }
                 if (Input::key_state(Key::Up).down)
                 {
-                    player.center.y += 1;
+                    dir.y += 1;
                 }
+
+                if (dir.len_squared() > 0.0f)
+                {
+                    vel = dir.norm();
+                }
+
+                player.center += vel;
+                Vec2 push = Collision::scirc_dcirc(obstacle, player);
+                player.center += push;
+
+
 
                 renderer.push_matrix(Mat3x3::create_translation(-player.center + scene_size.center()));
 
-                Color rect_color = Collision::intersects(obstacle, player) ? Color::red : Color::green;
+                /* Color obst_color = player.intersects(obstacle) ? Color::red : Color::green; */
 
                 renderer.begin();
-                renderer.rect(obstacle, rect_color);
                 renderer.circ(player, 128, Color::blue);
+                renderer.circ(obstacle, 128, Color::green);
                 renderer.end();
 
                 Graphics::clear(clear_color);

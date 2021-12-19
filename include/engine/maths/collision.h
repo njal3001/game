@@ -11,5 +11,6 @@ namespace Engine
         // Returns the shortest vector that pushes the dynamic object out of the static object
         Vec2 srect_drect(const Rect& sr, const Rect& dr);
         Vec2 srect_dcirc(const Rect& sr, const Circ& dc);
+        Vec2 scirc_dcirc(const Circ & sc, const Circ& dc);
     }
 }

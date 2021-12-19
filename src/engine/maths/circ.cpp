@@ -19,4 +19,10 @@ namespace Engine
     {
         return line.distance(center) <= radius;
     }
+
+    bool Circ::intersects(const Circ& other) const
+    {
+        const float r_sum = radius + other.radius;
+        return center.distance_squared(other.center) <= r_sum * r_sum;
+    }
 }

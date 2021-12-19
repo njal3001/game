@@ -14,5 +14,6 @@ namespace Engine
 
         bool contains(const Vec2& point) const;
         bool intersects(const Line& line) const;
+        bool intersects(const Circ& other) const;
     };
 }

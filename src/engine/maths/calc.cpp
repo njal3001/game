@@ -55,4 +55,9 @@ namespace Engine
     {
         return a < b ? a : b;
     }
+
+    float Calc::clamp(const float min_val, const float max_val, const float val)
+    {
+        return max(min_val, min(max_val, val));
+    }
 }

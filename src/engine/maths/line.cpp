@@ -28,7 +28,7 @@ namespace Engine
         const Vec2 ps = point - start;
         const Vec2 es = end - start;
 
-        const float t = Calc::max(0.0f, Calc::min(1.0f, ps.dot(es) / l2));
+        const float t = Calc::clamp(0.0f, 1.0f, ps.dot(es / l2));
 
         const Vec2 proj = start + (end - start) * t;
         return point.distance(proj);
