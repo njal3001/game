@@ -19,7 +19,6 @@ namespace Engine
         Vec2 operator *(const float rhs) const;
         Vec2 operator /(const float rhs) const;
 
-
         Vec2& operator +=(const Vec2& rhs);
         Vec2& operator -=(const Vec2& rhs);
         Vec2& operator *=(const float rhs);
@@ -29,7 +28,10 @@ namespace Engine
         bool operator !=(const Vec2& rhs) const;
 
         float len() const;
+        float len_squared() const;
         Vec2 norm() const;
+        float distance(const Vec2& other) const;
+        float distance_squared(const Vec2& other) const;
         float dot(const Vec2& other) const;
     };
 }

@@ -11,6 +11,7 @@
 #include "engine/graphics/shader.h"
 #include "engine/graphics/subtexture.h"
 #include "engine/graphics/font.h"
+#include "engine/maths/circ.h"
 
 namespace Engine
 {
@@ -76,13 +77,18 @@ namespace Engine
 
         void rect(const Vec2& pos, const Vec2& size, const Color color);
         void rect(const Rect& r, const Color color);
+
         void tri(const Vec2& pos0, const Vec2& pos1, const Vec2& pos2, const Color color); 
+
+        void circ(const Vec2& center, const float radius, const unsigned int steps, const Color color);
+        void circ(const Circ& c, const unsigned int steps, const Color color);
 
         // TODO: Renderer assumes textures are flipped, might need to generalize
         void tex(const std::shared_ptr<Texture>& texture, const Vec2& pos, const Color color);
         void tex(const std::shared_ptr<Texture>& texture, const Vec2& pos, const Vec2& scale, const Color color);
         void tex(const Subtexture& sub, const Vec2& pos, const Color color);
         void tex(const Subtexture& sub, const Vec2& pos, const Vec2& scale, const Color color);
+
         void str(const Font& font, const std::string& text, const Vec2& pos, const Color color);
         void str(const Font& font, const std::string& text, const Vec2& pos, const Vec2& scale, const Color color);
 

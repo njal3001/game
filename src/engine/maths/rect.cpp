@@ -39,6 +39,27 @@ namespace Engine
         return Vec2(x + w, y);
     }
 
+
+    Line Rect::bottom() const
+    {
+        return Line(bottom_left(), bottom_right());
+    }
+
+    Line Rect::top() const
+    {
+        return Line(top_left(), top_right());
+    }
+
+    Line Rect::left() const
+    {
+        return Line(bottom_left(), top_left());
+    }
+
+    Line Rect::right() const
+    {
+        return Line(bottom_right(), top_right());
+    }
+
     bool Rect::contains(const Vec2& point) const
     {
         return 
@@ -46,7 +67,7 @@ namespace Engine
             y <= point.y && point.y <= y + h;
     }
 
-    bool Rect::overlaps(const Rect& other) const
+    bool Rect::intersects(const Rect& other) const
     {
         return 
             x <= other.x + other.w &&

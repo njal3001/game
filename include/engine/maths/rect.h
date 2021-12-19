@@ -1,5 +1,6 @@
 #pragma once
 #include "engine/maths/vec2.h"
+#include "engine/maths/line.h"
 
 namespace Engine
 {
@@ -18,7 +19,12 @@ namespace Engine
         Vec2 top_right() const;
         Vec2 bottom_right() const;
 
+        Line bottom() const;
+        Line top() const;
+        Line left() const;
+        Line right() const;
+
         bool contains(const Vec2& point) const;
-        bool overlaps(const Rect& other) const;
+        bool intersects(const Rect& other) const;
     };
 }

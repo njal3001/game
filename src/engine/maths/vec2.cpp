@@ -86,6 +86,12 @@ namespace Engine
         return Calc::sqrt(x * x + y * y);
     }
 
+
+    float Vec2::len_squared() const
+    {
+        return x * x + y* y;
+    }
+
     Vec2 Vec2::norm() const
     {
         if (x == 0 && y == 0)
@@ -96,6 +102,18 @@ namespace Engine
         const float l = len();
 
         return Vec2(x / l, y / l);
+    }
+
+    float Vec2::distance(const Vec2& other) const
+    {
+        return Calc::sqrt(distance_squared(other));
+    }
+
+    float Vec2::distance_squared(const Vec2& other) const
+    {
+        float dx = x - other.x;
+        float dy = y - other.y;
+        return dx * dx + dy * dy;
     }
 
     float Vec2::dot(const Vec2& other) const

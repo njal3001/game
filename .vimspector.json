@@ -7,7 +7,7 @@
                 "type": "cpp",
                 "request": "launch",
                 "cwd": "${workspaceRoot}/build",
-                "program": "${workspaceRoot}/build/game",
+                "program": "${workspaceRoot}/build/sb",
                 "stopOnEntry": true,
                 "console": "integratedTerminal",
                 "MIMode": "gdb"

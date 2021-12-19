@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <memory>
 #include "engine/log.h"
+#include "engine/maths/calc.h"
 
 namespace Engine
 {
@@ -288,6 +289,29 @@ namespace Engine
     void Renderer::rect(const Rect& r, const Color color)
     {
         rect(r.bottom_left(), Vec2(r.w, r.h), color);
+    }
+
+    void Renderer::circ(const Vec2& center, const float radius, const unsigned int steps, const Color color)
+    {
+        float step_rad = Calc::TAU / (float)steps;
+
+        float rad = 0.0f;
+        for (size_t i = 0; i < steps; i++)
+        {
+            float next_rad = rad + step_rad;
+
+            Vec2 start = center + (Vec2(Calc::cos(rad), Calc::sin(rad)) * radius);
+            Vec2 end = center + (Vec2(Calc::cos(next_rad), Calc::sin(next_rad)) * radius);
+
+            tri(center, start, end, color);
+
+            rad = next_rad;
+        }
+    }
+
+    void Renderer::circ(const Circ& c, const unsigned int steps, const Color color)
+    {
+        circ(c.center, c.radius, steps, color);
     }
 
     void Renderer::tex(const std::shared_ptr<Texture>& texture, const Vec2& pos, const Color color)

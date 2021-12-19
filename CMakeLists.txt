@@ -13,7 +13,6 @@ add_executable(sb
     src/main.cpp 
 
     src/sb/game.cpp
-    src/sb/collision.cpp
 
     src/engine/platform.cpp 
     src/engine/input.cpp 
@@ -24,6 +23,9 @@ add_executable(sb
     src/engine/maths/mat3x3.cpp
     src/engine/maths/calc.cpp
     src/engine/maths/rect.cpp
+    src/engine/maths/circ.cpp
+    src/engine/maths/line.cpp
+    src/engine/maths/collision.cpp
     
     src/engine/graphics/graphics.cpp
     src/engine/graphics/color.cpp

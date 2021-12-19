@@ -45,4 +45,14 @@ namespace Engine
     {
         return fabs(x);
     }
+
+    float Calc::max(const float a, const float b)
+    {
+        return a > b ? a : b;
+    }
+
+    float Calc::min(const float a, const float b)
+    {
+        return a < b ? a : b;
+    }
 }
