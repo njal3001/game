@@ -1,8 +1,8 @@
-#include "game/game.h"
+#include "sb/game.h"
 
 int main() 
 {
-    Game::Game game(144);
+    SB::Game game(144);
 
     game.run();
 }

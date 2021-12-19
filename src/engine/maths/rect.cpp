@@ -14,6 +14,11 @@ namespace Engine
         : x(pos.y), y(pos.y), w(size.x), h(size.y)
     {}
 
+    Vec2 Rect::center() const
+    {
+        return Vec2(x + (w/2.0f), y + (h/2.0f));
+    }
+
     Vec2 Rect::bottom_left() const
     {
         return Vec2(x, y);
@@ -32,5 +37,21 @@ namespace Engine
     Vec2 Rect::bottom_right() const
     {
         return Vec2(x + w, y);
+    }
+
+    bool Rect::contains(const Vec2& point) const
+    {
+        return 
+            x <= point.x && point.x <= x + w && 
+            y <= point.y && point.y <= y + h;
+    }
+
+    bool Rect::overlaps(const Rect& other) const
+    {
+        return 
+            x <= other.x + other.w &&
+            x + h >= other.x &&
+            y <= other.y + other.h &&
+            y + h >= other.y;
     }
 }

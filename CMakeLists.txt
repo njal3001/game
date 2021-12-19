@@ -9,10 +9,11 @@ find_package(Freetype REQUIRED)
 
 include_directories(include ${SDL2_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS})
 
-add_executable(game 
+add_executable(sb 
     src/main.cpp 
 
-    src/game/game.cpp
+    src/sb/game.cpp
+    src/sb/collision.cpp
 
     src/engine/platform.cpp 
     src/engine/input.cpp 
@@ -35,4 +36,4 @@ add_executable(game
     src/engine/graphics/font.cpp
     )
 
-target_link_libraries(game ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${FREETYPE_LIBRARIES})
+target_link_libraries(sb ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${FREETYPE_LIBRARIES})

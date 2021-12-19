@@ -1,4 +1,4 @@
-#include "game/game.h"
+#include "sb/game.h"
 #include <iostream>
 #include <memory>
 #include <string>
@@ -8,8 +8,9 @@
 #include "engine/maths/calc.h"
 #include "engine/graphics/font.h"
 #include "engine/log.h"
+#include "sb/collision.h"
 
-namespace Game
+namespace SB
 {
     using namespace Engine;
 
@@ -41,17 +42,12 @@ namespace Game
         {
             Renderer renderer;
 
-            Image img(Platform::app_path() + "test_texture.png");
-            std::shared_ptr<Texture> texture = std::make_shared<Texture>(img, TextureFormat::RGBA);
-            Subtexture sub(texture, Rect(0.0f, 0.0f, 8.0f, 8.0f));
-            Subtexture sub2(texture, Rect(4.0f, 4.0f, 4.0f, 4.0f));
-
-            Mat4x4 matrix = Mat4x4::create_ortho(0.0f, 256.0f, 0.0f, 256.0f, -1.0f, 1.0f);
+            Rect scene_size = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+            Mat4x4 matrix = Mat4x4::create_ortho(scene_size.x, scene_size.w, scene_size.y, scene_size.h, -1.0f, 1.0f);
             Color clear_color(0, 0, 0, 255);
 
-            Font font(Platform::app_path() + "/kongtext.ttf", 32);
-
-            Vec2 cam = Vec2(0.0f, 0.0f);
+            Rect player = Rect(0.0f, 0.0f, 8.0f, 8.0f);
+            Rect obstacle = Rect(32.0f, 32.0f, 32.0f, 32.0f);
 
             while (Platform::update())
             {
@@ -59,26 +55,30 @@ namespace Game
 
                 if (Input::key_state (Key::Left).down)                
                 {
-                    cam.x -= 1;      
+                    player.x -= 1;      
                 }                    
                 if (Input::key_state(Key::Right).down)
                 {                    
-                    cam.x += 1;      
+                    player.x += 1;      
                 }
                 if (Input::key_state(Key::Down).down) 
                 {
-                    cam.y -= 1;
+                    player.y -= 1;
                 }
                 if (Input::key_state(Key::Up).down)
                 {
-                    cam.y += 1;
+                    player.y += 1;
                 }
 
-                renderer.push_matrix(Mat3x3::create_translation(-cam));
+                Vec2 push = Collision::rect_rect(obstacle, player);
+                player.x += push.x;
+                player.y += push.y;
+
+                renderer.push_matrix(Mat3x3::create_translation(-player.center() + scene_size.center()));
 
                 renderer.begin();
-                renderer.tex(sub, Vec2(0.0f, 0.0f), Vec2(32, 32), Color::white);
-                renderer.str(font, "abcd\npqerk!", Vec2(32, 54), Color::white);
+                renderer.rect(obstacle, Color::green);
+                renderer.rect(player, Color::white);
                 renderer.end();
 
                 Graphics::clear(clear_color);

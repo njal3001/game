@@ -40,4 +40,9 @@ namespace Engine
     {
         return sqrtf(x);
     }
+
+    float Calc::abs(float x)
+    {
+        return fabs(x);
+    }
 }

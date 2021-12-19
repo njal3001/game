@@ -94,7 +94,7 @@ namespace Engine
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer);
 
         // Allocate index buffer memory
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, RENDERER_MAX_INDICES * sizeof(GLushort), nullptr, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, RENDERER_MAX_INDICES * sizeof(GLushort), nullptr, GL_DYNAMIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
         glBindVertexArray(0);
@@ -282,6 +282,12 @@ namespace Engine
 
         push_quad(pos.x, pos.y, pos.x, pos.y + size.y, pos.x + size.x, pos.y + size.y, 
                 pos.x + size.x, pos.y, 0, 0, 0, 0, 0, 0, 0, 0, 0, color, color, color, color);
+    }
+
+
+    void Renderer::rect(const Rect& r, const Color color)
+    {
+        rect(r.bottom_left(), Vec2(r.w, r.h), color);
     }
 
     void Renderer::tex(const std::shared_ptr<Texture>& texture, const Vec2& pos, const Color color)

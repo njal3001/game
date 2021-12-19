@@ -75,6 +75,7 @@ namespace Engine
         void end();
 
         void rect(const Vec2& pos, const Vec2& size, const Color color);
+        void rect(const Rect& r, const Color color);
         void tri(const Vec2& pos0, const Vec2& pos1, const Vec2& pos2, const Color color); 
 
         // TODO: Renderer assumes textures are flipped, might need to generalize

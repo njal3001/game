@@ -17,5 +17,8 @@ namespace Engine
 
         static const Color white;
         static const Color black;
+        static const Color red;
+        static const Color green;
+        static const Color blue;
     };
 }
