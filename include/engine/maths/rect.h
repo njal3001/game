@@ -1,10 +1,11 @@
 #pragma once
+#include "engine/maths/shape.h"
 #include "engine/maths/vec2.h"
 #include "engine/maths/line.h"
 
 namespace Engine
 {
-    struct Rect
+    struct Rect : Shape
     {
         float x, y;
         float w, h;
@@ -24,7 +25,9 @@ namespace Engine
         Line left() const;
         Line right() const;
 
-        bool contains(const Vec2& point) const;
+        bool contains(const Vec2& point) const override;
+        bool intersects(const Line& line) const override;
+
         bool intersects(const Rect& other) const;
     };
 }

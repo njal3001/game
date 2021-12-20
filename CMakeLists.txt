@@ -13,6 +13,9 @@ add_executable(sb
     src/main.cpp 
 
     src/sb/game.cpp
+    src/sb/collider.cpp
+    src/sb/boxcollider.cpp
+    src/sb/circlecollider.cpp
 
     src/engine/platform.cpp 
     src/engine/input.cpp 

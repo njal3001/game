@@ -1,9 +1,10 @@
 #include "engine/maths/rect.h"
+#include "engine/maths/collision.h"
 
 namespace Engine
 {
     Rect::Rect()
-        : x(0.0f), y(0.0f), w(0.0f), h(0.0f)
+        : Rect(0.0f, 0.0f, 0.0f, 0.0f)
     {}
 
     Rect::Rect(float x, float y, float w, float h)
@@ -11,7 +12,7 @@ namespace Engine
     {}
 
     Rect::Rect(const Vec2& pos, const Vec2& size)
-        : x(pos.y), y(pos.y), w(size.x), h(size.y)
+        : Rect(pos.y, pos.y, size.x, size.y)
     {}
 
     Vec2 Rect::center() const
@@ -39,7 +40,6 @@ namespace Engine
         return Vec2(x + w, y);
     }
 
-
     Line Rect::bottom() const
     {
         return Line(bottom_left(), bottom_right());
@@ -65,6 +65,11 @@ namespace Engine
         return 
             x <= point.x && point.x <= x + w && 
             y <= point.y && point.y <= y + h;
+    }
+
+    bool Rect::intersects(const Line& line) const
+    {
+        return false;
     }
 
     bool Rect::intersects(const Rect& other) const

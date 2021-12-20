@@ -2,6 +2,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include "engine/platform.h"
 #include "engine/input.h"
 #include "engine/graphics/renderer.h"
@@ -10,6 +11,8 @@
 #include "engine/graphics/font.h"
 #include "engine/log.h"
 #include "engine/maths/collision.h"
+#include "sb/boxcollider.h"
+#include "sb/circlecollider.h"
 
 namespace SB
 {
@@ -47,8 +50,9 @@ namespace SB
             Mat4x4 matrix = Mat4x4::create_ortho(scene_size.x, scene_size.w, scene_size.y, scene_size.h, -1.0f, 1.0f);
             Color clear_color(0, 0, 0, 255);
 
-            Circ player = Circ(Vec2(16.0f, 16.0f), 16.0f);
-            Circ obstacle = Circ(Vec2(32.0f, 32.0f), 16.0f);
+            CircleCollider player = CircleCollider(Circ(Vec2(16.0f, 16.0f), 8.0f));
+            BoxCollider obst1 = BoxCollider(Rect(32.0f, 32.0f, 16.0f, 16.0f));
+            CircleCollider obst2 = CircleCollider(Circ(Vec2(64.0f, 64.0f), 16.0f));
 
             while (Platform::update())
             {
@@ -78,19 +82,17 @@ namespace SB
                     vel = dir.norm();
                 }
 
-                player.center += vel;
-                Vec2 push = Collision::scirc_dcirc(obstacle, player);
-                player.center += push;
+                player.circ.center += vel;
 
+                renderer.push_matrix(Mat3x3::create_translation(-player.center() + scene_size.center()));
 
-
-                renderer.push_matrix(Mat3x3::create_translation(-player.center + scene_size.center()));
-
-                /* Color obst_color = player.intersects(obstacle) ? Color::red : Color::green; */
+                Color obst1_color = player.intersects(obst1) ? Color::red : Color::green;
+                Color obst2_color = player.intersects(obst2) ? Color::red : Color::green;
 
                 renderer.begin();
-                renderer.circ(player, 128, Color::blue);
-                renderer.circ(obstacle, 128, Color::green);
+                renderer.circ(player.circ, 128, Color::blue);
+                renderer.rect(obst1.rect, obst1_color);
+                renderer.circ(obst2.circ, 128, obst2_color);
                 renderer.end();
 
                 Graphics::clear(clear_color);

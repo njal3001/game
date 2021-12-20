@@ -1,8 +1,25 @@
 #include "engine/maths/collision.h"
+#include "engine/maths/rect.h"
+#include "engine/maths/circ.h"
 #include "engine/maths/calc.h"
 
 namespace Engine
 {
+    bool Collision::intersects(const Rect& r1, const Rect& r2)
+    {
+        return 
+            r1.x <= r2.x + r2.w &&
+            r1.x + r1.h >= r2.x &&
+            r1.y <= r2.y + r2.h &&
+            r1.y + r1.h >= r2.y;
+    }
+
+    bool Collision::intersects(const Circ& c1, const Circ& c2)
+    {
+        const float r_sum = c1.radius + c2.radius;
+        return c1.center.distance_squared(c2.center) <= r_sum * r_sum;
+    }
+
     bool Collision::intersects(const Rect& r, const Circ& c)
     {
         const float nx = Calc::clamp(r.x, r.x + r.w, c.center.x);
@@ -14,7 +31,7 @@ namespace Engine
     // TODO: Probably not the best way to do this
     Vec2 Collision::srect_drect(const Rect& sr, const Rect& dr)
     {
-        if (!sr.intersects(dr))
+        if (!intersects(sr, dr))
         {
             return Vec2();
         }
