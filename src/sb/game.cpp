@@ -50,9 +50,16 @@ namespace SB
             Mat4x4 matrix = Mat4x4::create_ortho(scene_size.x, scene_size.w, scene_size.y, scene_size.h, -1.0f, 1.0f);
             Color clear_color(0, 0, 0, 255);
 
-            CircleCollider player = CircleCollider(Circ(Vec2(16.0f, 16.0f), 8.0f));
+            CircleCollider player = CircleCollider(Circ(Vec2(16.0f, 16.0f), 4.0f));
+            //BoxCollider player = BoxCollider(Rect(0.0f, 0.0f, 4.0f, 4.0f));
             BoxCollider obst1 = BoxCollider(Rect(32.0f, 32.0f, 16.0f, 16.0f));
             CircleCollider obst2 = CircleCollider(Circ(Vec2(64.0f, 64.0f), 16.0f));
+
+            std::vector<Collider*> colliders;
+            colliders.push_back(&player);
+            colliders.push_back(&obst1);
+            colliders.push_back(&obst2);
+
 
             while (Platform::update())
             {
@@ -82,17 +89,32 @@ namespace SB
                     vel = dir.norm();
                 }
 
-                player.circ.center += vel;
+                player.move(vel);
+
+                for (size_t i = 0; i < colliders.size(); i++)
+                {
+                    for (size_t j = i + 1; j < colliders.size(); j++)
+                    {
+                        Collider* o1 = colliders.at(i);
+                        Collider* o2 = colliders.at(j);
+                        Vec2 disp = o1->static_displacement(*o2) / 2.0f;
+
+                        o1->move(disp);
+                        o2->move(-disp);
+                    }
+                }
 
                 renderer.push_matrix(Mat3x3::create_translation(-player.center() + scene_size.center()));
 
-                Color obst1_color = player.intersects(obst1) ? Color::red : Color::green;
-                Color obst2_color = player.intersects(obst2) ? Color::red : Color::green;
+                /* Color obst1_color = player.intersects(obst1) ? Color::red : Color::green; */
+                /* Color obst2_color = player.intersects(obst2) ? Color::red : Color::green; */
 
                 renderer.begin();
+                //renderer.rect(player.rect, Color::blue);
                 renderer.circ(player.circ, 128, Color::blue);
-                renderer.rect(obst1.rect, obst1_color);
-                renderer.circ(obst2.circ, 128, obst2_color);
+                renderer.rect(obst1.rect, Color::green);
+                renderer.circ(obst2.circ, 128, Color::green);
+                renderer.circ(Vec2(0, 0), 1.0f, 128, Color::blue);
                 renderer.end();
 
                 Graphics::clear(clear_color);

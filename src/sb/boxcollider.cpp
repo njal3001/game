@@ -15,6 +15,12 @@ namespace SB
     {
         return rect.center();
     }
+
+    void BoxCollider::move(const Engine::Vec2& amount)
+    {
+        rect.x += amount.x;
+        rect.y += amount.y;
+    }
     
     // TODO: Cache axes
     std::vector<Vec2> BoxCollider::get_axes(const Collider& other) const

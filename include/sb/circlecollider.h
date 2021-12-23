@@ -13,6 +13,7 @@ namespace SB
         CircleCollider(const Engine::Circ& circ);
 
         Engine::Vec2 center() const override;
+        void move(const Engine::Vec2& amount) override;
 
     protected:
         std::vector<Engine::Vec2> get_axes(const Collider& other) const override;

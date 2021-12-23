@@ -16,6 +16,11 @@ namespace SB
         return circ.center;
     }
     
+    void CircleCollider::move(const Engine::Vec2& amount)
+    {
+        circ.center += amount;
+    }
+
     std::vector<Vec2> CircleCollider::get_axes(const Collider& other) const
     {
         std::vector<Vec2> axes;

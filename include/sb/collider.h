@@ -23,9 +23,14 @@ namespace SB
 
     public:
         virtual Engine::Vec2 center() const = 0;
+        virtual void move(const Engine::Vec2& amount) = 0;
 
         bool contains(const Engine::Vec2& point) const;
         bool intersects(const Engine::Line& line) const;
         bool intersects(const Collider& other) const;
+        
+        // Returns a vector that pushes this collider out of the other collider
+        Engine::Vec2 static_displacement(const Collider& other) const;
+
     };
 }
