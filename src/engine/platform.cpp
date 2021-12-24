@@ -19,8 +19,8 @@ namespace Engine
             "Hello World!",
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
-            640,
-            640,
+            1280,
+            1280,
             SDL_WINDOW_OPENGL
         );
 

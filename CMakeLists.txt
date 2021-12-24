@@ -16,6 +16,7 @@ add_executable(sb
     src/sb/collider.cpp
     src/sb/boxcollider.cpp
     src/sb/circlecollider.cpp
+    src/sb/physicsbody.cpp
 
     src/engine/platform.cpp 
     src/engine/input.cpp 

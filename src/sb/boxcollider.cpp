@@ -1,40 +1,42 @@
 #include "sb/boxcollider.h"
 #include "engine/maths/calc.h"
+#include <assert.h>
 
 namespace SB
 {
     using namespace Engine;
 
-    BoxCollider::BoxCollider(const Rect& rect)
-        : rect(rect)
+    BoxCollider::BoxCollider(const Engine::Vec2& size)
+        : size(size)
+    {}
+
+    bool BoxCollider::contains(const Engine::Vec2& pos, const Engine::Vec2& point) const
     {
-        m_shape = &this->rect;
+        Rect rect(pos.x - (size.x / 2.0f), pos.y - (size.y / 2.0f), size.x, size.y);
+        return rect.contains(point);
     }
 
-    Vec2 BoxCollider::center() const
+    bool BoxCollider::intersects(const Engine::Vec2& pos, const Engine::Line& line) const
     {
-        return rect.center();
-    }
-
-    void BoxCollider::move(const Engine::Vec2& amount)
-    {
-        rect.x += amount.x;
-        rect.y += amount.y;
+        Rect rect(pos.x - (size.x / 2.0f), pos.y - (size.y / 2.0f), size.x, size.y);
+        return rect.intersects(line);
     }
     
     // TODO: Cache axes
-    std::vector<Vec2> BoxCollider::get_axes(const Collider& other) const
+    std::vector<Vec2> BoxCollider::get_axes(const Vec2& pos, const Vec2& other_pos) const
     {
         std::vector<Vec2> axes;
-        axes.push_back(rect.top_right() - rect.top_left());
-        axes.push_back(rect.top_left() - rect.bottom_left());
+        axes.push_back(Vec2(1.0f, 0.0f));
+        axes.push_back(Vec2(0.0f, 1.0f));
 
         return axes;
     }
 
     // TODO: Optimize
-    Collider::Projection BoxCollider::get_projection(const Vec2& axis) const
+    Collider::Projection BoxCollider::get_projection(const Vec2& pos, const Vec2& axis) const
     {
+        Rect rect(pos.x - (size.x / 2.0f), pos.y - (size.y / 2.0f), size.x, size.y);
+
         const float p0 = rect.top_left().dot(axis);
         const float p1 = rect.bottom_left().dot(axis);
         const float p2 = rect.top_right().dot(axis);

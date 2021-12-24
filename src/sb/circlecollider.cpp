@@ -1,40 +1,40 @@
 #include "sb/circlecollider.h"
 #include "engine/maths/calc.h"
+#include <assert.h>
 
 namespace SB
 {
     using namespace Engine;
 
-    CircleCollider::CircleCollider(const Circ& circ)
-        : circ(circ)
+    CircleCollider::CircleCollider(const float radius)
+        : radius(radius)
+    {}
+
+    bool CircleCollider::contains(const Engine::Vec2& pos, const Engine::Vec2& point) const
     {
-        m_shape = &this->circ;
+        Circ circ(pos, radius);
+        return circ.contains(point);
     }
 
-    Vec2 CircleCollider::center() const
+    bool CircleCollider::intersects(const Engine::Vec2& pos, const Engine::Line& line) const
     {
-        return circ.center;
-    }
-    
-    void CircleCollider::move(const Engine::Vec2& amount)
-    {
-        circ.center += amount;
+        Circ circ(pos, radius);
+        return circ.intersects(line);
     }
 
-    std::vector<Vec2> CircleCollider::get_axes(const Collider& other) const
+    std::vector<Vec2> CircleCollider::get_axes(const Vec2& pos, const Vec2& other_pos) const
     {
         std::vector<Vec2> axes;
-        axes.push_back(circ.center - other.center());
+        Vec2 diff = pos - other_pos;
+        axes.push_back(diff.norm());
 
         return axes;
     }
 
-    Collider::Projection CircleCollider::get_projection(const Vec2& axis) const
+    Collider::Projection CircleCollider::get_projection(const Vec2& pos, const Vec2& axis) const
     {
-        const Vec2 norm = axis.norm();
-
-        const Vec2 front = circ.center + (norm * circ.radius);
-        const Vec2 back = circ.center - (norm * circ.radius);
+        const Vec2 front = pos + (axis * radius);
+        const Vec2 back = pos - (axis * radius);
 
         float p0 = front.dot(axis);
         float p1 = back.dot(axis);

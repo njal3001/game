@@ -8,6 +8,7 @@ namespace SB
         uint32_t m_target_ticks;
         uint32_t m_prev_ticks;
         uint32_t m_tick_diff;
+        float m_elapsed;
 
     public:
         Game(const unsigned int target_fps);
