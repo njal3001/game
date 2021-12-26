@@ -4,7 +4,7 @@
 namespace Engine
 {
     Circ::Circ()
-        : Circ(Vec2(), 0.0f)
+        : Circ(Vec2::zero, 0.0f)
     {}
 
     Circ::Circ(const Vec2& center, const float radius)

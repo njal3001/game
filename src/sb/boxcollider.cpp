@@ -10,15 +10,21 @@ namespace SB
         : size(size)
     {}
 
-    bool BoxCollider::contains(const Engine::Vec2& pos, const Engine::Vec2& point) const
+    Rect BoxCollider::make_rect(const Vec2& pos) const
     {
         Rect rect(pos.x - (size.x / 2.0f), pos.y - (size.y / 2.0f), size.x, size.y);
+        return rect;
+    }
+
+    bool BoxCollider::contains(const Engine::Vec2& pos, const Engine::Vec2& point) const
+    {
+        Rect rect = make_rect(pos);
         return rect.contains(point);
     }
 
     bool BoxCollider::intersects(const Engine::Vec2& pos, const Engine::Line& line) const
     {
-        Rect rect(pos.x - (size.x / 2.0f), pos.y - (size.y / 2.0f), size.x, size.y);
+        Rect rect = make_rect(pos);
         return rect.intersects(line);
     }
     
@@ -55,5 +61,11 @@ namespace SB
         max = Calc::max(max, p3);
 
         return {min, max};
+    }
+
+    void BoxCollider::draw(const Vec2& pos, Renderer* renderer) const
+    {
+        Rect r = make_rect(pos);
+        renderer->rect(r, Color::red);
     }
 }

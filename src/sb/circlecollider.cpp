@@ -42,4 +42,9 @@ namespace SB
         // TODO: Could do with one if else instead
         return {Calc::min(p0, p1), Calc::max(p0, p1)};
     }
+
+    void CircleCollider::draw(const Vec2& pos, Renderer* renderer) const
+    {
+        renderer->circ(pos, radius, 128, Color::red);
+    }
 }

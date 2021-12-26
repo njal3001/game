@@ -5,10 +5,9 @@ namespace SB
     class Game
     {
     private:
-        uint32_t m_target_ticks;
-        uint32_t m_prev_ticks;
-        uint32_t m_tick_diff;
-        float m_elapsed;
+        uint64_t m_target_ticks;
+        uint64_t m_prev_ticks;
+        float m_elapsed; // In seconds
 
     public:
         Game(const unsigned int target_fps);

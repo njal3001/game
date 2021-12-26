@@ -68,7 +68,7 @@ namespace SB
 
                 if (!(p1.start <= p2.end && p1.end >= p2.start))
                 {
-                    return Vec2();
+                    return Vec2::zero;
                 }
 
                 const float overlap = Calc::min(p1.end, p2.end) - Calc::max(p1.start, p2.start);

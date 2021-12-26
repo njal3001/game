@@ -33,5 +33,7 @@ namespace Engine
         float distance(const Vec2& other) const;
         float distance_squared(const Vec2& other) const;
         float dot(const Vec2& other) const;
+
+        static const Vec2 zero;
     };
 }

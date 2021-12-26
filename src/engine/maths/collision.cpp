@@ -33,7 +33,7 @@ namespace Engine
     {
         if (!intersects(sr, dr))
         {
-            return Vec2();
+            return Vec2::zero;
         }
 
         Vec2 right_push = Vec2(sr.x + sr.w - dr.x, 0.0f);

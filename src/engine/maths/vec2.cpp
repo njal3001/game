@@ -3,6 +3,8 @@
 
 namespace Engine
 {
+    const Vec2 Vec2::zero = Vec2();
+
     Vec2::Vec2()
             : x(0), y(0) {}
 
@@ -96,7 +98,7 @@ namespace Engine
     {
         if (x == 0 && y == 0)
         {
-            return Vec2();
+            return Vec2::zero;
         }
 
         const float l = len();
