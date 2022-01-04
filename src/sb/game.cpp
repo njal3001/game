@@ -10,10 +10,9 @@
 #include "engine/maths/circ.h"
 #include "engine/graphics/font.h"
 #include "engine/log.h"
-#include "engine/maths/collision.h"
 #include "sb/boxcollider.h"
 #include "sb/circlecollider.h"
-#include "sb/physicsbody.h"
+#include "sb/entity.h"
 
 namespace SB
 {
@@ -42,8 +41,6 @@ namespace SB
 
     void Game::run()
     {
-        using namespace Engine;
-
         if (Platform::init())
         {
             Renderer renderer;
@@ -52,27 +49,19 @@ namespace SB
             Mat4x4 matrix = Mat4x4::create_ortho(scene_size.x, scene_size.x + scene_size.w, scene_size.y, scene_size.y + scene_size.h, -1.0f, 1.0f);
             Color clear_color(0, 0, 0, 255);
 
-            CircleCollider player_collider = CircleCollider(32.0f);
-            PhysicsBody player(Vec2(16.0f, 16.0f), 10.0f, 0.8f, &player_collider);
+            CircleCollider player_collider = CircleCollider(8.0f);
+            Entity player(Vec2(16.0f, 16.0f), &player_collider);
 
             BoxCollider obst1_collider = BoxCollider(Vec2(16.0f, 16.0f));
-            PhysicsBody obst1(Vec2(32.0f, 32.0f), 120.0f, 0.9f, &obst1_collider);
+            Entity obst1(Vec2(32.0f, 32.0f), &obst1_collider);
 
             CircleCollider obst2_collider = CircleCollider(16.0f);
-            PhysicsBody obst2(Vec2(64.0f, 64.0f), 200.0f, 0.9f, &obst2_collider);
+            Entity obst2(Vec2(64.0f, 64.0f), &obst2_collider);
 
-            std::vector<PhysicsBody*> physics_bodies;
-            physics_bodies.push_back(&player);
-            physics_bodies.push_back(&obst1);
-            physics_bodies.push_back(&obst2);
-
-            struct Collision
-            {
-                PhysicsBody* o1;
-                PhysicsBody* o2;
-                Vec2 displacement;
-            };
-
+            std::vector<Entity*> entities;
+            entities.push_back(&player);
+            entities.push_back(&obst1);
+            entities.push_back(&obst2);
 
             // Initialize before first update
             m_prev_ticks = Platform::ticks();
@@ -81,7 +70,6 @@ namespace SB
             {
                 limit_fps();
 
-                Vec2 vel;
                 Vec2 dir;
                 if (Input::key_state (Key::Left).down)                
                 {
@@ -100,64 +88,29 @@ namespace SB
                     dir.y += 1;
                 }
 
+                Vec2 vel;
                 if (dir.len_squared() > 0.0f)
                 {
                     vel = dir.norm() * 32;
                 }
 
-                player.vel = vel;
+                player.pos += vel * m_elapsed;
 
-                for (auto pb : physics_bodies)
+                // Player collision
+                for (auto e : entities)
                 {
-                    pb->update(m_elapsed);
-                }
-
-                std::vector<Collision> collisions;
-
-                // Static collisions
-                for (size_t i = 0; i < physics_bodies.size(); i++)
-                {
-                    for (size_t j = i + 1; j < physics_bodies.size(); j++)
+                    if (e == &player)
                     {
-                        PhysicsBody* o1 = physics_bodies.at(i);
-                        PhysicsBody* o2 = physics_bodies.at(j);
-                        Vec2 disp = o1->collider->static_displacement(o1->pos, o2->pos, *o2->collider);
-
-                        // Collision occured
-                        if (disp != Vec2::zero)
-                        {
-                            // TODO: Find actual contact point, store time of collision for more accurate time step
-                            o1->pos += disp;
-                            collisions.push_back({o1, o2, disp});
-                        }
+                        continue;
                     }
-                }
 
-                // Elastic collisions
-                for (const auto& c : collisions)
-                {
-                    // Source: https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Balls1.cpp
-                    // TODO: Find out how this works...
-                    const Vec2 norm = c.displacement.norm();
+                    Vec2 disp = player.collider->static_displacement(player.pos, e->pos, *e->collider);
 
-                    const Vec2 tan = Vec2(-norm.y, norm.x);
-
-                    float dp_tan1 = c.o1->vel.dot(tan);
-                    float dp_tan2 = c.o2->vel.dot(tan);
-
-                    float dp_norm1 = c.o1->vel.dot(norm);
-                    float dp_norm2 = c.o2->vel.dot(norm);
-
-                    float m1 = (dp_norm1 * (c.o1->mass - c.o2->mass) + 2.0f * c.o2->mass * dp_norm2) / (c.o1->mass + c.o2->mass);
-                    float m2 = (dp_norm2 * (c.o2->mass - c.o1->mass) + 2.0f * c.o1->mass * dp_norm1) / (c.o1->mass + c.o2->mass);
-
-                    c.o1->vel = tan * dp_tan1 + norm * m1;
-                    c.o2->vel = tan * dp_tan2 + norm * m2;
-                    /* const Vec2 vel_diff = (c.o1->vel - c.o2->vel);// TODO: Should this be normalized? */
-                    /* const float p = 2.0f * norm.dot(vel_diff) / (c.o1->mass + c.o2->mass); */
-
-                    /* c.o1->vel -= norm * p * c.o2->mass; */
-                    /* c.o2->vel += norm * p * c.o1->mass; */
+                    // Collision occured
+                    if (disp != Vec2::zero)
+                    {
+                        player.pos += disp;
+                    }
                 }
 
                 // Camera
@@ -165,9 +118,9 @@ namespace SB
 
                 renderer.begin();
 
-                for (const auto pb : physics_bodies)
+                for (const auto e : entities)
                 {
-                    pb->collider->draw(pb->pos, &renderer);
+                    e->collider->draw(e->pos, &renderer);
                 }
 
                 renderer.end();

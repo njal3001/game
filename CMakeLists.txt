@@ -16,7 +16,7 @@ add_executable(sb
     src/sb/collider.cpp
     src/sb/boxcollider.cpp
     src/sb/circlecollider.cpp
-    src/sb/physicsbody.cpp
+    src/sb/entity.cpp
 
     src/engine/platform.cpp 
     src/engine/input.cpp 
@@ -29,7 +29,6 @@ add_executable(sb
     src/engine/maths/rect.cpp
     src/engine/maths/circ.cpp
     src/engine/maths/line.cpp
-    src/engine/maths/collision.cpp
     
     src/engine/graphics/graphics.cpp
     src/engine/graphics/color.cpp

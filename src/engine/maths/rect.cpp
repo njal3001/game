@@ -1,5 +1,4 @@
 #include "engine/maths/rect.h"
-#include "engine/maths/collision.h"
 
 namespace Engine
 {

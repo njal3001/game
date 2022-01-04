@@ -46,6 +46,11 @@ namespace Engine
         return fabs(x);
     }
 
+    float Calc::pow(float base, float exp)
+    {
+        return powf(base, exp);
+    }
+
     float Calc::max(const float a, const float b)
     {
         return a > b ? a : b;

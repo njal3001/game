@@ -1,5 +1,4 @@
 #include "engine/maths/circ.h"
-#include "engine/maths/collision.h"
 
 namespace Engine
 {
@@ -23,6 +22,7 @@ namespace Engine
 
     bool Circ::intersects(const Circ& other) const
     {
-        return Collision::intersects(*this, other);
+        const float r_sum = radius + other.radius;
+        return center.distance_squared(other.center) <= r_sum * r_sum;
     }
 }

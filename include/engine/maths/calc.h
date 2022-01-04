@@ -15,6 +15,7 @@ namespace Engine
 
         float sqrt(float x);
         float abs(float x);
+        float pow(float base, float exp);
 
         float max(const float a, const float b);
         float min(const float a, const float b);
