@@ -15,7 +15,7 @@ namespace SB
         bool contains(const Engine::Vec2& pos, const Engine::Vec2& point) const override;
         bool intersects(const Engine::Vec2& pos, const Engine::Line& line) const override;
 
-        void draw(const Engine::Vec2& pos, Engine::Renderer* renderer) const override;
+        void render(const Engine::Vec2& pos, Engine::Renderer* renderer) const override;
 
     protected:
         std::vector<Engine::Vec2> get_axes(const Engine::Vec2& pos,

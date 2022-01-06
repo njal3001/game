@@ -2,7 +2,7 @@
 
 namespace SB
 {
-    Entity::Entity(const Engine::Vec2& pos, Collider* const collider)
-        : pos(pos), collider(collider)
+    Entity::Entity(const Engine::Vec2& pos)
+        : pos(pos)
     {}
 }

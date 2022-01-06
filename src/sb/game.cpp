@@ -13,6 +13,7 @@
 #include "sb/boxcollider.h"
 #include "sb/circlecollider.h"
 #include "sb/entity.h"
+#include "sb/player.h"
 
 namespace SB
 {
@@ -49,19 +50,7 @@ namespace SB
             Mat4x4 matrix = Mat4x4::create_ortho(scene_size.x, scene_size.x + scene_size.w, scene_size.y, scene_size.y + scene_size.h, -1.0f, 1.0f);
             Color clear_color(0, 0, 0, 255);
 
-            CircleCollider player_collider = CircleCollider(8.0f);
-            Entity player(Vec2(16.0f, 16.0f), &player_collider);
-
-            BoxCollider obst1_collider = BoxCollider(Vec2(16.0f, 16.0f));
-            Entity obst1(Vec2(32.0f, 32.0f), &obst1_collider);
-
-            CircleCollider obst2_collider = CircleCollider(16.0f);
-            Entity obst2(Vec2(64.0f, 64.0f), &obst2_collider);
-
-            std::vector<Entity*> entities;
-            entities.push_back(&player);
-            entities.push_back(&obst1);
-            entities.push_back(&obst2);
+            Player player(Vec2(16.0f, 16.0f));
 
             // Initialize before first update
             m_prev_ticks = Platform::ticks();
@@ -70,58 +59,14 @@ namespace SB
             {
                 limit_fps();
 
-                Vec2 dir;
-                if (Input::key_state (Key::Left).down)                
-                {
-                    dir.x -= 1;      
-                }                    
-                if (Input::key_state(Key::Right).down)
-                {                    
-                    dir.x += 1;      
-                }
-                if (Input::key_state(Key::Down).down) 
-                {
-                    dir.y -= 1;
-                }
-                if (Input::key_state(Key::Up).down)
-                {
-                    dir.y += 1;
-                }
-
-                Vec2 vel;
-                if (dir.len_squared() > 0.0f)
-                {
-                    vel = dir.norm() * 32;
-                }
-
-                player.pos += vel * m_elapsed;
-
-                // Player collision
-                for (auto e : entities)
-                {
-                    if (e == &player)
-                    {
-                        continue;
-                    }
-
-                    Vec2 disp = player.collider->static_displacement(player.pos, e->pos, *e->collider);
-
-                    // Collision occured
-                    if (disp != Vec2::zero)
-                    {
-                        player.pos += disp;
-                    }
-                }
-
                 // Camera
                 //renderer.push_matrix(Mat3x3::create_translation(player.pos + scene_size.center()));
 
+                player.update(m_elapsed);
+
                 renderer.begin();
 
-                for (const auto e : entities)
-                {
-                    e->collider->draw(e->pos, &renderer);
-                }
+                player.render(&renderer);
 
                 renderer.end();
 

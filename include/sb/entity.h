@@ -1,6 +1,6 @@
 #pragma once
 #include "engine/maths/vec2.h"
-#include "sb/collider.h"
+#include "engine/graphics/renderer.h"
 
 namespace SB
 {
@@ -8,8 +8,10 @@ namespace SB
     {
     public:
         Engine::Vec2 pos;
-        Collider* const collider;
 
-        Entity(const Engine::Vec2& pos, Collider* const collider);
+        Entity(const Engine::Vec2& pos);
+
+        virtual void update(const float elapsed) = 0;
+        virtual void render(Engine::Renderer* renderer) = 0;
     };
 }

@@ -63,7 +63,7 @@ namespace SB
         return {min, max};
     }
 
-    void BoxCollider::draw(const Vec2& pos, Renderer* renderer) const
+    void BoxCollider::render(const Vec2& pos, Renderer* renderer) const
     {
         Rect r = make_rect(pos);
         renderer->rect(r, Color::red);

@@ -11,6 +11,9 @@
     The game ends with the sea worm reaching the ocean surface and killing
     the ocean polluters in the boats above.
 
+    Might scrap most of this since it makes more sense in terms of progression to be
+    travelling downwards towards the more dangerous and interesting areas.
+
 ###### Thoughts
     Don't know if it should be able to have multiple properties at the same time. 
     Maybe some could be compatible, but others override each other? Maybe it could 
@@ -20,3 +23,10 @@
     I want to focus on immersiveness and that everything somewhat "makes sense". 
     For example if the player dies, the sea worm can't just respawn from thin air. 
     Maybe it is left unconscious and it wakes up after descending down to the previous checkpoint.
+
+#### Mechanics
+    Swimming:
+        Player swims in strokes. There is a very small or no cooldown on the strokes because the game should feel responsive,
+        but the player will gain extra momentum by timing the strokes. This is done by performing a new stroke 
+        right after the previous stroke is finished, and this will allow the player to gain a lot more speed.
+        A misstimed stroke will not kill all the momentum, but it will be reduced.

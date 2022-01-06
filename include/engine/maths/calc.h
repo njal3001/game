@@ -20,5 +20,6 @@ namespace Engine
         float max(const float a, const float b);
         float min(const float a, const float b);
         float clamp(const float min_val, const float max_val, const float val);
+        float lerp(const float val, const float target, const float amount);
     }
 }

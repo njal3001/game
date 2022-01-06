@@ -65,4 +65,14 @@ namespace Engine
     {
         return max(min_val, min(max_val, val));
     }
+
+    float Calc::lerp(const float val, const float target, const float amount)
+    {
+        if (val < target)
+        {
+            return min(val + amount, target);
+        }
+
+        return max(val - amount, target);
+    }
 }
