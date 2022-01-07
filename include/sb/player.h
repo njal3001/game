@@ -15,10 +15,10 @@ namespace SB
         float m_stroke_cooldown_timer;
 
         // TODO: Should this be declared in cpp file instead?
-        static constexpr float deaccel = 0.8f;
-        static constexpr float stroke_accel = 8.0f;
+        static constexpr float deaccel = 0.4f;
+        static constexpr float stroke_accel = 1.0f;
         static constexpr float stroke_target_speed = 32.0f;
-        static constexpr float stroke_duration = 0.5f;
+        static constexpr float stroke_duration = 0.6f;
         static constexpr float stroke_cooldown = 0.0f;
 
     public:

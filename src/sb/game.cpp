@@ -2,7 +2,6 @@
 #include <iostream>
 #include <memory>
 #include <string>
-#include <unordered_map>
 #include "engine/platform.h"
 #include "engine/input.h"
 #include "engine/graphics/renderer.h"

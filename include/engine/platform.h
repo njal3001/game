@@ -18,6 +18,8 @@ namespace Engine
 
     private:
         static SDL_Window* g_window;
+        static SDL_Joystick* g_joystick;
+        static int g_joystick_index;
 
     public:
         static const uint64_t ticks_per_ms;
@@ -43,5 +45,7 @@ namespace Engine
 
         static void* create_gl_context();
         static void destroy_gl_context(void* context);
+
+        static bool joystick_is_connected(const int id);
     };
 }

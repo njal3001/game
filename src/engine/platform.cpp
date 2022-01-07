@@ -8,12 +8,14 @@
 namespace Engine
 {
     SDL_Window* Platform::g_window = nullptr;
+    SDL_Joystick* Platform::g_joystick = nullptr;
+    int Platform::g_joystick_index = -1;
 
     const uint64_t Platform::ticks_per_ms = 1000;
 
     bool Platform::init()
     {
-        SDL_Init(SDL_INIT_VIDEO);
+        SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER);
 
         g_window = SDL_CreateWindow(
             "Hello World!",
@@ -88,9 +90,74 @@ namespace Engine
 
                 Input::mouse_button_released(mb);
             }
+            else if (event.type == SDL_JOYDEVICEADDED)
+            {
+                if (!g_joystick)
+                {
+                    int index = event.jdevice.which;
+                    if (SDL_IsGameController(index))
+                    {
+                        g_joystick = SDL_JoystickOpen(index);
+                        g_joystick_index = index;
+
+                        Log::info("Controller connected");
+                    }
+                }
+                else
+                {
+                    Log::warn("No support for multiple controllers!");
+                }
+            }
+            else if (event.type == SDL_JOYDEVICEREMOVED)
+            {
+                if (joystick_is_connected(event.jdevice.which))
+                {
+                    SDL_JoystickClose(g_joystick);
+                    g_joystick = nullptr;
+                    g_joystick_index = -1;
+
+                    Log::info("Controller disconnected");
+                }
+            }
+            else if (event.type == SDL_JOYBUTTONDOWN)
+            {
+                if (joystick_is_connected(event.jdevice.which))
+                {
+                    Input::controller_button_pressed((ControllerButton)event.jbutton.button);
+                }
+            }
+            else if (event.type == SDL_JOYBUTTONUP)
+            {
+                if (joystick_is_connected(event.jdevice.which))
+                {
+                    Input::controller_button_released((ControllerButton)event.jbutton.button);
+                }
+            }
+            else if (event.type == SDL_JOYAXISMOTION)
+            {
+                if (joystick_is_connected(event.jdevice.which))
+                {
+                    float val;
+                    if (event.jaxis.value >= 0)
+                    {
+                        val = event.jaxis.value / 32767.0f;
+                    }
+                    else
+                    {
+                        val = event.jaxis.value / 32768.0f;
+                    }
+
+                    Input::axis_changed((Axis)event.jaxis.axis, val);
+                }
+            }
         }
 
         return cont;
+    }
+
+    bool Platform::joystick_is_connected(const int id)
+    {
+        return g_joystick && SDL_JoystickInstanceID(g_joystick) == id;
     }
 
     void Platform::present()

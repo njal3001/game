@@ -19,24 +19,10 @@ namespace SB
     {
 
         Vec2 dir;
-        if (Input::key_state (Key::Left).down)                
-        {
-            dir.x -= 1;      
-        }                    
-        if (Input::key_state(Key::Right).down)
-        {                    
-            dir.x += 1;      
-        }
-        if (Input::key_state(Key::Down).down) 
-        {
-            dir.y -= 1;
-        }
-        if (Input::key_state(Key::Up).down)
-        {
-            dir.y += 1;
-        }
+        dir.x = Input::axis_state(Axis::LeftX);
+        dir.y = -Input::axis_state(Axis::LeftY);
+        dir = dir.norm();
 
-        // TODO: Add controller support
         // TODO: Build up momentum with multiple swim strokes
         if (m_stroke_timer <= 0.0f) 
         {
@@ -53,7 +39,7 @@ namespace SB
 
         m_stroke_cooldown_timer -= elapsed;
 
-        if (m_stroke_cooldown_timer <= 0.0f && Input::key_state(Key::X).pressed)
+        if (m_stroke_cooldown_timer <= 0.0f && Input::controller_button_state(ControllerButton::A).pressed)
         {
             if (dir.len_squared() > 0.0f)
             {
@@ -72,6 +58,7 @@ namespace SB
 
     void Player::render(Engine::Renderer* renderer)
     {
-        m_collider.render(pos, renderer);
+        Color c = m_stroke_timer <= 0.0f ? Color::green : Color::red; 
+        renderer->circ(pos, m_collider.radius, 128, c);
     }
 }
