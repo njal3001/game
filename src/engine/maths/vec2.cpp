@@ -122,4 +122,20 @@ namespace Engine
     {
         return x * other.x + y * other.y;
     }
+    
+    Vec2 Vec2::approach(const Vec2& val, const Vec2& target, const float amount)
+    {
+        if (val.distance_squared(target) <= amount)
+        {
+            return target;
+        }
+
+        Vec2 dir = (target - val).norm();
+        return val + dir * amount;
+    }
+
+    Vec2 Vec2::lerp(const Vec2& a, const Vec2& b, const float t)
+    {
+        return a + (b - a) * t;
+    }
 }

@@ -18,6 +18,8 @@ add_executable(sb
     src/sb/circlecollider.cpp
     src/sb/entity.cpp
     src/sb/player.cpp
+    src/sb/enemy.cpp
+    src/sb/scene.cpp
 
     src/engine/platform.cpp 
     src/engine/input.cpp 

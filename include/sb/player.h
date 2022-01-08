@@ -10,16 +10,18 @@ namespace SB
         CircleCollider m_collider;
         Engine::Vec2 m_vel;
 
-        Engine::Vec2 m_stroke_dir;
-        float m_stroke_timer;
-        float m_stroke_cooldown_timer;
+        float m_dash_timer;
+        float m_dash_cooldown_timer;
+        Engine::Vec2 m_dash_target;
+        Engine::Vec2 m_facing;
 
-        // TODO: Should this be declared in cpp file instead?
-        static constexpr float deaccel = 0.4f;
-        static constexpr float stroke_accel = 1.0f;
-        static constexpr float stroke_target_speed = 32.0f;
-        static constexpr float stroke_duration = 0.6f;
-        static constexpr float stroke_cooldown = 0.0f;
+        static constexpr float max_swim_speed = 68.0f;
+        static constexpr float swim_accel = 278.0f;
+        static constexpr float swim_deaccel = 312.0f;
+
+        static constexpr float dash_speed = 126.0f;
+        static constexpr float dash_time = 0.3f;
+        static constexpr float dash_cooldown = 1.0f;
 
     public:
         Player(const Engine::Vec2& pos);
