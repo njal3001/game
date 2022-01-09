@@ -10,7 +10,7 @@ namespace SB
     {
         friend class Scene;
 
-    private:
+    protected:
         Scene* m_scene;
 
     public:
@@ -19,10 +19,12 @@ namespace SB
         Entity(const Engine::Vec2& pos);
         virtual ~Entity();
 
-        void destroy();
+        // Called after being added to scene
+        virtual void awake();
 
-        virtual void update(const float elapsed) = 0;
-        virtual void render(Engine::Renderer* renderer) = 0;
+        virtual void destroy();
 
+        virtual void update(const float elapsed);
+        virtual void render(Engine::Renderer* renderer);
     };
 }

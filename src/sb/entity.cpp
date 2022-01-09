@@ -8,6 +8,10 @@ namespace SB
         : m_scene(nullptr), pos(pos)
     {}
 
+    Entity::~Entity()
+    {}
+
+    // TODO: Kinda sketchy...
     // Assumes heap alloaction
     void Entity::destroy()
     {
@@ -15,6 +19,12 @@ namespace SB
         m_scene->destroy_entity(this);
     }
 
-    Entity::~Entity()
+    void Entity::awake()
+    {}
+
+    void Entity::update(const float elapsed)
+    {}
+
+    void Entity::render(Engine::Renderer* renderer)
     {}
 }

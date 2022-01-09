@@ -28,6 +28,9 @@ namespace SB
 
         const Collider* collider() const;
 
+        void awake() override;
+        void destroy() override;
+
         void update(const float elapsed) override;
         void render(Engine::Renderer* renderer) override;
     };

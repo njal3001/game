@@ -1,6 +1,8 @@
 #include "sb/player.h"
 #include "engine/input.h"
 #include "engine/maths/calc.h"
+#include "sb/scene.h"
+#include "sb/boxcollider.h"
 
 namespace SB
 {
@@ -14,6 +16,17 @@ namespace SB
     const Collider* Player::collider() const
     {
         return &m_collider;
+    }
+
+    void Player::awake()
+    {
+        m_scene->player = this;
+    }
+
+    void Player::destroy()
+    {
+        Entity::destroy();
+        m_scene->player = nullptr;
     }
 
     void Player::update(const float elapsed)
@@ -60,6 +73,59 @@ namespace SB
             m_dash_target = m_facing;
             m_vel = m_facing * dash_speed;
             m_dash_cooldown_timer = dash_cooldown;
+        }
+
+        // Check bounds
+        // TODO: Cleanup a bit
+        {
+            Rect bounds = m_scene->bounds;
+            const float check_width = 1000.0f;
+
+            // Y direction
+            BoxCollider ycol(Vec2(bounds.w, check_width));
+
+            Rect bottom(bounds.x, bounds.y - check_width, bounds.w, check_width);
+            Vec2 disp = m_collider.Collider::static_displacement(pos, bottom.center(), ycol);
+
+            if (disp != Vec2::zero)
+            {
+                pos += disp;
+                m_vel.y = 0.0f;
+            }
+            else
+            {
+                Rect top(bounds.x, bounds.y + bounds.h, bounds.w, check_width);
+                disp = m_collider.Collider::static_displacement(pos, top.center(), ycol);
+
+                if (disp != Vec2::zero)
+                {
+                    pos += disp;
+                    m_vel.y = 0.0f;
+                }
+            }
+
+            // X direction
+            BoxCollider xcol(Vec2(check_width, bounds.h));
+
+            Rect left(bounds.x - check_width, bounds.y, check_width, bounds.h);
+            disp = m_collider.Collider::static_displacement(pos, left.center(), xcol);
+
+            if (disp != Vec2::zero)
+            {
+                pos += disp;
+                m_vel.x = 0.0f;
+            }
+            else
+            {
+                Rect right(bounds.x + bounds.w, bounds.y, check_width, bounds.h);
+                disp = m_collider.Collider::static_displacement(pos, right.center(), xcol);
+
+                if (disp != Vec2::zero)
+                {
+                    pos += disp;
+                    m_vel.x = 0.0f;
+                }
+            }
         }
     }
 

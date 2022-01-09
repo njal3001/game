@@ -47,18 +47,18 @@ namespace SB
         {
             Renderer renderer;
 
-            Rect scene_size = Rect(0.0f, 0.0f, 128.0f, 128.0f);
-            Mat4x4 matrix = Mat4x4::create_ortho(scene_size.x, scene_size.x + scene_size.w, scene_size.y, scene_size.y + scene_size.h, -1.0f, 1.0f);
+            Rect scene_bounds = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+            Mat4x4 matrix = Mat4x4::create_ortho(scene_bounds.x, scene_bounds.x + scene_bounds.w, scene_bounds.y, scene_bounds.y + scene_bounds.h, -1.0f, 1.0f);
             Color clear_color(0, 0, 0, 255);
 
-            Scene scene;
+            Scene scene(scene_bounds);
 
             Player* player = new Player(Vec2(16.0f, 16.0f));
 
-            Enemy* e1 = new Enemy(Vec2(32.0f, 32.0f), 4.0f, player);
-            Enemy* e2 = new Enemy(Vec2(64.0f, 64.0f), 6.0f, player);
-            Enemy* e3 = new Enemy(Vec2(88.0f, 88.0f), 8.0f, player);
-            Enemy* e4 = new Enemy(Vec2(88.0f, 16.0f), 12.0f, player);
+            Enemy* e1 = new Enemy(Vec2(32.0f, 32.0f), 4.0f);
+            Enemy* e2 = new Enemy(Vec2(64.0f, 64.0f), 6.0f);
+            Enemy* e3 = new Enemy(Vec2(88.0f, 88.0f), 8.0f);
+            Enemy* e4 = new Enemy(Vec2(88.0f, 16.0f), 12.0f);
 
             scene.add_entity(player);
             scene.add_entity(e1);

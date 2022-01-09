@@ -5,18 +5,17 @@
 
 namespace SB
 {
-    class Enemy : public Entity
+    class Bullet : public Entity
     {
+    public:
+        Engine::Vec2 vel;
+
     private:
         CircleCollider m_collider;
-
-        float m_shoot_cooldown_timer;
-
-        static constexpr float bullet_speed = 5.0f;
-        static constexpr float shoot_cooldown = 3.0f;
+        Player* m_player;
 
     public:
-        Enemy(const Engine::Vec2& pos, const float radius);
+        Bullet(const Engine::Vec2& pos, const Engine::Vec2& vel, const float radius);
 
         void update(const float elapsed) override;
         void render(Engine::Renderer* renderer) override;

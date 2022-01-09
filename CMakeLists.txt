@@ -20,6 +20,7 @@ add_executable(sb
     src/sb/player.cpp
     src/sb/enemy.cpp
     src/sb/scene.cpp
+    src/sb/bullet.cpp
 
     src/engine/platform.cpp 
     src/engine/input.cpp 

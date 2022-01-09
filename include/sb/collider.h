@@ -7,6 +7,7 @@
 
 namespace SB
 {
+    // TODO: Convert to entity component
     class Collider
     {
     protected:
@@ -29,6 +30,7 @@ namespace SB
         bool intersects(const Engine::Vec2& pos, const Engine::Vec2& pos_other, const Collider& other) const;
         
         // Returns a vector that pushes this collider out of the other collider
+        // Position refers to the center of the collider
         Engine::Vec2 static_displacement(const Engine::Vec2& pos, const Engine::Vec2& pos_other, const Collider& other) const;
 
         virtual void render(const Engine::Vec2& pos, Engine::Renderer* renderer) const = 0;
