@@ -12,8 +12,8 @@ namespace SB
 
         float m_shoot_cooldown_timer;
 
-        static constexpr float bullet_speed = 5.0f;
-        static constexpr float shoot_cooldown = 3.0f;
+        static constexpr float bullet_speed = 40.0f;
+        static constexpr float shoot_cooldown = 2.0f;
 
     public:
         Enemy(const Engine::Vec2& pos, const float radius);

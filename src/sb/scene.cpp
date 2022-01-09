@@ -9,26 +9,23 @@ namespace SB
     using namespace Engine;
 
     Scene::Scene(const Rect& bounds)
-        : bounds(bounds), player(nullptr)
+        : bounds(bounds)
     {}
 
     Scene::~Scene()
     {
-        for (auto e : m_entities)
+        for (auto& e_vec : m_entities)
+        {
+            for (auto e : e_vec)
+            {
+                delete e;
+            }
+        }
+
+        for (auto e : m_destroyed)
         {
             delete e;
         }
-    }
-
-    void Scene::add_entity(Entity* entity)
-    {
-        assert(!entity->m_scene);
-
-        bool added = m_entities.insert(entity).second;
-        assert(added);
-
-        entity->m_scene = this;
-        entity->awake();
     }
 
     void Scene::destroy_entity(Entity* entity)
@@ -41,9 +38,12 @@ namespace SB
     {
         update_lists();
 
-        for (auto e : m_entities)
+        for (auto& e_vec : m_entities)
         {
-            e->update(elapsed);
+            for (auto e : e_vec)
+            {
+                e->update(elapsed);
+            }
         }
     }
 
@@ -51,20 +51,21 @@ namespace SB
     {
         for (auto entity : m_to_remove)
         {
-            auto pos = std::find(m_entities.begin(), m_entities.end(), entity);
-            m_entities.erase(pos);
+            auto& entity_vec = m_entities[entity->m_type];
+            auto pos = std::find(entity_vec.begin(), entity_vec.end(), entity);
+            entity_vec.erase(pos);
 
-            delete entity;
+            entity->m_scene = nullptr;
+            m_destroyed.push_back(entity);
         }
 
         m_to_remove.clear();
 
         for (auto entity : m_to_add)
         {
-            bool added = m_entities.insert(entity).second;
-            assert(added);
+            auto& entity_vec = m_entities[entity->m_type];
+            entity_vec.push_back(entity);
 
-            entity->m_scene = this;
             entity->awake();
         }
 
@@ -73,9 +74,12 @@ namespace SB
 
     void Scene::render(Engine::Renderer* renderer)
     {
-        for (auto e : m_entities)
+        for (auto& e_vec : m_entities)
         {
-            e->render(renderer);
+            for (auto e : e_vec)
+            {
+                e->render(renderer);
+            }
         }
     }
 }

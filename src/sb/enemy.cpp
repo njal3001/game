@@ -14,12 +14,16 @@ namespace SB
     {
         if (m_shoot_cooldown_timer <= 0.0f)
         {
-            Vec2 bullet_vel = (m_scene->player->pos - pos).norm() * bullet_speed;
-            Bullet* bullet = new Bullet(pos, bullet_vel, 1.0f);
+            Player* player = m_scene->first<Player>();
+            if (player)
+            {
+                Vec2 bullet_vel = (player->pos - pos).norm() * bullet_speed;
+                Bullet* bullet = new Bullet(pos, bullet_vel, 1.0f);
 
-            m_scene->add_entity(bullet);
+                m_scene->add_entity(bullet);
 
-            m_shoot_cooldown_timer = shoot_cooldown;
+                m_shoot_cooldown_timer = shoot_cooldown;
+            }
         }
 
         m_shoot_cooldown_timer -= elapsed;
@@ -27,7 +31,7 @@ namespace SB
 
     void Enemy::render(Engine::Renderer* renderer)
     {
-        Player* player = m_scene->player;
+        Player* player = m_scene->first<Player>();
 
         Color c = Color::white;
         if (player && m_collider.Collider::intersects(pos, player->pos, *player->collider()))

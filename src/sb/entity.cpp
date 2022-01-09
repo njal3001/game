@@ -1,6 +1,6 @@
 #include "sb/entity.h"
-#include <assert.h>
 #include "sb/scene.h"
+#include <assert.h>
 
 namespace SB
 {
@@ -11,8 +11,7 @@ namespace SB
     Entity::~Entity()
     {}
 
-    // TODO: Kinda sketchy...
-    // Assumes heap alloaction
+    // Assumes heap allocation
     void Entity::destroy()
     {
         assert(m_scene);
