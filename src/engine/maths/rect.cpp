@@ -80,4 +80,9 @@ namespace Engine
             y <= other.y + other.h &&
             y + h >= other.y;
     }
+
+    Rect Rect::offset(const Vec2& o) const
+    {
+        return Rect(x + o.x, y + o.y, w, h);
+    }
 }

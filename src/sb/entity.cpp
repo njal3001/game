@@ -14,8 +14,10 @@ namespace SB
     // Assumes heap allocation
     void Entity::destroy()
     {
-        assert(m_scene);
-        m_scene->destroy_entity(this);
+        if (m_scene)
+        {
+            m_scene->destroy_entity(this);
+        }
     }
 
     void Entity::awake()

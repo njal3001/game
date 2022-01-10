@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include "engine/maths/shape.h"
 #include "engine/maths/vec2.h"
 #include "engine/maths/line.h"
 #include "engine/graphics/renderer.h"
@@ -18,12 +17,11 @@ namespace SB
         };
 
     protected:
-        virtual std::vector<Engine::Vec2> get_axes(const Engine::Vec2& pos, 
+        virtual std::vector<Engine::Vec2> axes(const Engine::Vec2& pos, 
                 const Engine::Vec2& pos_other) const = 0;
-        virtual Projection get_projection(const Engine::Vec2& pos, const Engine::Vec2& axis) const = 0;
+        virtual Projection projection(const Engine::Vec2& pos, const Engine::Vec2& axis) const = 0;
 
     public:
-        // TODO: Could get shape from subclasses instead and implement in this class
         virtual bool contains(const Engine::Vec2& pos, const Engine::Vec2& point) const = 0;
         virtual bool intersects(const Engine::Vec2& pos, const Engine::Line& line) const = 0;
 

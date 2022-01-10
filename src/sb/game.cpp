@@ -77,6 +77,7 @@ namespace SB
 
                 renderer.begin();
                 scene.render(&renderer);
+
                 renderer.end();
 
                 Graphics::clear(clear_color);

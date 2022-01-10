@@ -12,6 +12,7 @@
 #include "engine/graphics/subtexture.h"
 #include "engine/graphics/font.h"
 #include "engine/maths/circ.h"
+#include "engine/maths/quad.h"
 
 namespace Engine
 {
@@ -77,6 +78,9 @@ namespace Engine
 
         void rect(const Vec2& pos, const Vec2& size, const Color color);
         void rect(const Rect& r, const Color color);
+
+        void quad(const Vec2& a, const Vec2& b, const Vec2& c, const Vec2& d, const Color color);
+        void quad(const Quad& q, const Color color);
 
         void tri(const Vec2& pos0, const Vec2& pos1, const Vec2& pos2, const Color color); 
 

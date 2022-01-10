@@ -13,7 +13,7 @@ namespace SB
         static constexpr int max_entity_types = 256;
 
     private:
-        // TODO: Change to linked list for faster remove
+        // TODO: Change to linked list for faster remove and subclass casting
         std::vector<Entity*> m_entities[max_entity_types];
 
         std::vector<Entity*> m_destroyed;
@@ -37,7 +37,7 @@ namespace SB
 
             m_to_add.push_back(entity);
 
-            uint8_t type = Entity::Types::id<T>();
+            const uint8_t type = Entity::Types::id<T>();
             entity->m_scene = this;
             entity->m_type = type;
         }
@@ -48,10 +48,10 @@ namespace SB
         void render(Engine::Renderer* renderer);
 
         template<class T>
-        T* first()
+        T* first() const
         {
-            uint8_t type = Entity::Types::id<T>();
-            auto& e_vec = m_entities[type];
+            const uint8_t type = Entity::Types::id<T>();
+            const auto& e_vec = m_entities[type];
 
             if (e_vec.size() > 0)
             {
@@ -59,6 +59,22 @@ namespace SB
             }
 
             return nullptr;
+        }
+
+        template<class T>
+        std::vector<T*> all() const
+        {
+            const uint8_t type = Entity::Types::id<T>();
+            const auto&  e_vec = m_entities[type];
+
+            // TODO: Slow, but I want the cast
+            std::vector<T*> res;
+            for (auto e : e_vec)
+            {
+                res.push_back((T*)e);
+            }
+
+            return res;
         }
 
     private:

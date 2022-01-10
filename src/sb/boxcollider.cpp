@@ -6,30 +6,23 @@ namespace SB
 {
     using namespace Engine;
 
-    BoxCollider::BoxCollider(const Engine::Vec2& size)
-        : size(size)
+    BoxCollider::BoxCollider(const Rect& bounds)
+        : bounds(bounds)
     {}
 
-    Rect BoxCollider::make_rect(const Vec2& pos) const
+    bool BoxCollider::contains(const Vec2& pos, const Vec2& point) const
     {
-        Rect rect(pos.x - (size.x / 2.0f), pos.y - (size.y / 2.0f), size.x, size.y);
-        return rect;
-    }
-
-    bool BoxCollider::contains(const Engine::Vec2& pos, const Engine::Vec2& point) const
-    {
-        Rect rect = make_rect(pos);
+        Rect rect = bounds.offset(pos - (Vec2(bounds.w, bounds.h) / 2.0f));
         return rect.contains(point);
     }
 
-    bool BoxCollider::intersects(const Engine::Vec2& pos, const Engine::Line& line) const
+    bool BoxCollider::intersects(const Vec2& pos, const Line& line) const
     {
-        Rect rect = make_rect(pos);
+        Rect rect = bounds.offset(pos - (Vec2(bounds.w, bounds.h) / 2.0f));
         return rect.intersects(line);
     }
     
-    // TODO: Cache axes
-    std::vector<Vec2> BoxCollider::get_axes(const Vec2& pos, const Vec2& other_pos) const
+    std::vector<Vec2> BoxCollider::axes(const Vec2& pos, const Vec2& other_pos) const
     {
         std::vector<Vec2> axes;
         axes.push_back(Vec2(1.0f, 0.0f));
@@ -38,10 +31,9 @@ namespace SB
         return axes;
     }
 
-    // TODO: Optimize
-    Collider::Projection BoxCollider::get_projection(const Vec2& pos, const Vec2& axis) const
+    Collider::Projection BoxCollider::projection(const Vec2& pos, const Vec2& axis) const
     {
-        Rect rect(pos.x - (size.x / 2.0f), pos.y - (size.y / 2.0f), size.x, size.y);
+        Rect rect = bounds.offset(pos - (Vec2(bounds.w, bounds.h) / 2.0f));
 
         const float p0 = rect.top_left().dot(axis);
         const float p1 = rect.bottom_left().dot(axis);
@@ -65,7 +57,7 @@ namespace SB
 
     void BoxCollider::render(const Vec2& pos, Renderer* renderer) const
     {
-        Rect r = make_rect(pos);
+        Rect r = bounds.offset(pos - (Vec2(bounds.w, bounds.h) / 2.0f));
         renderer->rect(r, Color::red);
     }
 }

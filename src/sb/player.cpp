@@ -3,13 +3,16 @@
 #include "engine/maths/calc.h"
 #include "sb/scene.h"
 #include "sb/boxcollider.h"
+#include "sb/bullet.h"
+#include <vector>
 
 namespace SB
 {
     using namespace Engine;
 
     Player::Player(const Vec2& pos)
-        : Entity(pos), m_collider(CircleCollider(4.0f)), m_facing(Vec2(1.0f, 0.0f)), m_dash_timer(0.0f), 
+        : Entity(pos), m_collider(CircleCollider(Circ(Vec2(), collider_radius))), 
+        m_facing(Vec2(1.0f, 0.0f)), m_dash_timer(0.0f), 
         m_dash_cooldown_timer(0.0f), m_dash_stopped(false), m_invincible_timer(0.0f)
     {}
 
@@ -26,55 +29,73 @@ namespace SB
             printf("Tok damage!\n");
         }
     }
+    
+    bool Player::dashing() const
+    {
+        return m_dash_timer > 0.0f;
+    }
 
     void Player::update(const float elapsed)
     {
         m_invincible_timer -= elapsed;
 
-        Vec2 dir;
-        dir.x = Input::axis_state(Axis::LeftX);
-        dir.y = -Input::axis_state(Axis::LeftY);
-
-        if (dir.len() >= 0.99f)
         {
-            dir = dir.norm();
-        }
+            Vec2 dir;
+            dir.x = Input::axis_state(Axis::LeftX);
+            dir.y = -Input::axis_state(Axis::LeftY);
 
-        if (dir.x || dir.y)
-        {
-            m_facing = dir.norm();
-        }
-
-        if (m_dash_timer > 0.0f)
-        {
-            m_dash_timer -= elapsed;
-
-            // Stop dash early
-            if (!m_dash_stopped && Input::controller_button_state(ControllerButton::A).released)
+            if (dir.len() >= 0.99f)
             {
-                m_dash_timer = dash_min_time - (dash_max_time - m_dash_timer);
-                m_dash_stopped = true;
+                dir = dir.norm();
             }
-        }
-        else
-        {
-            m_dash_cooldown_timer -= elapsed;
 
-            // TODO: Compare square instead
-            if (m_vel.len() - 1.0f > max_swim_speed)
+            if (dir.x || dir.y)
             {
-                m_vel = Vec2::approach(m_vel, dir * max_swim_speed, swim_deaccel * elapsed);
+                m_facing = dir.norm();
+            }
+
+            if (m_dash_timer > 0.0f)
+            {
+                m_dash_timer -= elapsed;
+
+                // Dash attack
+                for (auto b : m_scene->all<Bullet>())
+                {
+                    if (b->collider().intersects(b->pos, pos, m_collider))
+                    {
+                        b->destroy();
+                        printf("Bullet destroyed!\n");
+                    }
+                }
+
+                // Stop dash early
+                if (!m_dash_stopped && Input::controller_button_state(ControllerButton::A).released)
+                {
+                    m_dash_timer = dash_min_time - (dash_max_time - m_dash_timer);
+                    m_dash_stopped = true;
+                }
             }
             else
             {
-                m_vel = Vec2::approach(m_vel, dir * max_swim_speed, swim_accel * elapsed);
+                m_dash_cooldown_timer -= elapsed;
+
+                // TODO: Compare square instead
+                if (m_vel.len() - 1.0f > max_swim_speed)
+                {
+                    m_vel = Vec2::approach(m_vel, dir * max_swim_speed, swim_deaccel * elapsed);
+                }
+                else
+                {
+                    m_vel = Vec2::approach(m_vel, dir * max_swim_speed, swim_accel * elapsed);
+                }
             }
         }
 
         pos += m_vel * elapsed;
 
         // Dash
-        if (Input::controller_button_state(ControllerButton::A).pressed && m_dash_cooldown_timer <= 0.0f)
+        if (Input::controller_button_state(ControllerButton::A).pressed 
+                && m_dash_cooldown_timer <= 0.0f)
         {
             m_dash_timer = dash_max_time;
             m_dash_target = m_facing;
@@ -84,64 +105,26 @@ namespace SB
         }
 
         // Check bounds
-        // TODO: Cleanup a bit
         {
-            Rect bounds = m_scene->bounds;
-            const float check_width = 1000.0f;
+            const Rect bounds = m_scene->bounds;
 
-            // Y direction
-            BoxCollider ycol(Vec2(bounds.w, check_width));
+            const Vec2 center = m_collider.bounds.center;
+            const float radius = m_collider.bounds.radius;
+            pos.x = Calc::clamp(bounds.x + center.x + radius,
+                    bounds.x + center.x + bounds.w - radius, pos.x); 
 
-            Rect bottom(bounds.x, bounds.y - check_width, bounds.w, check_width);
-            Vec2 disp = m_collider.Collider::static_displacement(pos, bottom.center(), ycol);
-
-            if (disp != Vec2::zero)
-            {
-                pos += disp;
-                m_vel.y = 0.0f;
-            }
-            else
-            {
-                Rect top(bounds.x, bounds.y + bounds.h, bounds.w, check_width);
-                disp = m_collider.Collider::static_displacement(pos, top.center(), ycol);
-
-                if (disp != Vec2::zero)
-                {
-                    pos += disp;
-                    m_vel.y = 0.0f;
-                }
-            }
-
-            // X direction
-            BoxCollider xcol(Vec2(check_width, bounds.h));
-
-            Rect left(bounds.x - check_width, bounds.y, check_width, bounds.h);
-            disp = m_collider.Collider::static_displacement(pos, left.center(), xcol);
-
-            if (disp != Vec2::zero)
-            {
-                pos += disp;
-                m_vel.x = 0.0f;
-            }
-            else
-            {
-                Rect right(bounds.x + bounds.w, bounds.y, check_width, bounds.h);
-                disp = m_collider.Collider::static_displacement(pos, right.center(), xcol);
-
-                if (disp != Vec2::zero)
-                {
-                    pos += disp;
-                    m_vel.x = 0.0f;
-                }
-            }
+            pos.y = Calc::clamp(bounds.y + center.y + radius,
+                    bounds.y + center.y + bounds.h - radius, pos.y); 
         }
     }
 
     void Player::render(Engine::Renderer* renderer)
     {
-        Color c = m_dash_timer > 0.0f ? Color::blue : (m_invincible_timer > 0.0f ? Color::white :
+        const Color c = m_dash_timer > 0.0f ? Color::blue : 
+            (m_invincible_timer > 0.0f ? Color::white :
                 (m_dash_cooldown_timer <= 0.0f ? Color::green : Color::red));
 
-        renderer->circ(pos, m_collider.radius, 128, c);
+        const float radius = dashing() ? dash_shield_radius : m_collider.bounds.radius;
+        renderer->circ(pos, radius, 128, c);
     }
 }

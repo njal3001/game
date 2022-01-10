@@ -7,8 +7,13 @@ namespace SB
     using namespace Engine;
 
     Bullet::Bullet(const Vec2& pos, const Vec2& vel, const float radius)
-        : Entity(pos), vel(vel), m_collider(CircleCollider(radius))
+        : Entity(pos), vel(vel), m_collider(CircleCollider(Circ(Vec2(), radius)))
     {}
+
+    const Collider& Bullet::collider() const
+    {
+        return m_collider;
+    }
 
     void Bullet::update(const float elapsed)
     {
@@ -16,8 +21,13 @@ namespace SB
         if (player && m_collider.Collider::intersects(pos, player->pos, *player->collider()))
         {
             // Collided with player
-            player->hurt();
-            destroy();
+            if (!player->dashing())
+            {
+                player->hurt();
+                destroy();
+
+                printf("Collided with player!\n");
+            }
         }
         else
         {
@@ -25,7 +35,7 @@ namespace SB
 
             // Check bounds
             Rect bounds = m_scene->bounds;
-            BoxCollider scene_collider(Vec2(bounds.w, bounds.h));
+            BoxCollider scene_collider(Rect(0.0f, 0.0f, bounds.w, bounds.h));
             if (!m_collider.Collider::intersects(pos, Vec2(bounds.center()), scene_collider))
             {
                 destroy();
@@ -35,6 +45,6 @@ namespace SB
 
     void Bullet::render(Engine::Renderer* renderer)
     {
-        renderer->circ(pos, m_collider.radius, 128, Color(0, 255, 255));
+        renderer->circ(pos, m_collider.bounds.radius, 128, Color(0, 255, 255));
     }
 }

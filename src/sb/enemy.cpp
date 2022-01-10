@@ -7,7 +7,8 @@ namespace SB
     using namespace Engine;
 
     Enemy::Enemy(const Vec2& pos, const float radius)
-        : Entity(pos), m_collider(CircleCollider(radius)), m_shoot_cooldown_timer(0.0f)
+        : Entity(pos), m_collider(CircleCollider(Circ(Vec2(), radius))), 
+        m_shoot_cooldown_timer(0.0f)
     {}
 
     void Enemy::update(const float elapsed)
@@ -39,6 +40,6 @@ namespace SB
             c = Color(255, 255, 0);
         }
 
-        renderer->circ(pos, m_collider.radius, 128, c);
+        renderer->circ(pos, m_collider.bounds.radius, 128, c);
     }
 }

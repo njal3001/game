@@ -31,6 +31,7 @@ namespace SB
     void Scene::destroy_entity(Entity* entity)
     {
         assert(entity->m_scene == this);
+        entity->m_scene = nullptr;
         m_to_remove.push_back(entity);
     }
 
@@ -42,7 +43,10 @@ namespace SB
         {
             for (auto e : e_vec)
             {
-                e->update(elapsed);
+                if (e->m_scene == this)
+                {
+                    e->update(elapsed);
+                }
             }
         }
     }
@@ -78,7 +82,10 @@ namespace SB
         {
             for (auto e : e_vec)
             {
-                e->render(renderer);
+                if (e->m_scene == this)
+                {
+                    e->render(renderer);
+                }
             }
         }
     }

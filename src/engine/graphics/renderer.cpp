@@ -291,6 +291,20 @@ namespace Engine
         rect(r.bottom_left(), Vec2(r.w, r.h), color);
     }
 
+    void Renderer::quad(const Vec2& a, const Vec2& b, const Vec2& c, const Vec2& d, 
+            const Color color)
+    {
+        assert(m_vertex_map && m_index_map);
+
+        push_quad(a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                color, color, color, color);
+    }
+
+    void Renderer::quad(const Quad& q, const Color color)
+    {
+        quad(q.a, q.b, q.c, q.d, color);
+    }
+
     void Renderer::circ(const Vec2& center, const float radius, const unsigned int steps, const Color color)
     {
         float step_rad = Calc::TAU / (float)steps;

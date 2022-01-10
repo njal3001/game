@@ -26,10 +26,10 @@ namespace SB
                 pos2 = &pos;
             }
 
-            for (auto& axis : c1->get_axes(*pos1, *pos2))
+            for (auto& axis : c1->axes(*pos1, *pos2))
             {
-                Projection p1 = c1->get_projection(*pos1, axis);
-                Projection p2 = c2->get_projection(*pos2, axis);
+                Projection p1 = c1->projection(*pos1, axis);
+                Projection p2 = c2->projection(*pos2, axis);
 
                 if (!(p1.start <= p2.end && p1.end >= p2.start))
                 {
@@ -61,10 +61,10 @@ namespace SB
                 pos2 = &pos;
             }
 
-            for (auto& axis : c1->get_axes(*pos1, *pos2))
+            for (auto& axis : c1->axes(*pos1, *pos2))
             {
-                Projection p1 = c1->get_projection(*pos1, axis);
-                Projection p2 = c2->get_projection(*pos2, axis);
+                Projection p1 = c1->projection(*pos1, axis);
+                Projection p2 = c2->projection(*pos2, axis);
 
                 if (!(p1.start <= p2.end && p1.end >= p2.start))
                 {

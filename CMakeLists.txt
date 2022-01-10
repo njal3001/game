@@ -33,6 +33,7 @@ add_executable(sb
     src/engine/maths/rect.cpp
     src/engine/maths/circ.cpp
     src/engine/maths/line.cpp
+    src/engine/maths/quad.cpp
     
     src/engine/graphics/graphics.cpp
     src/engine/graphics/color.cpp

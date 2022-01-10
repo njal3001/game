@@ -1,11 +1,10 @@
 #pragma once
-#include "engine/maths/shape.h"
 #include "engine/maths/vec2.h"
 #include "engine/maths/line.h"
 
 namespace Engine
 {
-    struct Circ : Shape
+    struct Circ
     {
         Vec2 center;
         float radius;
@@ -13,8 +12,8 @@ namespace Engine
         Circ();
         Circ(const Vec2& center, const float radius);
 
-        bool contains(const Vec2& point) const override;
-        bool intersects(const Line& line) const override;
+        bool contains(const Vec2& point) const;
+        bool intersects(const Line& line) const;
 
         bool intersects(const Circ& other) const;
     };
