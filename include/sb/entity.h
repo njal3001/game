@@ -10,6 +10,14 @@ namespace SB
     {
         friend class Scene;
 
+    public:
+        Engine::Vec2 pos;
+
+    protected:
+        Scene* m_scene;
+        Entity* m_next;
+        Entity* m_prev;
+
     private:
         uint8_t m_type;
 
@@ -27,12 +35,7 @@ namespace SB
                 }
         };
 
-    protected:
-        Scene* m_scene;
-
     public:
-        Engine::Vec2 pos;
-
         Entity(const Engine::Vec2& pos);
         virtual ~Entity();
 
@@ -45,5 +48,8 @@ namespace SB
 
         virtual void update(const float elapsed);
         virtual void render(Engine::Renderer* renderer);
+
+        Entity* next() const;
+        Entity* prev() const;
     };
 }

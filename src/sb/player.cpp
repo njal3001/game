@@ -59,13 +59,16 @@ namespace SB
                 m_dash_timer -= elapsed;
 
                 // Dash attack
-                for (auto b : m_scene->all<Bullet>())
+                Bullet* b = m_scene->first<Bullet>();
+                while (b)
                 {
                     if (b->collider().intersects(b->pos, pos, m_collider))
                     {
                         b->destroy();
                         printf("Bullet destroyed!\n");
                     }
+                    
+                    b = (Bullet*)b->next();
                 }
 
                 // Stop dash early

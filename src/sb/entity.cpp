@@ -5,11 +5,26 @@
 namespace SB
 {
     Entity::Entity(const Engine::Vec2& pos)
-        : m_scene(nullptr), pos(pos)
+        : pos(pos), m_type(0), m_scene(nullptr), m_next(nullptr), m_prev(nullptr)
     {}
 
     Entity::~Entity()
     {}
+
+    uint8_t Entity::type() const
+    {
+        return m_type;
+    }
+    
+    Entity* Entity::next() const
+    {
+        return m_next;
+    }
+
+    Entity* Entity::prev() const
+    {
+        return m_prev;
+    }
 
     // Assumes heap allocation
     void Entity::destroy()
