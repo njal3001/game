@@ -9,12 +9,11 @@
 #include "engine/maths/circ.h"
 #include "engine/graphics/font.h"
 #include "engine/log.h"
+#include "sb/ecs.h"
 #include "sb/boxcollider.h"
 #include "sb/circlecollider.h"
-#include "sb/entity.h"
 #include "sb/player.h"
 #include "sb/enemy.h"
-#include "sb/scene.h"
 
 namespace SB
 {
@@ -53,18 +52,17 @@ namespace SB
 
             Scene scene(scene_bounds);
 
-            Player* player = new Player(Vec2(16.0f, 16.0f));
+            Entity* e_player = scene.add_entity(Vec2(16.0f, 16.0f));
+            e_player->add(new Player());
 
-            Enemy* e1 = new Enemy(Vec2(32.0f, 32.0f), 4.0f);
-            Enemy* e2 = new Enemy(Vec2(64.0f, 64.0f), 6.0f);
-            Enemy* e3 = new Enemy(Vec2(88.0f, 88.0f), 8.0f);
-            Enemy* e4 = new Enemy(Vec2(88.0f, 16.0f), 12.0f);
-
-            scene.add_entity(player);
-            scene.add_entity(e1);
-            scene.add_entity(e2);
-            scene.add_entity(e3);
-            scene.add_entity(e4);
+            Entity* e1 = scene.add_entity(Vec2(32.0f, 32.0f));
+            e1->add(new Enemy(4.0f));
+            Entity* e2 = scene.add_entity(Vec2(64.0f, 64.0f));
+            e2->add(new Enemy(6.0f));
+            Entity* e3 = scene.add_entity(Vec2(88.0f, 88.0f));
+            e3->add(new Enemy(8.0f));
+            Entity* e4 = scene.add_entity(Vec2(88.0f, 16.0f));
+            e4->add(new Enemy(12.0f));
 
             // Initialize before first update
             m_prev_ticks = Platform::ticks();

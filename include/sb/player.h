@@ -1,10 +1,10 @@
 #pragma once
-#include "sb/entity.h"
+#include "sb/ecs.h"
 #include "sb/circlecollider.h"
 
 namespace SB
 {
-    class Player : public Entity
+    class Player : public Component
     {
     private:
         CircleCollider m_collider;
@@ -33,7 +33,7 @@ namespace SB
         static constexpr float invincible_time = 1.0f;
 
     public:
-        Player(const Engine::Vec2& pos);
+        Player();
 
         const Collider* collider() const;
 

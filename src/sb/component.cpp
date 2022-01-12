@@ -1,10 +1,12 @@
-#include "sb/component.h"
-#include "sb/entity.h"
+#include "sb/ecs.h"
 
 namespace SB
 {
-    Component::Component(Entity* entity)
-        : m_entity(entity), m_next(nullptr), m_prev(nullptr)
+    Component::Component()
+        : m_type(0), m_alive(true), m_entity(nullptr)
+    {}
+
+    Component::~Component()
     {}
 
     uint8_t Component::type() const
@@ -17,18 +19,22 @@ namespace SB
         return m_entity;
     }
 
-    Component* Component::next() const
+    Scene* Component::scene() const
     {
-        return m_next;
+        return (m_entity ? m_entity->scene() : nullptr);
     }
 
-    Component* Component::prev() const
+    void Component::destroy()
     {
-        return m_prev;
+        m_alive = false;
     }
 
-    void destroy()
-    {
-        // TODO: Call scene function
-    }
+    void Component::awake()
+    {}
+
+    void Component::update(const float elapsed)
+    {}
+
+    void Component::render(Engine::Renderer* renderer)
+    {}
 }

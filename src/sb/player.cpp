@@ -1,7 +1,6 @@
 #include "sb/player.h"
 #include "engine/input.h"
 #include "engine/maths/calc.h"
-#include "sb/scene.h"
 #include "sb/boxcollider.h"
 #include "sb/bullet.h"
 #include <vector>
@@ -10,8 +9,8 @@ namespace SB
 {
     using namespace Engine;
 
-    Player::Player(const Vec2& pos)
-        : Entity(pos), m_collider(CircleCollider(Circ(Vec2(), collider_radius))), 
+    Player::Player()
+        : m_collider(CircleCollider(Circ(Vec2(), collider_radius))), 
         m_facing(Vec2(1.0f, 0.0f)), m_dash_timer(0.0f), 
         m_dash_cooldown_timer(0.0f), m_dash_stopped(false), m_invincible_timer(0.0f)
     {}
@@ -59,16 +58,14 @@ namespace SB
                 m_dash_timer -= elapsed;
 
                 // Dash attack
-                Bullet* b = m_scene->first<Bullet>();
-                while (b)
+                auto b_vec = scene()->all<Bullet>();
+                for (auto b : b_vec)
                 {
-                    if (b->collider().intersects(b->pos, pos, m_collider))
+                    if (b->collider().intersects(b->entity()->pos, m_entity->pos, m_collider))
                     {
                         b->destroy();
                         printf("Bullet destroyed!\n");
                     }
-                    
-                    b = (Bullet*)b->next();
                 }
 
                 // Stop dash early
@@ -94,7 +91,7 @@ namespace SB
             }
         }
 
-        pos += m_vel * elapsed;
+        m_entity->pos += m_vel * elapsed;
 
         // Dash
         if (Input::controller_button_state(ControllerButton::A).pressed 
@@ -109,15 +106,15 @@ namespace SB
 
         // Check bounds
         {
-            const Rect bounds = m_scene->bounds;
+            const Rect bounds = scene()->bounds;
 
             const Vec2 center = m_collider.bounds.center;
             const float radius = m_collider.bounds.radius;
-            pos.x = Calc::clamp(bounds.x + center.x + radius,
-                    bounds.x + center.x + bounds.w - radius, pos.x); 
+            m_entity->pos.x = Calc::clamp(bounds.x + center.x + radius,
+                    bounds.x + center.x + bounds.w - radius, m_entity->pos.x); 
 
-            pos.y = Calc::clamp(bounds.y + center.y + radius,
-                    bounds.y + center.y + bounds.h - radius, pos.y); 
+            m_entity->pos.y = Calc::clamp(bounds.y + center.y + radius,
+                    bounds.y + center.y + bounds.h - radius, m_entity->pos.y); 
         }
     }
 
@@ -128,6 +125,6 @@ namespace SB
                 (m_dash_cooldown_timer <= 0.0f ? Color::green : Color::red));
 
         const float radius = dashing() ? dash_shield_radius : m_collider.bounds.radius;
-        renderer->circ(pos, radius, 128, c);
+        renderer->circ(m_entity->pos, radius, 128, c);
     }
 }

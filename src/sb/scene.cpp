@@ -1,8 +1,5 @@
-#include "sb/scene.h"
+#include "sb/ecs.h"
 #include <algorithm>
-#include "engine/log.h"
-#include "sb/entity.h"
-#include <assert.h>
 
 namespace SB
 {
@@ -14,69 +11,83 @@ namespace SB
 
     Scene::~Scene()
     {
-        for (auto& ll : m_entities)
+        for (auto e : m_to_add)
         {
-            Entity* e = ll.head;
-            while (e)
-            {
-                Entity* next = e->m_next;
-
-                delete e;
-                e = next;
-            }
+            delete e;
         }
 
-        for (auto e : m_destroyed)
+        for (auto e : m_entities)
         {
             delete e;
         }
     }
 
-    void Scene::destroy_entity(Entity* entity)
+    Entity* Scene::add_entity(const Engine::Vec2& pos)
     {
-        assert(entity->m_scene == this);
-        entity->m_scene = nullptr;
-        m_to_remove.push_back(entity);
+        Entity* entity = new Entity(pos);
+        entity->m_scene = this;
+
+        m_to_add.push_back(entity);
+
+        return entity;
+    }
+
+    void Scene::track_component(Component* component)
+    {
+        m_components[component->type()].push_back(component);
+    }
+
+    void Scene::untrack_component(Component* component)
+    {
+        assert(component->scene() == this);
+
+        auto& c_vec = m_components[component->m_type];
+        c_vec.erase(std::find(std::begin(c_vec), std::end(c_vec), component));
     }
 
     void Scene::update(float elapsed)
     {
         update_lists();
 
-        for (auto& ll : m_entities)
+        for (auto e : m_entities)
         {
-            Entity* e = ll.head;
-            while (e)
-            {
-                if (e->m_scene == this)
-                {
-                    e->update(elapsed);
-                }
+            e->update_lists();
+        }
 
-                e = e->m_next;
+        for (auto& c_vec : m_components)
+        {
+            for (auto c : c_vec)
+            {
+                if (c->scene() == this)
+                {
+                    c->update(elapsed);
+                }
             }
         }
     }
 
     void Scene::update_lists()
     {
-        for (auto entity : m_to_remove)
+        auto it = m_entities.begin();
+
+        while (it != m_entities.end())
         {
-            auto& ll = m_entities[entity->m_type];
-            ll.remove(entity);
+            if (!(*it)->m_alive)
+            {
+                auto next = m_entities.erase(it);
+                delete *it;
 
-            entity->m_scene = nullptr;
-            m_destroyed.push_back(entity);
+                it = next;
+            }
+            else
+            {
+                it++;
+            }
         }
-
-        m_to_remove.clear();
 
         for (auto entity : m_to_add)
         {
-            auto& ll = m_entities[entity->m_type];
-            ll.insert(entity);
-
-            entity->awake();
+            m_entities.push_back(entity);
         }
 
         m_to_add.clear();
@@ -84,18 +95,14 @@ namespace SB
 
     void Scene::render(Engine::Renderer* renderer)
     {
-        for (const auto& ll : m_entities)
+        for (const auto& c_vec : m_components)
         {
-            Entity* e = ll.head;
-
-            while (e)
+            for (auto c : c_vec)
             {
-                if (e->m_scene == this)
+                if (c->m_alive)
                 {
-                    e->render(renderer);
+                    c->render(renderer);
                 }
-
-                e = e->m_next;
             }
         }
     }

@@ -1,21 +1,20 @@
 #pragma once
-#include "sb/entity.h"
+#include "sb/ecs.h"
 #include "sb/player.h"
 #include "sb/circlecollider.h"
 
 namespace SB
 {
-    class Bullet : public Entity
+    class Bullet : public Component
     {
     public:
         Engine::Vec2 vel;
 
     private:
         CircleCollider m_collider;
-        Player* m_player;
 
     public:
-        Bullet(const Engine::Vec2& pos, const Engine::Vec2& vel, const float radius);
+        Bullet(const Engine::Vec2& vel, const float radius);
 
         const Collider& collider() const;
 

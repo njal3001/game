@@ -16,10 +16,11 @@ add_executable(sb
     src/sb/collider.cpp
     src/sb/boxcollider.cpp
     src/sb/circlecollider.cpp
+    src/sb/scene.cpp
     src/sb/entity.cpp
+    src/sb/component.cpp
     src/sb/player.cpp
     src/sb/enemy.cpp
-    src/sb/scene.cpp
     src/sb/bullet.cpp
 
     src/engine/platform.cpp 
