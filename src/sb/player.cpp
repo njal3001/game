@@ -63,7 +63,7 @@ namespace SB
                 {
                     if (b->collider().intersects(b->entity()->pos, m_entity->pos, m_collider))
                     {
-                        b->destroy();
+                        b->entity()->destroy();
                         printf("Bullet destroyed!\n");
                     }
                 }

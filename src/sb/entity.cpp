@@ -25,6 +25,16 @@ namespace SB
         return m_scene;
     }
 
+    void Entity::removed()
+    {
+        for (auto c : m_components)
+        {
+            m_scene->untrack_component(c);
+        }
+
+        m_scene = nullptr;
+    }
+
     void Entity::destroy()
     {
         m_alive = false;

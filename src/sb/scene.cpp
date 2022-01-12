@@ -72,12 +72,13 @@ namespace SB
 
         while (it != m_entities.end())
         {
-            if (!(*it)->m_alive)
+            Entity* e = *it;
+            if (!e->m_alive)
             {
-                auto next = m_entities.erase(it);
-                delete *it;
+                it = m_entities.erase(it);
 
-                it = next;
+                e->removed();
+                delete e;
             }
             else
             {

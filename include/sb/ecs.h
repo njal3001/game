@@ -80,6 +80,7 @@ namespace SB
         void destroy();
 
     private:
+        void removed();
         void update_lists();
     };
 
