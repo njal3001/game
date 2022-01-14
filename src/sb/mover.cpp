@@ -31,6 +31,8 @@ namespace SB
                     {
                         m_entity->pos += disp;
 
+                        Vec2 prev_vel = vel;
+
                         // Correct velocity
                         const Vec2 disp_norm = disp.norm();
                         const Vec2 vel_norm = vel.norm();
@@ -43,7 +45,7 @@ namespace SB
 
                         if (on_hit)
                         {
-                            on_hit(this, other, disp);
+                            on_hit(this, other, disp_norm, prev_vel);
                         }
                     }
                 }

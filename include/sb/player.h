@@ -10,9 +10,9 @@ namespace SB
         Engine::Vec2 m_facing;
 
         CircleCollider* m_dash_collider;
+        bool m_is_dashing;
         float m_dash_timer;
         float m_dash_cooldown_timer;
-        Engine::Vec2 m_dash_target;
         bool m_dash_stopped;
 
         float m_invincible_timer;
@@ -23,7 +23,6 @@ namespace SB
         static constexpr float swim_deaccel = 427.0f;
 
         static constexpr float dash_speed = 126.0f;
-        static constexpr float dash_time = 0.3f;
         static constexpr float dash_cooldown = 1.0f;
         static constexpr float dash_min_time = 0.1f;
         static constexpr float dash_max_time = 0.25f;
@@ -36,6 +35,8 @@ namespace SB
 
         void hurt();
         bool dashing() const;
+
+        void on_hit(const Engine::Vec2& dir, const Engine::Vec2& prev_vel);
 
         void awake() override;
         void update(const float elapsed) override;

@@ -30,7 +30,7 @@ namespace SB
         m->vel = vel;
         m->stop_mask |= (Mask::Player | Mask::PlayerDash);
 
-        m->on_hit = [](Mover* mover, Collider* other, const Vec2& disp)
+        m->on_hit = [](Mover* mover, Collider* other, const Vec2& dir, const Vec2& prev_vel)
         {
             if (other->mask & (Mask::Solid | Mask::PlayerDash))
             {

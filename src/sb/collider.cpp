@@ -214,4 +214,20 @@ namespace SB
 
         return displace(v1, v2, a1, a2, m1, m2);
     }
+
+    bool Collider::check(const uint32_t mask) const
+    {
+        std::vector<Collider*> out;
+        scene()->all(&out, mask);
+
+        for (auto c : out)
+        {
+            if (c->intersects(*this))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

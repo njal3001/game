@@ -61,6 +61,8 @@ namespace SB
 
         bool intersects(const Engine::Rect& rect) const;
 
+        bool check(const uint32_t mask) const;
+
     private:
         static Projection projection(const std::vector<Engine::Vec2>& vertices, 
                 const Engine::Vec2& axis, 
