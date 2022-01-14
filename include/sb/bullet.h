@@ -13,7 +13,7 @@ namespace SB
     public:
         Bullet(const Engine::Vec2& vel);
 
-        void update(const float elapsed) override;
+        /* void update(const float elapsed) override; */
         void render(Engine::Renderer* renderer) override;
 
         static Entity* create(Scene* scene, const Engine::Vec2& pos,

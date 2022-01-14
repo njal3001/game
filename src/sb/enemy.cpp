@@ -53,6 +53,7 @@ namespace SB
         e->add(new Enemy());
 
         Collider* c = new CircleCollider(Circ(Vec2(), radius));
+        c->mask = Mask::Enemy;
         e->add(c);
 
         return e;

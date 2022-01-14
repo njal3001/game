@@ -19,6 +19,7 @@ add_executable(sb
     src/sb/scene.cpp
     src/sb/entity.cpp
     src/sb/component.cpp
+    src/sb/mover.cpp
     src/sb/player.cpp
     src/sb/enemy.cpp
     src/sb/bullet.cpp

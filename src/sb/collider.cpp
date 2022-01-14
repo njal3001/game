@@ -11,6 +11,10 @@ namespace SB
     const std::vector<Vec2> Collider::rect_axes =
     { Vec2(1.0f, 0.0f), Vec2(0.0f, 1.0f) };
 
+    Collider::Collider()
+        : mask(Mask::None)
+    {}
+
     Vec2 Collider::circ_axis(const Circ& circ, const std::vector<Vec2>& other_vertices)
     {
         Vec2 min_vertex;

@@ -1,5 +1,6 @@
 #include "sb/ecs.h"
 #include <algorithm>
+#include <vector>
 
 namespace SB
 {
@@ -47,21 +48,23 @@ namespace SB
 
     void Entity::update_lists()
     {
-        auto it = m_components.begin();
-
-        while (it != m_components.end())
         {
-            Component* c = *it;
-            if (!c->m_alive)
-            {
-                it = m_components.erase(it);
+            auto it = m_components.begin();
 
-                m_scene->untrack_component(c);
-                delete c;
-            }
-            else
+            while (it != m_components.end())
             {
-                it++;
+                Component* c = *it;
+                if (!c->m_alive)
+                {
+                    it = m_components.erase(it);
+
+                    m_scene->untrack_component(c);
+                    delete c;
+                }
+                else
+                {
+                    it++;
+                }
             }
         }
 
@@ -70,10 +73,19 @@ namespace SB
             c->m_entity = this;
             m_components.push_back(c);
             m_scene->track_component(c);
-
-            c->awake();
         }
 
+        // Need to wake components after clearing because new components
+        // can be added in awake function
+        
+        std::vector<Component*> added;
+        added.insert(added.begin(), m_to_add.begin(), m_to_add.end());
+
         m_to_add.clear();
+
+        for (auto c : added)
+        {
+            c->awake();
+        }
     }
 }

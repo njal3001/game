@@ -1,5 +1,6 @@
 #include "sb/bullet.h"
 #include "sb/boxcollider.h"
+#include "sb/mover.h"
 
 namespace SB
 {
@@ -8,37 +9,6 @@ namespace SB
     Bullet::Bullet(const Vec2& vel)
         : vel(vel)
     {}
-
-    void Bullet::update(const float elapsed)
-    {
-        const Collider* collider = get<Collider>();
-
-        Player* player = scene()->first<Player>();
-        const Collider* p_collider = player->get<Collider>();
-
-        if (player && collider->intersects(*p_collider))
-        {
-            // Collided with player
-            if (!player->dashing())
-            {
-                player->hurt();
-                destroy();
-
-                printf("Collided with player!\n");
-            }
-        }
-        else
-        {
-            m_entity->pos += vel * elapsed;
-
-            // Check bounds
-            Rect bounds = scene()->bounds;
-            if (!collider->intersects(bounds))
-            {
-                destroy();
-            }
-        }
-    }
 
     void Bullet::render(Engine::Renderer* renderer)
     {
@@ -54,6 +24,30 @@ namespace SB
 
         Collider* c = new CircleCollider(Circ(Vec2(), radius));
         e->add(c);
+
+        Mover* m = new Mover();
+        m->collider = c;
+        m->vel = vel;
+        m->stop_mask |= (Mask::Player | Mask::PlayerDash);
+
+        m->on_hit = [](Mover* mover, Collider* other, const Vec2& disp)
+        {
+            if (other->mask & (Mask::Solid | Mask::PlayerDash))
+            {
+                mover->entity()->destroy();
+                if (other->mask & Mask::PlayerDash)
+                {
+                    printf("Bullet dash collision!\n");
+                }
+            }
+            else if (other->mask & Mask::Player)
+            {
+                mover->entity()->destroy();
+                other->entity()->get<Player>()->hurt();
+            }
+        };
+
+        e->add(m);
 
         return e;
     }

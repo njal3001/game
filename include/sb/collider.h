@@ -8,23 +8,35 @@
 
 namespace SB
 {
+    struct Mask
+    {
+        static constexpr uint32_t None = 0;
+        static constexpr uint32_t Solid = 1;
+        static constexpr uint32_t Enemy = 1 << 1;
+        static constexpr uint32_t Player = 1 << 2;
+        static constexpr uint32_t PlayerDash = 1 << 3;
+    };
+
     // TODO: This turned into an overcomplicated mess...
     // Should redo it all at some point
     class Collider : public Component
     {
-    protected:
+    public:
+        uint32_t mask;
+
+    private:
         struct Projection
         {
             float start;
             float end;
         };
 
+    protected:
         static const std::vector<Engine::Vec2> rect_axes;
 
     protected:
         virtual std::vector<Engine::Vec2> axes(const std::vector<Engine::Vec2>& other_vertices) const = 0;
         virtual std::vector<Engine::Vec2> vertices() const = 0;
-        //virtual Projection projection(const Engine::Vec2& axis) const = 0;
 
         // Some collider projections are axis dependent and use a mapper
         virtual std::function<std::vector<Engine::Vec2> (const Engine::Vec2& vertex, 
@@ -34,6 +46,7 @@ namespace SB
         static std::vector<Engine::Vec2> rect_vertices(const Engine::Rect& rect);
 
     public:
+        Collider();
         // Colliders offset from entity position
         virtual Engine::Vec2 offset() const = 0;
 

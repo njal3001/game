@@ -60,6 +60,23 @@ namespace SB
             Enemy::create(&scene, Vec2(88.0f, 88.0f), 8.0f);
             Enemy::create(&scene, Vec2(88.0f, 16.0f), 12.0f);
 
+            // Create walls
+            {
+                const float thickness = 1000.0f;
+
+                Rect bottom(scene_bounds.x, scene_bounds.y - thickness, scene_bounds.w, thickness);
+                create_wall(&scene, bottom);
+
+                Rect top(scene_bounds.x, scene_bounds.y + scene_bounds.h, scene_bounds.w, thickness);
+                create_wall(&scene, top);
+
+                Rect left(scene_bounds.x - thickness, scene_bounds.y, thickness, scene_bounds.h);
+                create_wall(&scene, left);
+                
+                Rect right(scene_bounds.x + scene_bounds.w, scene_bounds.y, thickness, scene_bounds.h);
+                create_wall(&scene, right);
+            }
+
             // Initialize before first update
             m_prev_ticks = Platform::ticks();
 
@@ -82,5 +99,16 @@ namespace SB
         }
 
         Platform::shutdown();
+    }
+
+    Entity* Game::create_wall(Scene* scene, const Rect& bounds)
+    {
+        Entity* e = scene->add_entity(bounds.center());
+
+        Collider* c = new BoxCollider(Rect(0.0f, 0.0f, bounds.w, bounds.h));
+        c->mask = Mask::Solid;
+        e->add(c);
+
+        return e;
     }
 }

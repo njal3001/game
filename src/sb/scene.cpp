@@ -1,5 +1,6 @@
 #include "sb/ecs.h"
 #include <algorithm>
+#include "sb/collider.h"
 
 namespace SB
 {
@@ -104,6 +105,21 @@ namespace SB
                 {
                     c->render(renderer);
                 }
+            }
+        }
+    }
+
+    void Scene::all(std::vector<Collider*>* out, const uint32_t mask) const
+    {
+        const uint8_t type = Component::Types::id<Collider>();
+        auto& comp_vec = m_components[type];
+
+        for (Component* comp : comp_vec)
+        {
+            auto collider = (Collider*)comp;
+            if (collider->m_alive && (collider->mask & mask))
+            {
+                out->push_back(collider);
             }
         }
     }

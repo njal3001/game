@@ -9,6 +9,11 @@ namespace SB
     Component::~Component()
     {}
 
+    bool Component::alive() const
+    {
+        return m_alive;
+    }
+
     uint8_t Component::type() const
     {
         return m_type;

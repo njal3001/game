@@ -37,6 +37,7 @@ namespace SB
         Component();
         virtual ~Component();
 
+        bool alive() const;
         uint8_t type() const;
 
         Entity* entity() const;
@@ -88,6 +89,8 @@ namespace SB
         void update_lists();
     };
 
+    class Collider;
+
     class Scene
     {
     public:
@@ -122,6 +125,8 @@ namespace SB
 
         template<class T>
         void all(std::vector<T*>* out) const;
+
+        void all(std::vector<Collider*>* out, const uint32_t mask) const;
 
     private:
         void update_lists();
@@ -166,11 +171,8 @@ namespace SB
         const uint8_t type = Component::Types::id<T>();
         auto& c_vec = m_components[type];
 
-        auto it = c_vec.begin();
-
-        while (it != c_vec.end())
+        for (auto c : c_vec)
         {
-            auto c = *it;
             if (c->m_alive)
             {
                 return (T*)c;
@@ -186,7 +188,6 @@ namespace SB
         const uint8_t type = Component::Types::id<T>();
         auto& c_vec = m_components[type];
 
-        // TODO: Slow
         for (auto c : c_vec)
         {
             if (c->m_alive)

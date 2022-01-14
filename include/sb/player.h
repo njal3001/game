@@ -7,9 +7,9 @@ namespace SB
     class Player : public Component
     {
     private:
-        Engine::Vec2 m_vel;
         Engine::Vec2 m_facing;
 
+        CircleCollider* m_dash_collider;
         float m_dash_timer;
         float m_dash_cooldown_timer;
         Engine::Vec2 m_dash_target;
@@ -37,6 +37,7 @@ namespace SB
         void hurt();
         bool dashing() const;
 
+        void awake() override;
         void update(const float elapsed) override;
         void render(Engine::Renderer* renderer) override;
 

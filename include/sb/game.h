@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "ecs.h"
 
 namespace SB
 {
@@ -15,5 +16,7 @@ namespace SB
 
     private:
         void limit_fps();
+
+        static Entity* create_wall(Scene* scene, const Engine::Rect& bounds);
     };
 }
