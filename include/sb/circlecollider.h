@@ -18,8 +18,7 @@ namespace SB
         bool intersects(const Engine::Line& line) const override;
 
     protected:
-        std::vector<Engine::Vec2> axes(const Collider& other) const override;
-        //Projection projection(const Engine::Vec2& axis) const override;
+        std::vector<Engine::Vec2> axes(const std::vector<Engine::Vec2>& other_vertices) const override;
         std::vector<Engine::Vec2> vertices() const override;
 
         std::function<std::vector<Engine::Vec2> (const Engine::Vec2& vertex,

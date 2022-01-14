@@ -8,6 +8,8 @@
 
 namespace SB
 {
+    // TODO: This turned into an overcomplicated mess...
+    // Should redo it all at some point
     class Collider : public Component
     {
     protected:
@@ -20,7 +22,7 @@ namespace SB
         static const std::vector<Engine::Vec2> rect_axes;
 
     protected:
-        virtual std::vector<Engine::Vec2> axes(const Collider& other) const = 0;
+        virtual std::vector<Engine::Vec2> axes(const std::vector<Engine::Vec2>& other_vertices) const = 0;
         virtual std::vector<Engine::Vec2> vertices() const = 0;
         //virtual Projection projection(const Engine::Vec2& axis) const = 0;
 
@@ -28,7 +30,7 @@ namespace SB
         virtual std::function<std::vector<Engine::Vec2> (const Engine::Vec2& vertex, 
                 const Engine::Vec2& axis)> vertex_mapper() const = 0;
 
-        static Engine::Vec2 circ_axis(const Engine::Circ& circ, const Collider& other);
+        static Engine::Vec2 circ_axis(const Engine::Circ& circ, const std::vector<Engine::Vec2>& other_vertices);
         static std::vector<Engine::Vec2> rect_vertices(const Engine::Rect& rect);
 
     public:
@@ -45,7 +47,6 @@ namespace SB
         Engine::Vec2 displace(const Collider& other) const;
 
         bool intersects(const Engine::Rect& rect) const;
-        bool intersects(const Engine::Circ& circ) const;
 
     private:
         static Projection projection(const std::vector<Engine::Vec2>& vertices, 

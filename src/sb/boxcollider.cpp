@@ -28,7 +28,7 @@ namespace SB
         return rect.intersects(line);
     }
     
-    std::vector<Vec2> BoxCollider::axes(const Collider& other) const
+    std::vector<Vec2> BoxCollider::axes(const std::vector<Vec2>& other_vertices) const
     {
         return Collider::rect_axes;
     }
@@ -44,28 +44,4 @@ namespace SB
     {
         return nullptr;
     }
-
-    /* Collider::Projection BoxCollider::projection(const Vec2& axis) const */
-    /* { */
-    /*     Rect rect = bounds.offset(m_entity->pos - (Vec2(bounds.w, bounds.h) / 2.0f)); */
-
-    /*     const float p0 = rect.top_left().dot(axis); */
-    /*     const float p1 = rect.bottom_left().dot(axis); */
-    /*     const float p2 = rect.top_right().dot(axis); */
-    /*     const float p3 = rect.bottom_right().dot(axis); */
-
-    /*     float min = p0; */
-
-    /*     min = Calc::min(min, p1); */
-    /*     min = Calc::min(min, p2); */
-    /*     min = Calc::min(min, p3); */
-
-    /*     float max = p0; */
-
-    /*     max = Calc::max(max, p1); */
-    /*     max = Calc::max(max, p2); */
-    /*     max = Calc::max(max, p3); */
-
-    /*     return {min, max}; */
-    /* } */
 }

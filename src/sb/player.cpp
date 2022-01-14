@@ -106,16 +106,13 @@ namespace SB
         std::vector<Enemy*> enemies;
         scene()->all(&enemies);
 
+        // Collide with enemies
         for (auto e : enemies)
         {
             Collider* c = e->get<Collider>();
 
-            /* Vec2 disp = collider->displace(*c); */
-            /* printf("disp: (%f, %f)\n", disp.x, disp.y); */
-            /* m_entity->pos += disp; */
-            
-            bool i = collider->Collider::intersects(*c);
-            /* printf("intersects: %d\n", i); */
+            Vec2 disp = collider->displace(*c);
+            m_entity->pos += disp;
         }
 
         // Check bounds

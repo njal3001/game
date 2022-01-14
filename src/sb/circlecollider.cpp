@@ -1,6 +1,5 @@
 #include "sb/circlecollider.h"
 #include "engine/maths/calc.h"
-#include <assert.h>
 
 namespace SB
 {
@@ -27,10 +26,10 @@ namespace SB
         return circ.intersects(line);
     }
 
-    std::vector<Vec2> CircleCollider::axes(const Collider& other) const
+    std::vector<Vec2> CircleCollider::axes(const std::vector<Vec2>& other_vertices) const
     {
         std::vector<Vec2> axes;
-        axes.push_back(circ_axis(bounds.offset(m_entity->pos), other));
+        axes.push_back(circ_axis(bounds.offset(m_entity->pos), other_vertices));
 
         return axes;
     }
@@ -55,16 +54,4 @@ namespace SB
             return mapped;
         };
     }
-
-    /* Collider::Projection CircleCollider::projection(const Vec2& axis) const */
-    /* { */
-    /*     const Vec2 front = bounds.center + m_entity->pos + (axis * bounds.radius); */
-    /*     const Vec2 back = bounds.center + m_entity->pos - (axis * bounds.radius); */
-
-    /*     const float p0 = front.dot(axis); */
-    /*     const float p1 = back.dot(axis); */
-
-    /*     // TODO: Could do with one if else instead */
-    /*     return {Calc::min(p0, p1), Calc::max(p0, p1)}; */
-    /* } */
 }

@@ -31,15 +31,12 @@ namespace SB
         {
             m_entity->pos += vel * elapsed;
 
-            // TODO: Fix
             // Check bounds
-            /* Rect bounds = scene()->bounds; */
-            /* BoxCollider scene_collider(Rect(0.0f, 0.0f, bounds.w, bounds.h)); */
-            /* if (!m_collider.Collider::intersects(m_entity->pos, Vec2(bounds.center()), */
-            /*             scene_collider)) */
-            /* { */
-            /*     destroy(); */
-            /* } */
+            Rect bounds = scene()->bounds;
+            if (!collider->intersects(bounds))
+            {
+                destroy();
+            }
         }
     }
 
