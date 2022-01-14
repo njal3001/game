@@ -4,21 +4,16 @@
 #include "sb/boxcollider.h"
 #include "sb/bullet.h"
 #include <vector>
+#include "sb/enemy.h"
 
 namespace SB
 {
     using namespace Engine;
 
     Player::Player()
-        : m_collider(CircleCollider(Circ(Vec2(), collider_radius))), 
-        m_facing(Vec2(1.0f, 0.0f)), m_dash_timer(0.0f), 
+        : m_facing(Vec2(1.0f, 0.0f)), m_dash_timer(0.0f),
         m_dash_cooldown_timer(0.0f), m_dash_stopped(false), m_invincible_timer(0.0f)
     {}
-
-    const Collider* Player::collider() const
-    {
-        return &m_collider;
-    }
 
     void Player::hurt()
     {
@@ -36,6 +31,8 @@ namespace SB
 
     void Player::update(const float elapsed)
     {
+        CircleCollider* collider = (CircleCollider*)get<Collider>();
+
         m_invincible_timer -= elapsed;
 
         {
@@ -58,10 +55,12 @@ namespace SB
                 m_dash_timer -= elapsed;
 
                 // Dash attack
-                auto b_vec = scene()->all<Bullet>();
-                for (auto b : b_vec)
+                std::vector<Bullet*> bullets;
+                scene()->all(&bullets);
+                for (auto b : bullets)
                 {
-                    if (b->collider().intersects(b->entity()->pos, m_entity->pos, m_collider))
+                    Collider* b_collider = b->get<Collider>();
+                    if (b_collider->intersects(*collider))
                     {
                         b->entity()->destroy();
                         printf("Bullet destroyed!\n");
@@ -104,12 +103,27 @@ namespace SB
             m_dash_stopped = false;
         }
 
+        std::vector<Enemy*> enemies;
+        scene()->all(&enemies);
+
+        for (auto e : enemies)
+        {
+            Collider* c = e->get<Collider>();
+
+            /* Vec2 disp = collider->displace(*c); */
+            /* printf("disp: (%f, %f)\n", disp.x, disp.y); */
+            /* m_entity->pos += disp; */
+            
+            bool i = collider->Collider::intersects(*c);
+            /* printf("intersects: %d\n", i); */
+        }
+
         // Check bounds
         {
             const Rect bounds = scene()->bounds;
 
-            const Vec2 center = m_collider.bounds.center;
-            const float radius = m_collider.bounds.radius;
+            const Vec2 center = collider->bounds.center;
+            const float radius = collider->bounds.radius;
             m_entity->pos.x = Calc::clamp(bounds.x + center.x + radius,
                     bounds.x + center.x + bounds.w - radius, m_entity->pos.x); 
 
@@ -120,11 +134,25 @@ namespace SB
 
     void Player::render(Engine::Renderer* renderer)
     {
+        const CircleCollider* collider = (CircleCollider*)get<Collider>();
+
         const Color c = m_dash_timer > 0.0f ? Color::blue : 
             (m_invincible_timer > 0.0f ? Color::white :
                 (m_dash_cooldown_timer <= 0.0f ? Color::green : Color::red));
 
-        const float radius = dashing() ? dash_shield_radius : m_collider.bounds.radius;
+        const float radius = dashing() ? dash_shield_radius : collider->bounds.radius;
+
         renderer->circ(m_entity->pos, radius, 128, c);
+    }
+
+    Entity* Player::create(Scene* scene, const Engine::Vec2& pos)
+    {
+        Entity* e = scene->add_entity(pos);
+        e->add(new Player());
+
+        Collider* c = new CircleCollider(Circ(Vec2(), collider_radius));
+        e->add(c);
+
+        return e;
     }
 }

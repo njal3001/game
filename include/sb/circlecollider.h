@@ -12,14 +12,17 @@ namespace SB
     public:
         CircleCollider(const Engine::Circ& bounds);
 
-        bool contains(const Engine::Vec2& pos, const Engine::Vec2& point) const override;
-        bool intersects(const Engine::Vec2& pos, const Engine::Line& line) const override;
+        Engine::Vec2 offset() const override;
 
-        void render(const Engine::Vec2& pos, Engine::Renderer* renderer) const override;
+        bool contains(const Engine::Vec2& point) const override;
+        bool intersects(const Engine::Line& line) const override;
 
     protected:
-        std::vector<Engine::Vec2> axes(const Engine::Vec2& pos,
-                const Engine::Vec2& pos_other) const override;
-        Projection projection(const Engine::Vec2& pos, const Engine::Vec2& axis) const override;
+        std::vector<Engine::Vec2> axes(const Collider& other) const override;
+        //Projection projection(const Engine::Vec2& axis) const override;
+        std::vector<Engine::Vec2> vertices() const override;
+
+        std::function<std::vector<Engine::Vec2> (const Engine::Vec2& vertex,
+                const Engine::Vec2& axis)> vertex_mapper() const override;
     };
 }

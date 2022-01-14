@@ -1,5 +1,6 @@
 #pragma once
 #include <assert.h>
+#include <vector>
 #include "engine/graphics/renderer.h"
 
 namespace SB
@@ -40,6 +41,9 @@ namespace SB
 
         Entity* entity() const;
         Scene* scene() const;
+
+        template <class T>
+        T* get() const;
 
         virtual void awake();
         virtual void destroy();
@@ -117,11 +121,18 @@ namespace SB
         T* first() const;
 
         template<class T>
-        std::vector<T*> all() const;
+        void all(std::vector<T*>* out) const;
 
     private:
         void update_lists();
     };
+
+    template <class T>
+    T* Component::get() const
+    {
+        assert(m_entity);
+        return m_entity->get<T>();
+    }
 
     template <class T>
     void Entity::add(T* component)
@@ -142,7 +153,7 @@ namespace SB
         {
             if (c->m_type == type)
             {
-                return c;
+                return (T*)c;
             }
         }
 
@@ -170,21 +181,18 @@ namespace SB
     }
 
     template<class T>
-    std::vector<T*> Scene::all() const
+    void Scene::all(std::vector<T*>* out) const
     {
         const uint8_t type = Component::Types::id<T>();
         auto& c_vec = m_components[type];
 
         // TODO: Slow
-        std::vector<T*> v_all;
         for (auto c : c_vec)
         {
             if (c->m_alive)
             {
-                v_all.push_back((T*)c);
+                out->push_back((T*)c);
             }
         }
-
-        return v_all;
     }
 }

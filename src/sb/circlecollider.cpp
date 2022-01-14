@@ -10,41 +10,61 @@ namespace SB
         : bounds(bounds)
     {}
 
-    bool CircleCollider::contains(const Engine::Vec2& pos, const Engine::Vec2& point) const
+    Engine::Vec2 CircleCollider::offset() const
     {
-        Circ circ(pos + bounds.center, bounds.radius);
+        return bounds.center;
+    }
+
+    bool CircleCollider::contains(const Engine::Vec2& point) const
+    {
+        const Circ circ(m_entity->pos + bounds.center, bounds.radius);
         return circ.contains(point);
     }
 
-    bool CircleCollider::intersects(const Engine::Vec2& pos, const Engine::Line& line) const
+    bool CircleCollider::intersects(const Engine::Line& line) const
     {
-        Circ circ(pos + bounds.center, bounds.radius);
+        const Circ circ(m_entity->pos + bounds.center, bounds.radius);
         return circ.intersects(line);
     }
 
-    std::vector<Vec2> CircleCollider::axes(const Vec2& pos, const Vec2& other_pos) const
+    std::vector<Vec2> CircleCollider::axes(const Collider& other) const
     {
         std::vector<Vec2> axes;
-        Vec2 diff = bounds.center + pos - other_pos;
-        axes.push_back(diff.norm());
+        axes.push_back(circ_axis(bounds.offset(m_entity->pos), other));
 
         return axes;
     }
 
-    Collider::Projection CircleCollider::projection(const Vec2& pos, const Vec2& axis) const
+    std::vector<Vec2> CircleCollider::vertices() const
     {
-        const Vec2 front = bounds.center + pos + (axis * bounds.radius);
-        const Vec2 back = bounds.center + pos - (axis * bounds.radius);
-
-        float p0 = front.dot(axis);
-        float p1 = back.dot(axis);
-
-        // TODO: Could do with one if else instead
-        return {Calc::min(p0, p1), Calc::max(p0, p1)};
+        std::vector<Vec2> v = { m_entity->pos + bounds.center };
+        return v;
     }
 
-    void CircleCollider::render(const Vec2& pos, Renderer* renderer) const
+    std::function<std::vector<Vec2> (const Vec2& vertex, const Vec2& axis)>
+        CircleCollider::vertex_mapper() const
     {
-        renderer->circ(bounds.center + pos, bounds.radius, 128, Color::red);
+        return [this](const Vec2& vertex, const Vec2& axis)
+        {
+            std::vector<Vec2> mapped = 
+            {
+                vertex + (axis * this->bounds.radius),
+                vertex - (axis * this->bounds.radius), 
+            };
+
+            return mapped;
+        };
     }
+
+    /* Collider::Projection CircleCollider::projection(const Vec2& axis) const */
+    /* { */
+    /*     const Vec2 front = bounds.center + m_entity->pos + (axis * bounds.radius); */
+    /*     const Vec2 back = bounds.center + m_entity->pos - (axis * bounds.radius); */
+
+    /*     const float p0 = front.dot(axis); */
+    /*     const float p1 = back.dot(axis); */
+
+    /*     // TODO: Could do with one if else instead */
+    /*     return {Calc::min(p0, p1), Calc::max(p0, p1)}; */
+    /* } */
 }

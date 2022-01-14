@@ -5,20 +5,18 @@ namespace SB
 {
     using namespace Engine;
 
-    Bullet::Bullet(const Vec2& vel, const float radius)
-        : vel(vel), m_collider(CircleCollider(Circ(Vec2(), radius)))
+    Bullet::Bullet(const Vec2& vel)
+        : vel(vel)
     {}
-
-    const Collider& Bullet::collider() const
-    {
-        return m_collider;
-    }
 
     void Bullet::update(const float elapsed)
     {
+        const Collider* collider = get<Collider>();
+
         Player* player = scene()->first<Player>();
-        if (player && m_collider.Collider::intersects(m_entity->pos, player->entity()->pos,
-                    *player->collider()))
+        const Collider* p_collider = player->get<Collider>();
+
+        if (player && collider->intersects(*p_collider))
         {
             // Collided with player
             if (!player->dashing())
@@ -33,19 +31,33 @@ namespace SB
         {
             m_entity->pos += vel * elapsed;
 
+            // TODO: Fix
             // Check bounds
-            Rect bounds = scene()->bounds;
-            BoxCollider scene_collider(Rect(0.0f, 0.0f, bounds.w, bounds.h));
-            if (!m_collider.Collider::intersects(m_entity->pos, Vec2(bounds.center()),
-                        scene_collider))
-            {
-                destroy();
-            }
+            /* Rect bounds = scene()->bounds; */
+            /* BoxCollider scene_collider(Rect(0.0f, 0.0f, bounds.w, bounds.h)); */
+            /* if (!m_collider.Collider::intersects(m_entity->pos, Vec2(bounds.center()), */
+            /*             scene_collider)) */
+            /* { */
+            /*     destroy(); */
+            /* } */
         }
     }
 
     void Bullet::render(Engine::Renderer* renderer)
     {
-        renderer->circ(m_entity->pos, m_collider.bounds.radius, 128, Color(0, 255, 255));
+        const CircleCollider* collider = (CircleCollider*)get<Collider>();
+        renderer->circ(m_entity->pos, collider->bounds.radius, 128, Color(0, 255, 255));
+    }
+
+    Entity* Bullet::create(Scene* scene, const Engine::Vec2& pos, 
+            const Engine::Vec2& vel, const float radius)
+    {
+        Entity* e = scene->add_entity(pos);
+        e->add(new Bullet(vel));
+
+        Collider* c = new CircleCollider(Circ(Vec2(), radius));
+        e->add(c);
+
+        return e;
     }
 }

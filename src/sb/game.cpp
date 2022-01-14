@@ -47,22 +47,18 @@ namespace SB
             Renderer renderer;
 
             Rect scene_bounds = Rect(0.0f, 0.0f, 128.0f, 128.0f);
-            Mat4x4 matrix = Mat4x4::create_ortho(scene_bounds.x, scene_bounds.x + scene_bounds.w, scene_bounds.y, scene_bounds.y + scene_bounds.h, -1.0f, 1.0f);
+            Mat4x4 matrix = Mat4x4::create_ortho(scene_bounds.x, scene_bounds.x + scene_bounds.w, 
+                    scene_bounds.y, scene_bounds.y + scene_bounds.h, -1.0f, 1.0f);
             Color clear_color(0, 0, 0, 255);
 
             Scene scene(scene_bounds);
 
-            Entity* e_player = scene.add_entity(Vec2(16.0f, 16.0f));
-            e_player->add(new Player());
+            Player::create(&scene, Vec2(16.0f, 16.0f));
 
-            Entity* e1 = scene.add_entity(Vec2(32.0f, 32.0f));
-            e1->add(new Enemy(4.0f));
-            Entity* e2 = scene.add_entity(Vec2(64.0f, 64.0f));
-            e2->add(new Enemy(6.0f));
-            Entity* e3 = scene.add_entity(Vec2(88.0f, 88.0f));
-            e3->add(new Enemy(8.0f));
-            Entity* e4 = scene.add_entity(Vec2(88.0f, 16.0f));
-            e4->add(new Enemy(12.0f));
+            /* Enemy::create(&scene, Vec2(32.0f, 32.0f), 4.0f); */
+            /* Enemy::create(&scene, Vec2(64.0f, 64.0f), 6.0f); */
+            /* Enemy::create(&scene, Vec2(88.0f, 88.0f), 8.0f); */
+            Enemy::create(&scene, Vec2(88.0f, 16.0f), 12.0f);
 
             // Initialize before first update
             m_prev_ticks = Platform::ticks();

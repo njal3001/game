@@ -10,15 +10,13 @@ namespace SB
     public:
         Engine::Vec2 vel;
 
-    private:
-        CircleCollider m_collider;
-
     public:
-        Bullet(const Engine::Vec2& vel, const float radius);
-
-        const Collider& collider() const;
+        Bullet(const Engine::Vec2& vel);
 
         void update(const float elapsed) override;
         void render(Engine::Renderer* renderer) override;
+
+        static Entity* create(Scene* scene, const Engine::Vec2& pos,
+                const Engine::Vec2& vel, const float radius);
     };
 }

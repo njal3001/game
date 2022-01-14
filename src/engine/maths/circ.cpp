@@ -25,4 +25,9 @@ namespace Engine
         const float r_sum = radius + other.radius;
         return center.distance_squared(other.center) <= r_sum * r_sum;
     }
+
+    Circ Circ::offset(const Vec2& o) const
+    {
+        return Circ(center + o, radius);
+    }
 }

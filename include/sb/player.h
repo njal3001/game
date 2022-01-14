@@ -7,7 +7,6 @@ namespace SB
     class Player : public Component
     {
     private:
-        CircleCollider m_collider;
         Engine::Vec2 m_vel;
         Engine::Vec2 m_facing;
 
@@ -35,13 +34,12 @@ namespace SB
     public:
         Player();
 
-        const Collider* collider() const;
-
         void hurt();
         bool dashing() const;
 
         void update(const float elapsed) override;
         void render(Engine::Renderer* renderer) override;
 
+        static Entity* create(Scene* scene, const Engine::Vec2& pos);
     };
 }

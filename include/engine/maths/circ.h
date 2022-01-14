@@ -16,5 +16,7 @@ namespace Engine
         bool intersects(const Line& line) const;
 
         bool intersects(const Circ& other) const;
+
+        Circ offset(const Vec2& o) const;
     };
 }
