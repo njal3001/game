@@ -31,7 +31,7 @@ namespace SB
                     {
                         m_entity->pos += disp;
 
-                        Vec2 prev_vel = vel;
+                        const Vec2 prev_vel = vel;
 
                         // Correct velocity
                         const Vec2 disp_norm = disp.norm();

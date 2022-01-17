@@ -14,17 +14,17 @@ namespace SB
         return bounds.center;
     }
 
-    bool CircleCollider::contains(const Engine::Vec2& point) const
-    {
-        const Circ circ(m_entity->pos + bounds.center, bounds.radius);
-        return circ.contains(point);
-    }
+    /* bool CircleCollider::contains(const Engine::Vec2& point) const */
+    /* { */
+    /*     const Circ circ(m_entity->pos + bounds.center, bounds.radius); */
+    /*     return circ.contains(point); */
+    /* } */
 
-    bool CircleCollider::intersects(const Engine::Line& line) const
-    {
-        const Circ circ(m_entity->pos + bounds.center, bounds.radius);
-        return circ.intersects(line);
-    }
+    /* bool CircleCollider::intersects(const Engine::Line& line) const */
+    /* { */
+    /*     const Circ circ(m_entity->pos + bounds.center, bounds.radius); */
+    /*     return circ.intersects(line); */
+    /* } */
 
     std::vector<Vec2> CircleCollider::axes(const std::vector<Vec2>& other_vertices) const
     {
@@ -53,5 +53,10 @@ namespace SB
 
             return mapped;
         };
+    }
+
+    void CircleCollider::render(Engine::Renderer* renderer)
+    {
+        renderer->circ(bounds.offset(m_entity->pos), 128, color);
     }
 }

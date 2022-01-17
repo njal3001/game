@@ -13,6 +13,9 @@ namespace SB
         friend class Scene;
         friend class Entity;
 
+    public:
+        bool visible;
+
     private:
         uint8_t m_type;
         bool m_alive;
@@ -59,6 +62,7 @@ namespace SB
 
     public:
         Engine::Vec2 pos;
+        bool visible;
 
     private:
         Scene* m_scene;
@@ -72,6 +76,7 @@ namespace SB
         Entity(const Engine::Vec2& pos);
         ~Entity();
 
+        bool alive() const;
         Scene* scene() const;
 
         template <class T>
@@ -156,7 +161,7 @@ namespace SB
         const uint8_t type = Component::Types::id<T>();
         for (auto c : m_components)
         {
-            if (c->m_type == type)
+            if (c->alive() && c->m_type == type)
             {
                 return (T*)c;
             }
@@ -173,7 +178,7 @@ namespace SB
 
         for (auto c : c_vec)
         {
-            if (c->m_alive)
+            if (c->alive())
             {
                 return (T*)c;
             }
@@ -190,7 +195,7 @@ namespace SB
 
         for (auto c : c_vec)
         {
-            if (c->m_alive)
+            if (c->alive())
             {
                 out->push_back((T*)c);
             }

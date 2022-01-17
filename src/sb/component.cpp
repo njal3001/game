@@ -3,7 +3,7 @@
 namespace SB
 {
     Component::Component()
-        : m_type(0), m_alive(true), m_entity(nullptr)
+        : visible(true), m_type(0), m_alive(true), m_entity(nullptr)
     {}
 
     Component::~Component()
@@ -11,7 +11,7 @@ namespace SB
 
     bool Component::alive() const
     {
-        return m_alive;
+        return m_alive && m_entity->alive();
     }
 
     uint8_t Component::type() const

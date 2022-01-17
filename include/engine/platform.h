@@ -26,19 +26,18 @@ namespace Engine
 
     public:
         static bool init();
-
         static bool update();
-
         static void present();
+        static void shutdown();
+
+        static void set_fullscreen(const bool val);
 
         static uint64_t ticks();
-
         static void sleep(uint32_t ms);
 
         static std::string app_path();
         static File read_file(const std::string& file_path);
 
-        static void shutdown();
 
     private:
         Platform();

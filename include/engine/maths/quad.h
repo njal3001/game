@@ -15,13 +15,6 @@ namespace Engine
         Quad(const Rect& rect);
         Quad(const Rect& rect, const float rotation);
 
-        bool contains(const Vec2& point) const;
-        bool intersects(const Line& line) const;
-
-        bool intersects(const Quad& other) const;
-
-        void rotate(const float delta);
-
         Quad offset(const Vec2& o) const;
     };
 }

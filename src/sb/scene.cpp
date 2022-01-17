@@ -1,6 +1,7 @@
 #include "sb/ecs.h"
 #include <algorithm>
 #include "sb/collider.h"
+#include "sb/enemy.h"
 
 namespace SB
 {
@@ -59,7 +60,7 @@ namespace SB
         {
             for (auto c : c_vec)
             {
-                if (c->scene() == this)
+                if (c->m_alive && c->entity()->m_alive)
                 {
                     c->update(elapsed);
                 }
@@ -101,7 +102,7 @@ namespace SB
         {
             for (auto c : c_vec)
             {
-                if (c->m_alive)
+                if (c->alive() && c->visible && c->entity()->visible)
                 {
                     c->render(renderer);
                 }
@@ -117,7 +118,7 @@ namespace SB
         for (Component* comp : comp_vec)
         {
             auto collider = (Collider*)comp;
-            if (collider->m_alive && (collider->mask & mask))
+            if (collider->alive() && (collider->mask & mask))
             {
                 out->push_back(collider);
             }

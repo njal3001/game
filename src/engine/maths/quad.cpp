@@ -17,27 +17,12 @@ namespace Engine
     // TODO: Implement
     Quad::Quad(const Rect& rect, const float rotation)
     {
+        const Vec2 around = rect.center();
 
-    }
-
-    bool Quad::contains(const Vec2& point) const
-    {
-        return false;
-    }
-
-    bool Quad::intersects(const Line& line) const
-    {
-        return false;
-    }
-
-    bool Quad::intersects(const Quad& other) const
-    {
-        return false;
-    }
-
-    void Quad::rotate(const float delta)
-    {
-
+        a = rect.bottom_left().rotate(around, rotation);
+        b = rect.top_left().rotate(around, rotation);
+        c = rect.top_right().rotate(around, rotation);
+        d = rect.bottom_right().rotate(around, rotation);
     }
 
     Quad Quad::offset(const Vec2& o) const

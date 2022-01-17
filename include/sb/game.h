@@ -18,5 +18,6 @@ namespace SB
         void limit_fps();
 
         static Entity* create_wall(Scene* scene, const Engine::Rect& bounds);
+        static Entity* create_dash_trough(Scene* scene, const Engine::Rect& bounds);
     };
 }

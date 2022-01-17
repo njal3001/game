@@ -6,33 +6,25 @@ namespace SB
 {
     using namespace Engine;
 
-    Bullet::Bullet(const Vec2& vel)
-        : vel(vel)
-    {}
-
-    void Bullet::render(Engine::Renderer* renderer)
-    {
-        const CircleCollider* collider = (CircleCollider*)get<Collider>();
-        renderer->circ(m_entity->pos, collider->bounds.radius, 128, Color(0, 255, 255));
-    }
-
-    Entity* Bullet::create(Scene* scene, const Engine::Vec2& pos, 
-            const Engine::Vec2& vel, const float radius)
+    Entity* Bullet::create(Scene* scene, const Vec2& pos, 
+            const Vec2& vel, const float radius)
     {
         Entity* e = scene->add_entity(pos);
-        e->add(new Bullet(vel));
+        e->add(new Bullet());
 
         Collider* c = new CircleCollider(Circ(Vec2(), radius));
+        c->visible = true;
+        c->color = Color(0, 255, 255);
         e->add(c);
 
         Mover* m = new Mover();
         m->collider = c;
         m->vel = vel;
-        m->stop_mask |= (Mask::Player | Mask::PlayerDash);
+        m->stop_mask |= (Mask::BulletStopper | Mask::PlayerDash | Mask::Player);
 
         m->on_hit = [](Mover* mover, Collider* other, const Vec2& dir, const Vec2& prev_vel)
         {
-            if (other->mask & (Mask::Solid | Mask::PlayerDash))
+            if (other->mask & (Mask::Solid | Mask::PlayerDash | Mask::BulletStopper))
             {
                 mover->entity()->destroy();
                 if (other->mask & Mask::PlayerDash)

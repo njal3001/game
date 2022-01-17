@@ -5,7 +5,7 @@
 namespace SB
 {
     Entity::Entity(const Engine::Vec2& pos)
-        : pos(pos), m_scene(nullptr), m_alive(true)
+        : pos(pos), visible(true), m_scene(nullptr), m_alive(true)
     {}
 
     Entity::~Entity()
@@ -19,6 +19,11 @@ namespace SB
         {
             delete c;
         }
+    }
+
+    bool Entity::alive() const
+    {
+        return m_alive;
     }
 
     Scene* Entity::scene() const
@@ -39,11 +44,6 @@ namespace SB
     void Entity::destroy()
     {
         m_alive = false;
-
-        for (auto c : m_components)
-        {
-            c->m_alive = false;
-        }
     }
 
     void Entity::update_lists()

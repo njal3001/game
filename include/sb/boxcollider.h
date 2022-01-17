@@ -1,4 +1,5 @@
 #pragma once
+#include "engine/graphics/renderer.h"
 #include "sb/collider.h"
 #include "engine/maths/rect.h"
 
@@ -8,14 +9,15 @@ namespace SB
     {
     public:
         Engine::Rect bounds;
+        float rotation; // In radians
 
     public:
         BoxCollider(const Engine::Rect& bounds);
+        BoxCollider(const Engine::Rect& bounds, const float rotation);
 
         Engine::Vec2 offset() const override;
 
-        bool contains(const Engine::Vec2& point) const override;
-        bool intersects(const Engine::Line& line) const override;
+        void render(Engine::Renderer* renderer) override;
 
     protected:
         std::vector<Engine::Vec2> axes(const std::vector<Engine::Vec2>& other_vertices) const override;

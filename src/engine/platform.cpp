@@ -22,7 +22,7 @@ namespace Engine
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
             960,
-            960,
+            540,
             SDL_WINDOW_OPENGL
         );
 
@@ -163,6 +163,18 @@ namespace Engine
     void Platform::present()
     {
 		SDL_GL_SwapWindow(g_window);
+    }
+    
+    void Platform::set_fullscreen(const bool val)
+    {
+        if (val)
+        {
+            SDL_SetWindowFullscreen(g_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+        }
+        else
+        {
+            SDL_SetWindowFullscreen(g_window, 0);
+        }
     }
 
     uint64_t Platform::ticks()

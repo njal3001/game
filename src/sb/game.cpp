@@ -46,7 +46,7 @@ namespace SB
         {
             Renderer renderer;
 
-            Rect scene_bounds = Rect(0.0f, 0.0f, 128.0f, 128.0f);
+            Rect scene_bounds = Rect(0.0f, 0.0f, 320.0f, 180.0f);
             Mat4x4 matrix = Mat4x4::create_ortho(scene_bounds.x, scene_bounds.x + scene_bounds.w, 
                     scene_bounds.y, scene_bounds.y + scene_bounds.h, -1.0f, 1.0f);
             Color clear_color(0, 0, 0, 255);
@@ -55,6 +55,7 @@ namespace SB
 
             Player::create(&scene, Vec2(16.0f, 16.0f));
 
+            // Create enemies
             Enemy::create(&scene, Vec2(32.0f, 32.0f), 4.0f);
             Enemy::create(&scene, Vec2(64.0f, 64.0f), 6.0f);
             Enemy::create(&scene, Vec2(88.0f, 88.0f), 8.0f);
@@ -76,6 +77,9 @@ namespace SB
                 Rect right(scene_bounds.x + scene_bounds.w, scene_bounds.y, thickness, scene_bounds.h);
                 create_wall(&scene, right);
             }
+
+            // Create dash troughs
+            create_dash_trough(&scene, Rect(32.0f, 64.0f, 16.0f, 12.0f));
 
             // Initialize before first update
             m_prev_ticks = Platform::ticks();
@@ -107,6 +111,19 @@ namespace SB
 
         Collider* c = new BoxCollider(Rect(0.0f, 0.0f, bounds.w, bounds.h));
         c->mask = Mask::Solid;
+        e->add(c);
+
+        return e;
+    }
+
+    Entity* Game::create_dash_trough(Scene* scene, const Rect& bounds)
+    {
+        Entity* e = scene->add_entity(bounds.center());
+
+        Collider* c = new BoxCollider(Rect(0.0f, 0.0f, bounds.w, bounds.h));
+        c->mask = Mask::DashTrough | Mask::BulletStopper;
+        c->visible = true;
+        c->color = Color(255, 255, 0);
         e->add(c);
 
         return e;

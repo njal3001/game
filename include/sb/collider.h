@@ -15,6 +15,8 @@ namespace SB
         static constexpr uint32_t Enemy = 1 << 1;
         static constexpr uint32_t Player = 1 << 2;
         static constexpr uint32_t PlayerDash = 1 << 3;
+        static constexpr uint32_t DashTrough = 1 << 4;
+        static constexpr uint32_t BulletStopper = 1 << 5;
     };
 
     // TODO: This turned into an overcomplicated mess...
@@ -23,6 +25,7 @@ namespace SB
     {
     public:
         uint32_t mask;
+        Engine::Color color;
 
     private:
         struct Projection
@@ -43,23 +46,21 @@ namespace SB
                 const Engine::Vec2& axis)> vertex_mapper() const = 0;
 
         static Engine::Vec2 circ_axis(const Engine::Circ& circ, const std::vector<Engine::Vec2>& other_vertices);
-        static std::vector<Engine::Vec2> rect_vertices(const Engine::Rect& rect);
 
     public:
         Collider();
+
         // Colliders offset from entity position
         virtual Engine::Vec2 offset() const = 0;
 
         // TODO: Implement wit SAT
-        virtual bool contains(const Engine::Vec2& point) const = 0;
-        virtual bool intersects(const Engine::Line& line) const = 0;
+        /* virtual bool contains(const Engine::Vec2& point) const = 0; */
+        /* virtual bool intersects(const Engine::Line& line) const = 0; */
 
         bool intersects(const Collider& other) const;
         
         // Returns a vector that pushes this collider out of the other collider
         Engine::Vec2 displace(const Collider& other) const;
-
-        bool intersects(const Engine::Rect& rect) const;
 
         bool check(const uint32_t mask) const;
 

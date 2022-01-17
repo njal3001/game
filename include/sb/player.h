@@ -14,6 +14,7 @@ namespace SB
         float m_dash_timer;
         float m_dash_cooldown_timer;
         bool m_dash_stopped;
+        bool m_dashing_through;
 
         float m_invincible_timer;
 
@@ -27,6 +28,7 @@ namespace SB
         static constexpr float dash_min_time = 0.1f;
         static constexpr float dash_max_time = 0.25f;
         static constexpr float dash_shield_radius = 8.0f;
+        static constexpr float dash_min_end_time = 0.05f;
 
         static constexpr float invincible_time = 1.0f;
 

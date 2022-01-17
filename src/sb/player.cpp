@@ -13,7 +13,7 @@ namespace SB
 
     Player::Player()
         : m_facing(Vec2(1.0f, 0.0f)), m_dash_collider(nullptr), m_is_dashing(false), m_dash_timer(0.0f),
-        m_dash_cooldown_timer(0.0f), m_dash_stopped(false), m_invincible_timer(0.0f)
+        m_dash_cooldown_timer(0.0f), m_dash_stopped(false), m_dashing_through(false), m_invincible_timer(0.0f)
     {
     }
 
@@ -33,10 +33,11 @@ namespace SB
 
     void Player::on_hit(const Vec2& dir, const Vec2& prev_vel)
     {
+        // Bounce off walls if dashing
         if (m_is_dashing)
         {
             auto mover = get<Mover>();
-            Vec2 reflected = prev_vel - (dir * prev_vel.dot(dir) * 2.0f);
+            const Vec2 reflected = prev_vel - (dir * prev_vel.dot(dir) * 2.0f);
             mover->vel = reflected;
         }
     }
@@ -86,13 +87,28 @@ namespace SB
                     m_dash_stopped = true;
                 }
 
-                // Stop dash
-                if (m_dash_timer <= 0.0f && !collider->check(Mask::Enemy))
+                // Check for dash trough
+                const bool overlapping = collider->check(Mask::DashTrough);
+                if (overlapping && !m_dashing_through)
                 {
+                    m_dashing_through = true;
+                }
+                else if (!overlapping && m_dashing_through)
+                {
+                    // Give small time extension after finishing dash trough
+                    m_dash_timer = Calc::max(m_dash_timer, dash_min_end_time);
+
+                    m_dashing_through = false;
+                }
+
+                // Stop dash
+                if (m_dash_timer <= 0.0f && !overlapping)
+                {
+                    printf("Dash ended\n");
                     m_is_dashing = false;
 
                     collider->mask = Mask::Player;
-                    mover->stop_mask |= Mask::Enemy;
+                    mover->stop_mask |= Mask::DashTrough;
                     m_dash_collider->mask = Mask::None;
 
                     m_dash_cooldown_timer = dash_cooldown;
@@ -123,7 +139,7 @@ namespace SB
                     collider->mask = Mask::None;
 
                     // Dash through enemies
-                    mover->stop_mask ^= Mask::Enemy;
+                    mover->stop_mask ^= Mask::DashTrough;
 
                     // Activate dash collider
                     m_dash_collider->mask = Mask::PlayerDash;
@@ -131,6 +147,7 @@ namespace SB
                     m_dash_timer = dash_max_time;
                     mover->vel = m_facing * dash_speed;
                     m_dash_stopped = false;
+                    m_dashing_through = false;
                 }
             }
         }
@@ -160,7 +177,7 @@ namespace SB
         Mover* m = new Mover();
         m->collider = c;
         c->mask = Mask::Player;
-        m->stop_mask |= Mask::Enemy; 
+        m->stop_mask |= Mask::DashTrough; 
 
         m->on_hit = [](Mover* mover, Collider* other, const Vec2& dir, const Vec2& prev_vel)
         {

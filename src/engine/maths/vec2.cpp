@@ -1,5 +1,6 @@
 #include "engine/maths/vec2.h"
 #include "engine/maths/calc.h"
+#include <stdio.h>
 
 namespace Engine
 {
@@ -121,6 +122,21 @@ namespace Engine
     float Vec2::dot(const Vec2& other) const
     {
         return x * other.x + y * other.y;
+    }
+
+    Vec2 Vec2::rotate(const Vec2& around, const float angle) const
+    {
+        const float s = Calc::sin(angle);
+        const float c = Calc::cos(angle);
+
+        // Translate back to origin
+        Vec2 t = *this - around;
+
+        // Rotate around origin
+        Vec2 r(t.x * c - t.y * s, t.x * s + t.y * c);
+
+        // Translate back
+        return r + around;
     }
     
     Vec2 Vec2::approach(const Vec2& val, const Vec2& target, const float amount)

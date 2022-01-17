@@ -8,12 +8,11 @@ namespace SB
 {
     using namespace Engine;
 
-    const std::vector<Vec2> Collider::rect_axes =
-    { Vec2(1.0f, 0.0f), Vec2(0.0f, 1.0f) };
-
     Collider::Collider()
-        : mask(Mask::None)
-    {}
+        : mask(Mask::None), color(Color::red)
+    {
+        visible = false;
+    }
 
     Vec2 Collider::circ_axis(const Circ& circ, const std::vector<Vec2>& other_vertices)
     {
@@ -32,19 +31,6 @@ namespace SB
 
         const Vec2 diff = circ.center - min_vertex;
         return diff.norm();
-    }
-
-    std::vector<Vec2> Collider::rect_vertices(const Rect& rect)
-    {
-        const std::vector<Vec2> vert = 
-        {
-            rect.top_left(),
-            rect.bottom_left(),
-            rect.top_right(),
-            rect.bottom_right()
-        };
-
-        return vert;
     }
 
     Collider::Projection Collider::projection(const std::vector<Vec2>& vertices, const Vec2& axis,
@@ -126,20 +112,6 @@ namespace SB
 
         auto m1 = vertex_mapper();
         auto m2 = other.vertex_mapper();
-
-        return intersects(v1, v2, a1, a2, m1, m2);
-    }
-
-    bool Collider::intersects(const Engine::Rect& rect) const
-    {
-        auto v1 = vertices();
-        auto v2 = rect_vertices(rect);
-
-        auto a1 = axes(v2);
-        auto a2 = rect_axes;
-
-        auto m1 = vertex_mapper();
-        auto m2 = nullptr;
 
         return intersects(v1, v2, a1, a2, m1, m2);
     }
