@@ -34,6 +34,7 @@ namespace Engine
         float distance_squared(const Vec2& other) const;
         float dot(const Vec2& other) const;
         Vec2 rotate(const Vec2& around, const float angle) const;
+        float angle(const Vec2& axis) const;
 
         static Vec2 approach(const Vec2& val, const Vec2& target, const float amount);
         static Vec2 lerp(const Vec2& a, const Vec2& b, const float t);

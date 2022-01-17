@@ -26,6 +26,8 @@ namespace SB
             {
                 m_entity->destroy();
             }
+
+            printf("Hurt enemy!\n");
         }
         else
         {

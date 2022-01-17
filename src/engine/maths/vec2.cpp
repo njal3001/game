@@ -1,6 +1,7 @@
 #include "engine/maths/vec2.h"
 #include "engine/maths/calc.h"
 #include <stdio.h>
+#include <cmath>
 
 namespace Engine
 {
@@ -137,6 +138,14 @@ namespace Engine
 
         // Translate back
         return r + around;
+    }
+
+    float Vec2::angle(const Vec2& axis) const
+    {
+        const float dt = dot(axis);
+        const float det = x * axis.y - y * axis.x;
+
+        return std::atan2(det, dt);
     }
     
     Vec2 Vec2::approach(const Vec2& val, const Vec2& target, const float amount)

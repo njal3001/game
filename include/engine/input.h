@@ -26,12 +26,15 @@ namespace Engine
         B,
         X,
         Y,
+        LeftShoulder
     };
 
     enum class Axis
     {
         LeftX = 0,
-        LeftY,
+        LeftY = 1,
+        RightX = 3,
+        RightY = 4
     };
 
     // TODO: Change to shared struct

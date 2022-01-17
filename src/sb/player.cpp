@@ -46,9 +46,14 @@ namespace SB
     {
         m_dash_collider = new CircleCollider(Circ(Vec2(), dash_shield_radius));
 
+        m_weapon_collider = new BoxCollider(Rect(0.0f, 0.0f, weapon_width, weapon_height));
+        m_weapon_collider->mask = Mask::PlayerDash; // TODO: Change to own mask
+        m_weapon_collider->visible = true;
+
         // Note: Need to cast to Collider here to avoid 
         // that the circle collider is treated as it's own type
         m_entity->add((Collider*)m_dash_collider);
+        m_entity->add((Collider*)m_weapon_collider);
     }
 
     void Player::update(const float elapsed)
@@ -111,6 +116,8 @@ namespace SB
                     mover->stop_mask |= Mask::DashTrough;
                     m_dash_collider->mask = Mask::None;
 
+                    m_weapon_collider->mask = Mask::PlayerDash; // TODO: Change to own mask
+
                     m_dash_cooldown_timer = dash_cooldown;
                 }
             }
@@ -119,6 +126,7 @@ namespace SB
                 // Not dashing
                 m_dash_cooldown_timer -= elapsed;
 
+                // Normal movement
                 // TODO: Compare square instead
                 if (mover->vel.len() - 1.0f > max_swim_speed)
                 {
@@ -129,14 +137,42 @@ namespace SB
                     mover->vel = Vec2::approach(mover->vel, dir * max_swim_speed, swim_accel * elapsed);
                 }
 
+                // Update weapon hitbox
+                {
+                    Vec2 weapon_extent;
+                    weapon_extent.x = Input::axis_state(Axis::RightX);
+                    weapon_extent.y = -Input::axis_state(Axis::RightY);
+
+                    const Vec2 weapon_dir = weapon_extent.norm();
+
+                    // Clamp to max extent
+                    if (weapon_extent.len_squared() > 1.0f)
+                    {
+                        weapon_extent = weapon_dir;
+                    }
+
+                    const float stretch = weapon_extent.len() * weapon_max_stretch;
+
+                    const Vec2 offset = Vec2(m_weapon_collider->bounds.x, m_weapon_collider->bounds.y);
+                    const Vec2 new_offset = Vec2::approach(offset, weapon_dir * stretch, 200.0f * elapsed);
+
+                    m_weapon_collider->bounds.x = new_offset.x;
+                    m_weapon_collider->bounds.y = new_offset.y;
+
+                    m_weapon_collider->rotation = -weapon_dir.angle(Vec2(0.0f, 1.0f));
+                }
+                
                 // Start dash
-                if (Input::controller_button_state(ControllerButton::A).pressed 
+                if (Input::controller_button_state(ControllerButton::LeftShoulder).pressed 
                         && m_dash_cooldown_timer <= 0.0f)
                 {
                     m_is_dashing = true;
 
                     // Disable player collisions
                     collider->mask = Mask::None;
+
+                    // Disable player weapon
+                    m_weapon_collider->mask = Mask::None;
 
                     // Dash through enemies
                     mover->stop_mask ^= Mask::DashTrough;

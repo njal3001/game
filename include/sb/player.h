@@ -1,6 +1,8 @@
 #pragma once
+#include "engine/maths/rect.h"
 #include "sb/ecs.h"
 #include "sb/circlecollider.h"
+#include "sb/boxcollider.h"
 
 namespace SB
 {
@@ -10,6 +12,7 @@ namespace SB
         Engine::Vec2 m_facing;
 
         CircleCollider* m_dash_collider;
+        BoxCollider* m_weapon_collider;
         bool m_is_dashing;
         float m_dash_timer;
         float m_dash_cooldown_timer;
@@ -31,6 +34,10 @@ namespace SB
         static constexpr float dash_min_end_time = 0.05f;
 
         static constexpr float invincible_time = 1.0f;
+
+        static constexpr float weapon_width = 4.0f;
+        static constexpr float weapon_height = 6.0f;
+        static constexpr float weapon_max_stretch = 22.0f;
 
     public:
         Player();

@@ -7,7 +7,7 @@
 namespace Engine
 {
     // TODO: Could do it with bits instead
-    // TODO: Find a cleaner way to do this
+    // TODO: Find a cleaner way to do this, just use arrays...
     std::unordered_map<Key, KeyState> Input::g_keyboard =
     {
         { Key::Left, { false, false, false } },
@@ -30,12 +30,15 @@ namespace Engine
         { ControllerButton::B, { false, false, false } },
         { ControllerButton::X, { false, false, false } },
         { ControllerButton::Y, { false, false, false } },
+        { ControllerButton::LeftShoulder, { false, false, false } },
     };
 
     std::unordered_map<Axis, float> Input::g_controller_axis =
     {
         { Axis::LeftX, 0.0f },
         { Axis::LeftY, 0.0f },
+        { Axis::RightX, 0.0f },
+        { Axis::RightY, 0.0f },
     };
 
     void Input::refresh()

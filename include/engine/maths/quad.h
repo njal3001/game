@@ -14,6 +14,7 @@ namespace Engine
         Quad(const Vec2& a, const Vec2& b, const Vec2& c, const Vec2& d);
         Quad(const Rect& rect);
         Quad(const Rect& rect, const float rotation);
+        Quad(const Rect& rect, const Vec2& pivot, const float rotation);
 
         Quad offset(const Vec2& o) const;
     };
