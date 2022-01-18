@@ -31,6 +31,7 @@ namespace Engine
         { ControllerButton::X, { false, false, false } },
         { ControllerButton::Y, { false, false, false } },
         { ControllerButton::LeftShoulder, { false, false, false } },
+        { ControllerButton::RightShoulder, { false, false, false } },
     };
 
     std::unordered_map<Axis, float> Input::g_controller_axis =

@@ -12,8 +12,10 @@ namespace SB
     using namespace Engine;
 
     Player::Player()
-        : m_facing(Vec2(1.0f, 0.0f)), m_dash_collider(nullptr), m_is_dashing(false), m_dash_timer(0.0f),
-        m_dash_cooldown_timer(0.0f), m_dash_stopped(false), m_dashing_through(false), m_invincible_timer(0.0f)
+        : m_facing(Vec2(1.0f, 0.0f)), m_dash_collider(nullptr), m_is_dashing(false),
+        m_dash_timer(0.0f), m_dash_cooldown_timer(0.0f), m_dash_stopped(false),
+        m_dashing_through(false), m_invincible_timer(0.0f), m_weapon_attack_timer(0.0f),
+        m_weapon_attack_cooldown_timer(0.0f)
     {
     }
 
@@ -117,6 +119,7 @@ namespace SB
                     m_dash_collider->mask = Mask::None;
 
                     m_weapon_collider->mask = Mask::PlayerDash; // TODO: Change to own mask
+                    m_weapon_collider->visible = true;
 
                     m_dash_cooldown_timer = dash_cooldown;
                 }
@@ -130,36 +133,52 @@ namespace SB
                 // TODO: Compare square instead
                 if (mover->vel.len() - 1.0f > max_swim_speed)
                 {
-                    mover->vel = Vec2::approach(mover->vel, dir * max_swim_speed, swim_deaccel * elapsed);
+                    mover->vel = Vec2::approach(mover->vel, dir * max_swim_speed, 
+                            swim_deaccel * elapsed);
                 }
                 else
                 {
-                    mover->vel = Vec2::approach(mover->vel, dir * max_swim_speed, swim_accel * elapsed);
+                    mover->vel = Vec2::approach(mover->vel, dir * max_swim_speed, 
+                            swim_accel * elapsed);
                 }
+                if (m_weapon_attack_cooldown_timer <= 0.0f && 
+                            Input::controller_button_state(ControllerButton::RightShoulder).pressed)
+                    printf("pressed\n");
 
-                // Update weapon hitbox
+
+                // Weapon attack
                 {
-                    Vec2 weapon_extent;
-                    weapon_extent.x = Input::axis_state(Axis::RightX);
-                    weapon_extent.y = -Input::axis_state(Axis::RightY);
+                    m_weapon_attack_cooldown_timer -= elapsed;
 
-                    const Vec2 weapon_dir = weapon_extent.norm();
-
-                    // Clamp to max extent
-                    if (weapon_extent.len_squared() > 1.0f)
+                    // Attack ongoing
+                    if (m_weapon_attack_timer > 0.0f)
                     {
-                        weapon_extent = weapon_dir;
+                        m_weapon_attack_timer = Calc::approach(m_weapon_attack_timer, 
+                                0.0f, elapsed);
+                        const float dur = weapon_attack_time - m_weapon_attack_timer;
+                        const float t = 1 - Calc::abs((2 * (dur / weapon_attack_time)) - 1);
+
+                        const Vec2 offset = Vec2::lerp(Vec2(), 
+                                m_weapon_attack_dir * weapon_max_stretch, t);
+
+                        m_weapon_collider->bounds.x = offset.x;
+                        m_weapon_collider->bounds.y = offset.y;
                     }
+                    else if (m_weapon_attack_cooldown_timer <= 0.0f && 
+                            Input::controller_button_state(ControllerButton::RightShoulder).pressed)
+                    {
+                        // Start attack
+                        Vec2 weapon_extent;
+                        weapon_extent.x = Input::axis_state(Axis::RightX);
+                        weapon_extent.y = -Input::axis_state(Axis::RightY);
 
-                    const float stretch = weapon_extent.len() * weapon_max_stretch;
+                        m_weapon_attack_timer = weapon_attack_time;
+                        m_weapon_attack_dir = weapon_extent.norm();
+                        m_weapon_collider->rotation = -m_weapon_attack_dir.
+                            angle(Vec2(1.0f, 0.0f));
 
-                    const Vec2 offset = Vec2(m_weapon_collider->bounds.x, m_weapon_collider->bounds.y);
-                    const Vec2 new_offset = Vec2::approach(offset, weapon_dir * stretch, 200.0f * elapsed);
-
-                    m_weapon_collider->bounds.x = new_offset.x;
-                    m_weapon_collider->bounds.y = new_offset.y;
-
-                    m_weapon_collider->rotation = -weapon_dir.angle(Vec2(0.0f, 1.0f));
+                        m_weapon_attack_cooldown_timer = weapon_attack_cooldown;
+                    }
                 }
                 
                 // Start dash
@@ -173,6 +192,11 @@ namespace SB
 
                     // Disable player weapon
                     m_weapon_collider->mask = Mask::None;
+                    m_weapon_collider->visible = false;
+                    m_weapon_attack_timer = 0.0f;
+                    m_weapon_attack_cooldown_timer = 0.0f;
+                    m_weapon_collider->bounds.x = 0.0f;
+                    m_weapon_collider->bounds.y = 0.0f;
 
                     // Dash through enemies
                     mover->stop_mask ^= Mask::DashTrough;

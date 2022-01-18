@@ -1,6 +1,7 @@
 #include "sb/enemy.h"
 #include "sb/bullet.h"
 #include "sb/boxcollider.h"
+#include "sb/mover.h"
 
 namespace SB
 {
@@ -16,11 +17,12 @@ namespace SB
         m_invincible_timer -= elapsed;
 
         // Check if hurt by player
-        auto collider = get<Collider>();
+        auto collider = (CircleCollider*)get<Collider>();
         if (m_invincible_timer <= 0.0f && collider->check(Mask::PlayerDash))
         {
             m_health -= 1;
             m_invincible_timer = invincible_time;
+            m_shoot_cooldown_timer = shoot_cooldown;
 
             if (m_health <= 0)
             {
@@ -31,20 +33,32 @@ namespace SB
         }
         else
         {
-            if (m_shoot_cooldown_timer <= 0.0f)
+            Player* player = scene()->first<Player>();
+
+            if (player)
             {
-                Player* player = scene()->first<Player>();
-                if (player)
+                m_shoot_cooldown_timer -= elapsed;
+                
+                if (m_shoot_cooldown_timer <= 0.0f)
                 {
                     Vec2 bullet_vel = (player->entity()->pos - m_entity->pos).norm() * bullet_speed;
                     Bullet::create(scene(), m_entity->pos, bullet_vel, 1.0f);
+
+                    m_shoot_cooldown_timer = shoot_cooldown;
                 }
 
-                m_shoot_cooldown_timer = shoot_cooldown;
-            }
-            else
-            {
-                m_shoot_cooldown_timer -= elapsed;
+
+                // Appoach player
+                auto mover = get<Mover>();
+                const Vec2 dir = (player->entity()->pos - m_entity->pos);
+                if (dir.len_squared() > collider->bounds.radius + 10.0f)
+                {
+                    mover->vel = Vec2::approach(mover->vel, dir.norm() * 40.0f, 20.0f * elapsed);
+                }
+                else
+                {
+                    mover->vel = Vec2::approach(mover->vel, Vec2(), 20.0f * elapsed);
+                }
             }
         }
     }
@@ -60,6 +74,11 @@ namespace SB
 
         c->visible = true;
         c->color = Color::white;
+
+        Mover* m = new Mover();
+        m->collider = c;
+        m->stop_mask |= Mask::Enemy | Mask::Player;
+        e->add(m);
 
         return e;
     }

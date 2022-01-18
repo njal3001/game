@@ -20,6 +20,10 @@ namespace SB
         bool m_dashing_through;
 
         float m_invincible_timer;
+        float m_weapon_attack_timer;
+        float m_weapon_attack_cooldown_timer;
+        Engine::Vec2 m_weapon_attack_dir;
+
 
         static constexpr float collider_radius = 4.0f;
         static constexpr float max_swim_speed = 68.0f;
@@ -27,17 +31,19 @@ namespace SB
         static constexpr float swim_deaccel = 427.0f;
 
         static constexpr float dash_speed = 126.0f;
-        static constexpr float dash_cooldown = 1.0f;
+        static constexpr float dash_cooldown = 0.8f;
         static constexpr float dash_min_time = 0.1f;
-        static constexpr float dash_max_time = 0.25f;
+        static constexpr float dash_max_time = 0.15;
         static constexpr float dash_shield_radius = 8.0f;
-        static constexpr float dash_min_end_time = 0.05f;
+        static constexpr float dash_min_end_time = 0.03f;
 
         static constexpr float invincible_time = 1.0f;
 
         static constexpr float weapon_width = 4.0f;
         static constexpr float weapon_height = 6.0f;
         static constexpr float weapon_max_stretch = 22.0f;
+        static constexpr float weapon_attack_time = 0.25f;
+        static constexpr float weapon_attack_cooldown = 0.4f;
 
     public:
         Player();

@@ -26,7 +26,8 @@ namespace Engine
         B,
         X,
         Y,
-        LeftShoulder
+        LeftShoulder,
+        RightShoulder
     };
 
     enum class Axis

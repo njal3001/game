@@ -12,7 +12,7 @@ namespace SB
         int m_health;
         float m_invincible_timer;
 
-        static constexpr float bullet_speed = 40.0f;
+        static constexpr float bullet_speed = 80.0f;
         static constexpr float shoot_cooldown = 2.0f;
         static constexpr float invincible_time = 1.0f;
 
