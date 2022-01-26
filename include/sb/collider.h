@@ -62,6 +62,8 @@ namespace SB
         // Returns a vector that pushes this collider out of the other collider
         Engine::Vec2 displace(const Collider& other) const;
 
+        float distance(const Collider& other) const;
+
         bool check(const uint32_t mask) const;
 
     private:
@@ -80,6 +82,15 @@ namespace SB
                 (const Engine::Vec2& v, const Engine::Vec2& a)> m2);
 
         static Engine::Vec2 displace(const std::vector<Engine::Vec2>& v1, 
+                const std::vector<Engine::Vec2>& v2,
+                const std::vector<Engine::Vec2>& a1,
+                const std::vector<Engine::Vec2>& a2,
+                const std::function<std::vector<Engine::Vec2> 
+                (const Engine::Vec2& v, const Engine::Vec2& a)> m1,
+                const std::function<std::vector<Engine::Vec2> 
+                (const Engine::Vec2& v, const Engine::Vec2& a)> m2);
+
+        static float distance(const std::vector<Engine::Vec2>& v1, 
                 const std::vector<Engine::Vec2>& v2,
                 const std::vector<Engine::Vec2>& a1,
                 const std::vector<Engine::Vec2>& a2,

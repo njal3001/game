@@ -2,6 +2,8 @@
 #include "sb/bullet.h"
 #include "sb/boxcollider.h"
 #include "sb/mover.h"
+#include <vector>
+#include <cmath>
 
 namespace SB
 {
@@ -49,15 +51,56 @@ namespace SB
 
 
                 // Appoach player
+                // TODO: Create pathfinder component
                 auto mover = get<Mover>();
-                const Vec2 dir = (player->entity()->pos - m_entity->pos);
-                if (dir.len_squared() > collider->bounds.radius + 10.0f)
+                const Vec2 pdir = (player->entity()->pos - m_entity->pos);
                 {
-                    mover->vel = Vec2::approach(mover->vel, dir.norm() * 40.0f, 20.0f * elapsed);
+                    auto pcol = player->get<Collider>();
+                    const float target_dist = 45.0f;
+                    if (collider->distance(*pcol) > target_dist)
+                    {
+                        mover->vel = Vec2::approach(mover->vel, pdir.norm() * 40.0f, 20.0f * elapsed);
+                        collider->color = Color::blue;
+                    }
+                    else
+                    {
+                        mover->vel = Vec2::approach(mover->vel, Vec2(), 20.0f * elapsed);
+                        collider->color = Color::red;
+                    }
                 }
-                else
+
+                // Spread from other enemies
                 {
-                    mover->vel = Vec2::approach(mover->vel, Vec2(), 20.0f * elapsed);
+                    std::vector<Collider*> others;
+                    scene()->all(&others, Mask::Enemy);
+
+                    float min_dist = INFINITY;
+                    Vec2 dir;
+
+                    for (auto ec : others)
+                    {
+                        if (ec->entity() != m_entity)
+                        {
+                            const float dist = collider->distance(*ec);
+                            if (dist < min_dist)
+                            {
+                                min_dist = dist;
+                                dir = ec->entity()->pos - m_entity->pos;
+                            }
+                        }
+                    }
+
+                    // Pivot away if too close
+                    if (min_dist < 10.0f)
+                    {
+                        const Vec2 dir_norm = dir.norm();
+                        const float dot = dir_norm.dot(mover->vel.norm());
+
+                        if (dot < 0.0f)
+                        {
+                            mover->vel -= dir_norm * dot * mover->vel.len();
+                        }
+                    }
                 }
             }
         }
@@ -77,7 +120,7 @@ namespace SB
 
         Mover* m = new Mover();
         m->collider = c;
-        m->stop_mask |= Mask::Enemy | Mask::Player;
+        m->stop_mask |= Mask::Enemy | Mask::Player | Mask::DashTrough;
         e->add(m);
 
         return e;
