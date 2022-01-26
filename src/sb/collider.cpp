@@ -172,6 +172,49 @@ namespace SB
         return dis_axis * min_overlap;
     }
 
+    float Collider::distance(const std::vector<Vec2>& v1, const std::vector<Vec2>& v2, 
+            const std::vector<Vec2>& a1, const std::vector<Vec2>& a2, 
+            const std::function<std::vector<Vec2> (const Vec2& v, const Vec2& a)> m1, 
+            const std::function<std::vector<Vec2> (const Vec2& v, const Vec2& a)> m2)
+    {
+        float max_dist = 0.0f;
+        
+        auto* vp1 = &v1;
+        auto* vp2 = &v2;
+
+        auto* mp1 = &m1;
+        auto* mp2 = &m2;
+
+        auto* ap = &a1;
+
+        for (size_t i = 0; i < 2; i++)
+        {
+            if (i)
+            {
+                vp1 = &v2;
+                vp2 = &v1;
+                mp1 = &m2;
+                mp2 = &m1;
+
+                ap = &a2;
+            }
+
+            for (auto& axis : *ap)
+            {
+                const Projection p1 = projection(*vp1, axis, *mp1);
+                const Projection p2 = projection(*vp2, axis, *mp2);
+
+                const float dist = Calc::max(p1.start, p2.start) - Calc::min(p1.end, p2.end);
+                if (dist > max_dist)
+                {
+                    max_dist = dist;
+                }
+            }
+        }
+
+        return max_dist;
+    }
+
 
     Vec2 Collider::displace(const Collider& other) const
     {
@@ -187,6 +230,20 @@ namespace SB
         return displace(v1, v2, a1, a2, m1, m2);
     }
 
+    float Collider::distance(const Collider& other) const
+    {
+        auto v1 = vertices();
+        auto v2 = other.vertices();
+
+        auto a1 = axes(v2);
+        auto a2 = other.axes(v1);
+
+        auto m1 = vertex_mapper();
+        auto m2 = other.vertex_mapper();
+
+        return distance(v1, v2, a1, a2, m1, m2);
+    }
+
     bool Collider::check(const uint32_t mask) const
     {
         std::vector<Collider*> out;
@@ -194,7 +251,7 @@ namespace SB
 
         for (auto c : out)
         {
-            if (c->intersects(*this))
+            if (c != this && c->intersects(*this))
             {
                 return true;
             }
