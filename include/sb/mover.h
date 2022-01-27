@@ -8,9 +8,9 @@ namespace SB
     public:
         Collider* collider;
         Engine::Vec2 vel;
+        bool stop_on_collide;
         uint32_t stop_mask;
-        std::function<void (Mover* mover, Collider* other, const Engine::Vec2& dir, 
-                const Engine::Vec2& prev_vel)> on_hit;
+        std::function<void (Mover* mover, Collider* other, const Engine::Vec2& dir)> on_hit;
 
         Mover();
 

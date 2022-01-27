@@ -12,15 +12,12 @@ namespace SB
     public:
         CircleCollider(const Engine::Circ& bounds);
 
-        Engine::Vec2 offset() const override;
+        Engine::Vec2 nearest_vertex(const Engine::Vec2& pos) const override;
 
         void render(Engine::Renderer* renderer) override;
 
     protected:
-        std::vector<Engine::Vec2> axes(const std::vector<Engine::Vec2>& other_vertices) const override;
-        std::vector<Engine::Vec2> vertices() const override;
-
-        std::function<std::vector<Engine::Vec2> (const Engine::Vec2& vertex,
-                const Engine::Vec2& axis)> vertex_mapper() const override;
+        std::vector<Engine::Vec2> axes(const Collider& other) const override;
+        Projection projection(const Engine::Vec2& axis) const override;
     };
 }

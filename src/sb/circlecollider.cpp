@@ -9,54 +9,33 @@ namespace SB
         : bounds(bounds)
     {}
 
-    Engine::Vec2 CircleCollider::offset() const
+    std::vector<Engine::Vec2> CircleCollider::axes(const Collider& other) const
     {
-        return bounds.center;
+        const Vec2 pos = m_entity->pos + bounds.center;
+        const Vec2 diff = pos - other.nearest_vertex(pos);
+        return { diff.norm() };
     }
 
-    /* bool CircleCollider::contains(const Engine::Vec2& point) const */
-    /* { */
-    /*     const Circ circ(m_entity->pos + bounds.center, bounds.radius); */
-    /*     return circ.contains(point); */
-    /* } */
+    Collider::Projection CircleCollider::projection(const Engine::Vec2& axis) const
+    {   
+        const Vec2 pos = m_entity->pos + bounds.center;
+        const Vec2 front = pos + (axis * bounds.radius);
+        const Vec2 back = pos - (axis * bounds.radius);
 
-    /* bool CircleCollider::intersects(const Engine::Line& line) const */
-    /* { */
-    /*     const Circ circ(m_entity->pos + bounds.center, bounds.radius); */
-    /*     return circ.intersects(line); */
-    /* } */
+        const float p0 = front.dot(axis);
+        const float p1 = back.dot(axis);
 
-    std::vector<Vec2> CircleCollider::axes(const std::vector<Vec2>& other_vertices) const
-    {
-        std::vector<Vec2> axes;
-        axes.push_back(circ_axis(bounds.offset(m_entity->pos), other_vertices));
-
-        return axes;
+        return {Calc::min(p0, p1), Calc::max(p0, p1)};
     }
 
-    std::vector<Vec2> CircleCollider::vertices() const
+    Vec2 CircleCollider::nearest_vertex(const Engine::Vec2& pos) const
     {
-        std::vector<Vec2> v = { m_entity->pos + bounds.center };
-        return v;
-    }
-
-    std::function<std::vector<Vec2> (const Vec2& vertex, const Vec2& axis)>
-        CircleCollider::vertex_mapper() const
-    {
-        return [this](const Vec2& vertex, const Vec2& axis)
-        {
-            std::vector<Vec2> mapped = 
-            {
-                vertex + (axis * this->bounds.radius),
-                vertex - (axis * this->bounds.radius), 
-            };
-
-            return mapped;
-        };
+        return m_entity->pos + bounds.center;
     }
 
     void CircleCollider::render(Engine::Renderer* renderer)
     {
+        Vec2 pos = bounds.offset(m_entity->pos).center;
         renderer->circ(bounds.offset(m_entity->pos), 128, color);
     }
 }

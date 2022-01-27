@@ -9,51 +9,38 @@ namespace SB
     class Player : public Component
     {
     private:
+        enum class State
+        {
+            Normal,
+            Dash
+        };
+
+        State m_state;
+
         Engine::Vec2 m_facing;
 
-        CircleCollider* m_dash_collider;
-        BoxCollider* m_weapon_collider;
-        bool m_is_dashing;
+        CircleCollider* m_weapon_collider;
         float m_dash_timer;
         float m_dash_cooldown_timer;
-        bool m_dash_stopped;
-        bool m_dashing_through;
 
         float m_invincible_timer;
-        float m_weapon_attack_timer;
-        float m_weapon_attack_cooldown_timer;
-        Engine::Vec2 m_weapon_attack_dir;
-
 
         static constexpr float collider_radius = 4.0f;
-        static constexpr float max_swim_speed = 68.0f;
-        static constexpr float swim_accel = 278.0f;
-        static constexpr float swim_deaccel = 427.0f;
+        static constexpr float max_speed = 68.0f;
+        static constexpr float accel = 278.0f;
+        static constexpr float deaccel = 427.0f;
 
         static constexpr float dash_speed = 126.0f;
-        static constexpr float dash_cooldown = 0.8f;
-        static constexpr float dash_min_time = 0.1f;
-        static constexpr float dash_max_time = 0.15;
-        static constexpr float dash_shield_radius = 8.0f;
-        static constexpr float dash_min_end_time = 0.03f;
+        static constexpr float dash_cooldown = 0.6f;
+        static constexpr float dash_time = 0.24f;
 
         static constexpr float invincible_time = 1.0f;
-
-        static constexpr float weapon_width = 4.0f;
-        static constexpr float weapon_height = 6.0f;
-        static constexpr float weapon_max_stretch = 22.0f;
-        static constexpr float weapon_attack_time = 0.25f;
-        static constexpr float weapon_attack_cooldown = 0.4f;
 
     public:
         Player();
 
         void hurt();
-        bool dashing() const;
 
-        void on_hit(const Engine::Vec2& dir, const Engine::Vec2& prev_vel);
-
-        void awake() override;
         void update(const float elapsed) override;
         void render(Engine::Renderer* renderer) override;
 

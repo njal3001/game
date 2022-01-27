@@ -15,47 +15,29 @@ namespace SB
         static constexpr uint32_t Enemy = 1 << 1;
         static constexpr uint32_t Player = 1 << 2;
         static constexpr uint32_t PlayerDash = 1 << 3;
-        static constexpr uint32_t DashTrough = 1 << 4;
-        static constexpr uint32_t BulletStopper = 1 << 5;
     };
 
-    // TODO: This turned into an overcomplicated mess...
-    // Should redo it all at some point
     class Collider : public Component
     {
-    public:
-        uint32_t mask;
-        Engine::Color color;
-
-    private:
+    protected:
         struct Projection
         {
             float start;
             float end;
         };
 
-    protected:
-        static const std::vector<Engine::Vec2> rect_axes;
+    public:
+        uint32_t mask;
+        Engine::Color color;
 
     protected:
-        virtual std::vector<Engine::Vec2> axes(const std::vector<Engine::Vec2>& other_vertices) const = 0;
-        virtual std::vector<Engine::Vec2> vertices() const = 0;
-
-        // Some collider projections are axis dependent and use a mapper
-        virtual std::function<std::vector<Engine::Vec2> (const Engine::Vec2& vertex, 
-                const Engine::Vec2& axis)> vertex_mapper() const = 0;
-
-        static Engine::Vec2 circ_axis(const Engine::Circ& circ, const std::vector<Engine::Vec2>& other_vertices);
+        virtual std::vector<Engine::Vec2> axes(const Collider& other) const = 0;
+        virtual Projection projection(const Engine::Vec2& axis) const = 0;
 
     public:
         Collider();
 
-        // Colliders offset from entity position
-        virtual Engine::Vec2 offset() const = 0;
-
-        // TODO: Implement wit SAT
-        /* virtual bool contains(const Engine::Vec2& point) const = 0; */
-        /* virtual bool intersects(const Engine::Line& line) const = 0; */
+        virtual Engine::Vec2 nearest_vertex(const Engine::Vec2& pos) const = 0;
 
         bool intersects(const Collider& other) const;
         
@@ -65,38 +47,5 @@ namespace SB
         float distance(const Collider& other) const;
 
         bool check(const uint32_t mask) const;
-
-    private:
-        static Projection projection(const std::vector<Engine::Vec2>& vertices, 
-                const Engine::Vec2& axis, 
-                const std::function<std::vector<Engine::Vec2> 
-                (const Engine::Vec2& vertex, const Engine::Vec2& axis)> mapper);
-
-        static bool intersects(const std::vector<Engine::Vec2>& v1, 
-                const std::vector<Engine::Vec2>& v2,
-                const std::vector<Engine::Vec2>& a1,
-                const std::vector<Engine::Vec2>& a2,
-                const std::function<std::vector<Engine::Vec2> 
-                (const Engine::Vec2& v, const Engine::Vec2& a)> m1,
-                const std::function<std::vector<Engine::Vec2> 
-                (const Engine::Vec2& v, const Engine::Vec2& a)> m2);
-
-        static Engine::Vec2 displace(const std::vector<Engine::Vec2>& v1, 
-                const std::vector<Engine::Vec2>& v2,
-                const std::vector<Engine::Vec2>& a1,
-                const std::vector<Engine::Vec2>& a2,
-                const std::function<std::vector<Engine::Vec2> 
-                (const Engine::Vec2& v, const Engine::Vec2& a)> m1,
-                const std::function<std::vector<Engine::Vec2> 
-                (const Engine::Vec2& v, const Engine::Vec2& a)> m2);
-
-        static float distance(const std::vector<Engine::Vec2>& v1, 
-                const std::vector<Engine::Vec2>& v2,
-                const std::vector<Engine::Vec2>& a1,
-                const std::vector<Engine::Vec2>& a2,
-                const std::function<std::vector<Engine::Vec2> 
-                (const Engine::Vec2& v, const Engine::Vec2& a)> m1,
-                const std::function<std::vector<Engine::Vec2> 
-                (const Engine::Vec2& v, const Engine::Vec2& a)> m2);
     };
 }

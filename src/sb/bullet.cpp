@@ -20,11 +20,11 @@ namespace SB
         Mover* m = new Mover();
         m->collider = c;
         m->vel = vel;
-        m->stop_mask |= (Mask::BulletStopper | Mask::PlayerDash | Mask::Player);
+        m->stop_mask |= (Mask::PlayerDash | Mask::Player);
 
-        m->on_hit = [](Mover* mover, Collider* other, const Vec2& dir, const Vec2& prev_vel)
+        m->on_hit = [](Mover* mover, Collider* other, const Vec2& dir)
         {
-            if (other->mask & (Mask::Solid | Mask::PlayerDash | Mask::BulletStopper))
+            if (other->mask & (Mask::Solid | Mask::PlayerDash))
             {
                 mover->entity()->destroy();
                 if (other->mask & Mask::PlayerDash)

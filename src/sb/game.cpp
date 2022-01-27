@@ -57,29 +57,30 @@ namespace SB
 
             // Create enemies
             Enemy::create(&scene, Vec2(32.0f, 32.0f), 4.0f);
-            Enemy::create(&scene, Vec2(64.0f, 64.0f), 6.0f);
-            Enemy::create(&scene, Vec2(88.0f, 88.0f), 8.0f);
-            Enemy::create(&scene, Vec2(88.0f, 16.0f), 12.0f);
+            Enemy::create(&scene, Vec2(64.0f, 64.0f), 4.0f);
+            Enemy::create(&scene, Vec2(88.0f, 88.0f), 4.0f);
+            Enemy::create(&scene, Vec2(88.0f, 16.0f), 4.0f);
 
             // Create walls
             {
                 const float thickness = 1000.0f;
 
-                Rect bottom(scene_bounds.x, scene_bounds.y - thickness, scene_bounds.w, thickness);
+                Rect bottom(scene_bounds.x, scene_bounds.y - thickness, 
+                        scene_bounds.w, thickness);
                 create_wall(&scene, bottom);
 
-                Rect top(scene_bounds.x, scene_bounds.y + scene_bounds.h, scene_bounds.w, thickness);
+                Rect top(scene_bounds.x, scene_bounds.y + scene_bounds.h, 
+                        scene_bounds.w, thickness);
                 create_wall(&scene, top);
 
-                Rect left(scene_bounds.x - thickness, scene_bounds.y, thickness, scene_bounds.h);
+                Rect left(scene_bounds.x - thickness, scene_bounds.y, 
+                        thickness, scene_bounds.h);
                 create_wall(&scene, left);
                 
-                Rect right(scene_bounds.x + scene_bounds.w, scene_bounds.y, thickness, scene_bounds.h);
+                Rect right(scene_bounds.x + scene_bounds.w, scene_bounds.y, 
+                        thickness, scene_bounds.h);
                 create_wall(&scene, right);
             }
-
-            // Create dash troughs
-            create_dash_trough(&scene, Rect(32.0f, 64.0f, 16.0f, 12.0f));
 
             // Initialize before first update
             m_prev_ticks = Platform::ticks();
@@ -111,19 +112,6 @@ namespace SB
 
         Collider* c = new BoxCollider(Rect(0.0f, 0.0f, bounds.w, bounds.h));
         c->mask = Mask::Solid;
-        e->add(c);
-
-        return e;
-    }
-
-    Entity* Game::create_dash_trough(Scene* scene, const Rect& bounds)
-    {
-        Entity* e = scene->add_entity(bounds.center());
-
-        Collider* c = new BoxCollider(Rect(0.0f, 0.0f, bounds.w, bounds.h));
-        c->mask = Mask::DashTrough | Mask::BulletStopper;
-        c->visible = true;
-        c->color = Color(255, 255, 0);
         e->add(c);
 
         return e;
