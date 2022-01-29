@@ -42,7 +42,7 @@ namespace SB
         min = Calc::min(min, p2);
         min = Calc::min(min, p3);
 
-        float max = p1;
+        float max = p0;
 
         max = Calc::max(max, p1);
         max = Calc::max(max, p2);

@@ -15,6 +15,7 @@ namespace SB
         static constexpr uint32_t Enemy = 1 << 1;
         static constexpr uint32_t Player = 1 << 2;
         static constexpr uint32_t PlayerDash = 1 << 3;
+        static constexpr uint32_t PlayerAttack = 1 << 4;
     };
 
     class Collider : public Component

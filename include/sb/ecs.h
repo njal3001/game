@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <vector>
 #include "engine/graphics/renderer.h"
+#include "sb/collisionresolver.h"
 
 namespace SB
 {
@@ -106,6 +107,7 @@ namespace SB
         std::vector<Entity*> m_entities;
         std::vector<Entity*> m_to_add;
         std::vector<Component*> m_components[max_component_types];
+        CollisionResolver m_collision_resolver;
 
     public:
         // TODO: Implement map class

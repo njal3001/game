@@ -20,6 +20,7 @@ namespace SB
         Mover* m = new Mover();
         m->collider = c;
         m->vel = vel;
+        m->trigger_only = true;
         m->stop_mask |= (Mask::PlayerDash | Mask::Player);
 
         m->on_hit = [](Mover* mover, Collider* other, const Vec2& dir)

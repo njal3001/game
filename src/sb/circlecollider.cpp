@@ -13,6 +13,7 @@ namespace SB
     {
         const Vec2 pos = m_entity->pos + bounds.center;
         const Vec2 diff = pos - other.nearest_vertex(pos);
+        //printf("axis: (%f, %f)\n", diff.norm().x, diff.norm().y);
         return { diff.norm() };
     }
 

@@ -1,8 +1,7 @@
 #pragma once
-#include "engine/maths/rect.h"
 #include "sb/ecs.h"
 #include "sb/circlecollider.h"
-#include "sb/boxcollider.h"
+#include "sb/mover.h"
 
 namespace SB
 {
@@ -16,12 +15,17 @@ namespace SB
         };
 
         State m_state;
+        CircleCollider* m_collider;
+        Mover* m_mover;
 
         Engine::Vec2 m_facing;
 
-        CircleCollider* m_weapon_collider;
         float m_dash_timer;
         float m_dash_cooldown_timer;
+
+        CircleCollider* m_attack_collider;
+        float m_attack_timer;
+        float m_attack_cooldown_timer;
 
         float m_invincible_timer;
 
@@ -34,6 +38,11 @@ namespace SB
         static constexpr float dash_cooldown = 0.6f;
         static constexpr float dash_time = 0.24f;
 
+        static constexpr float attack_offset = 8.0f;
+        static constexpr float attack_radius = 8.0f;
+        static constexpr float attack_time = 0.3f;
+        static constexpr float attack_cooldown = 0.45f;
+
         static constexpr float invincible_time = 1.0f;
 
     public:
@@ -41,8 +50,15 @@ namespace SB
 
         void hurt();
 
+        void awake() override;
         void update(const float elapsed) override;
         void render(Engine::Renderer* renderer) override;
+
+        void start_dash();
+        void stop_dash();
+
+        void start_attack();
+        void stop_attack();
 
         static Entity* create(Scene* scene, const Engine::Vec2& pos);
     };

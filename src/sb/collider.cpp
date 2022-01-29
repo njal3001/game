@@ -73,6 +73,7 @@ namespace SB
                 {
                     min_overlap = overlap;
                     
+                    // TODO: Probably cleaner way to do this
                     // Find the push out direction
                     dis_axis = axis * (i ? -1.0f : 1.0f);
                     if (p1.end < p2.end)

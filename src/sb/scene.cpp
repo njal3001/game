@@ -8,7 +8,7 @@ namespace SB
     using namespace Engine;
 
     Scene::Scene(const Rect& bounds)
-        : bounds(bounds)
+        : m_collision_resolver(CollisionResolver(this)), bounds(bounds)
     {}
 
     Scene::~Scene()
@@ -66,6 +66,8 @@ namespace SB
                 }
             }
         }
+
+        m_collision_resolver.update();
     }
 
     void Scene::update_lists()

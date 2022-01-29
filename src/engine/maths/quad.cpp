@@ -19,12 +19,11 @@ namespace Engine
     {}
 
     Quad::Quad(const Rect& rect, const Vec2& pivot, const float rotation)
-    {
-        a = rect.bottom_left().rotate(pivot, rotation);
-        b = rect.top_left().rotate(pivot, rotation);
-        c = rect.top_right().rotate(pivot, rotation);
-        d = rect.bottom_right().rotate(pivot, rotation);
-    }
+        : a(rect.bottom_left().rotate(pivot, rotation)), 
+        b(rect.top_left().rotate(pivot, rotation)),
+        c(rect.top_right().rotate(pivot, rotation)),
+        d(rect.bottom_right().rotate(pivot, rotation))
+    {}
 
     Quad Quad::offset(const Vec2& o) const
     {

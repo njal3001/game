@@ -33,7 +33,7 @@ namespace SB
             // Appoach player
             auto mover = get<Mover>();
             const Vec2 pdir = (player->entity()->pos - m_entity->pos);
-            mover->vel = Vec2::approach(mover->vel, pdir.norm() * 40.0f, 20.0f * elapsed);
+            mover->vel = Vec2::approach(mover->vel, pdir.norm() * 40.0f, 35.0f * elapsed);
         }
     }
 
@@ -51,7 +51,7 @@ namespace SB
 
         Mover* m = new Mover();
         m->collider = c;
-        m->stop_mask |= Mask::Enemy | Mask::Player;
+        m->stop_mask |= Mask::Enemy | Mask::Player | Mask::PlayerDash;
         e->add(m);
 
         return e;
