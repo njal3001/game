@@ -24,6 +24,7 @@ add_executable(sb
     src/sb/enemy.cpp
     src/sb/bullet.cpp
     src/sb/collisionresolver.cpp
+    src/sb/charger.cpp
 
     src/engine/platform.cpp 
     src/engine/input.cpp 

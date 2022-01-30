@@ -28,6 +28,7 @@ namespace SB
         float m_attack_cooldown_timer;
 
         float m_invincible_timer;
+        size_t m_health;
 
         static constexpr float collider_radius = 4.0f;
         static constexpr float max_speed = 68.0f;
@@ -43,6 +44,7 @@ namespace SB
         static constexpr float attack_time = 0.3f;
         static constexpr float attack_cooldown = 0.45f;
 
+        static constexpr size_t max_health = 5;
         static constexpr float invincible_time = 1.0f;
 
     public:

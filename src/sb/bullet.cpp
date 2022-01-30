@@ -14,13 +14,13 @@ namespace SB
 
         Collider* c = new CircleCollider(Circ(Vec2(), radius));
         c->visible = true;
+        c->trigger_only = true;
         c->color = Color(0, 255, 255);
         e->add(c);
 
         Mover* m = new Mover();
         m->collider = c;
         m->vel = vel;
-        m->trigger_only = true;
         m->stop_mask |= (Mask::PlayerDash | Mask::Player);
 
         m->on_hit = [](Mover* mover, Collider* other, const Vec2& dir)

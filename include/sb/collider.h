@@ -29,6 +29,7 @@ namespace SB
 
     public:
         uint32_t mask;
+        bool trigger_only;
         Engine::Color color;
 
     protected:

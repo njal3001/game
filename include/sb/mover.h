@@ -13,7 +13,6 @@ namespace SB
         Collider* collider;
         Engine::Vec2 vel;
         bool stop_on_collide;
-        bool trigger_only;
         uint32_t stop_mask;
         std::function<void (Mover* mover, Collider* other, const Engine::Vec2& dir)> on_hit;
 

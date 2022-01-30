@@ -8,7 +8,7 @@ namespace SB
     using namespace Engine;
 
     Mover::Mover()
-        : collider(nullptr), stop_on_collide(true), trigger_only(false), 
+        : collider(nullptr), stop_on_collide(true),
         stop_mask(Mask::Solid), on_hit(nullptr)
     {}
 

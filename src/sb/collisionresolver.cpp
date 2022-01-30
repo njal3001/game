@@ -20,7 +20,7 @@ namespace SB
         {
             for (auto m : movers)
             {
-                if (m->collider && m->stop_mask != Mask::None)
+                if (m->alive() && m->collider && m->stop_mask != Mask::None)
                 {
                     // TODO: Could cache this maybe?
                     std::vector<Collider*> stop_colliders;
@@ -28,7 +28,7 @@ namespace SB
 
                     for (const auto other : stop_colliders)
                     {
-                        if (other != m->collider)
+                        if (other->alive() && other != m->collider)
                         {
                             const Vec2 disp = m->collider->displace(*other);
 
@@ -37,7 +37,7 @@ namespace SB
                             {
                                 const Vec2 disp_norm = disp.norm();
 
-                                if (!m->trigger_only)
+                                if (!other->trigger_only)
                                 {
                                     // Inelastic collision, update positions and velocities
                                     auto om = other->get<Mover>();

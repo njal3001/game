@@ -14,7 +14,8 @@ namespace SB
         : m_state(State::Normal), m_collider(nullptr), m_mover(nullptr), 
         m_facing(Vec2(1.0f, 0.0f)), m_dash_timer(0.0f), 
         m_dash_cooldown_timer(0.0f), m_attack_collider(nullptr), 
-        m_attack_timer(0.0f), m_attack_cooldown_timer(0.0f), m_invincible_timer(0.0f)
+        m_attack_timer(0.0f), m_attack_cooldown_timer(0.0f), 
+        m_invincible_timer(0.0f), m_health(max_health)
     {}
 
     void Player::hurt()
@@ -22,7 +23,14 @@ namespace SB
         if (m_dash_timer <= 0.0f && m_invincible_timer <= 0.0f)
         {
             m_invincible_timer = invincible_time;
-            printf("Tok damage!\n");
+            m_health--;
+
+            printf("Health: %d\n", (int)m_health);
+
+            if (m_health == 0)
+            {
+                m_entity->destroy();
+            }
         }
     }
 
@@ -32,8 +40,9 @@ namespace SB
         m_mover = get<Mover>();
 
         m_attack_collider = new CircleCollider(Circ(Vec2(), attack_radius));
+        m_attack_collider->trigger_only = true;
         m_attack_collider->color = Color::red;
-        m_entity->add(m_attack_collider);
+        m_entity->add((Collider*)m_attack_collider);
     }
     
     void Player::update(const float elapsed)
@@ -88,7 +97,7 @@ namespace SB
                     }
                 }
                 
-                // Check for dash and attack input
+                // Check for dash or attack input
                 if (Input::controller_button_state(ControllerButton::LeftShoulder).pressed 
                         && m_dash_cooldown_timer <= 0.0f)
                 {
