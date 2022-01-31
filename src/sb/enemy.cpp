@@ -24,8 +24,8 @@ namespace SB
             // Shoot
             if (m_shoot_cooldown_timer <= 0.0f)
             {
-                Vec2 bullet_vel = (player->entity()->pos - m_entity->pos).norm() * bullet_speed;
-                Bullet::create(scene(), m_entity->pos, bullet_vel, 1.0f);
+                /* Vec2 bullet_vel = (player->entity()->pos - m_entity->pos).norm() * bullet_speed; */
+                /* Bullet::create(scene(), m_entity->pos, bullet_vel, 1.0f); */
 
                 m_shoot_cooldown_timer = shoot_cooldown;
             }

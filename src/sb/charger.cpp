@@ -2,6 +2,7 @@
 #include "sb/circlecollider.h"
 #include "sb/mover.h"
 #include "sb/player.h"
+#include "sb/animator.h"
 
 namespace SB
 {
@@ -163,12 +164,12 @@ namespace SB
     }
 
 
-    Entity* Charger::create(Scene* scene, const Engine::Vec2& pos, const float radius)
+    Entity* Charger::create(Scene* scene, const Engine::Vec2& pos)
     {
         Entity* e = scene->add_entity(pos);
         e->add(new Charger());
 
-        Collider* c = new CircleCollider(Circ(Vec2(), radius));
+        Collider* c = new CircleCollider(Circ(Vec2(), collider_radius));
         c->visible = true;
         c->mask = Mask::Enemy;
         e->add(c);
@@ -185,6 +186,10 @@ namespace SB
             auto charger = mover->get<Charger>();
             charger->on_hit(other, dir);
         };
+
+        /* Animator* a = new Animator("charger.png"); */
+        /* a->offset = Vec2(-18.0f, -15.0f); */
+        /* e->add(a); */
 
         e->add(m);
 

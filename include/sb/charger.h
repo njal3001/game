@@ -22,6 +22,7 @@ namespace SB
         size_t m_health;
         float m_invincible_timer;
 
+        static constexpr float collider_radius = 3.0f;
         static constexpr float accel = 68.0f;
         static constexpr float max_speed = 48.0f;
 
@@ -48,6 +49,6 @@ namespace SB
         void hurt(const Engine::Vec2& attack_dir);
         void update(const float elapsed) override;
 
-        static Entity* create(Scene* scene, const Engine::Vec2& pos, const float radius);
+        static Entity* create(Scene* scene, const Engine::Vec2& pos);
     };
 }

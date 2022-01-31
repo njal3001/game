@@ -12,10 +12,8 @@ namespace SB
 
     Player::Player()
         : m_state(State::Normal), m_collider(nullptr), m_mover(nullptr), 
-        m_facing(Vec2(1.0f, 0.0f)), m_dash_timer(0.0f), 
-        m_dash_cooldown_timer(0.0f), m_attack_collider(nullptr), 
-        m_attack_timer(0.0f), m_attack_cooldown_timer(0.0f), 
-        m_invincible_timer(0.0f), m_health(max_health)
+        m_facing(Vec2(1.0f, 0.0f)), m_dash_timer(0.0f), m_dash_cooldown_timer(0.0f),
+        m_shoot_cooldown_timer(0.0f), m_invincible_timer(0.0f), m_health(max_health)
     {}
 
     void Player::hurt()
@@ -36,20 +34,15 @@ namespace SB
 
     void Player::awake()
     {
-        m_collider = (CircleCollider*)get<Collider>();
+        m_collider = (BoxCollider*)get<Collider>();
         m_mover = get<Mover>();
-
-        m_attack_collider = new CircleCollider(Circ(Vec2(), attack_radius));
-        m_attack_collider->trigger_only = true;
-        m_attack_collider->color = Color::red;
-        m_entity->add((Collider*)m_attack_collider);
     }
     
     void Player::update(const float elapsed)
     {
         m_invincible_timer -= elapsed;
         m_dash_cooldown_timer -= elapsed;
-        m_attack_cooldown_timer -= elapsed;
+        m_shoot_cooldown_timer -= elapsed;
 
         switch (m_state)
         {
@@ -69,6 +62,8 @@ namespace SB
                 if (dir.x || dir.y)
                 {
                     m_facing = dir.norm();
+                    // TODO: No idea why this is correct
+                    m_collider->rotation = -m_facing.angle(Vec2(1.0f, 0.0f));
                 }
 
                 // Update speed
@@ -86,33 +81,33 @@ namespace SB
                             accel * elapsed);
                 }
 
-                // Attacking
-                if (m_attack_timer > 0.0f)
-                {
-                    m_attack_timer -= elapsed;
-
-                    if (m_attack_timer <= 0.0f)
-                    {
-                        stop_attack();
-                    }
-                }
-                
-                // Check for dash or attack input
+                // Check for dash or shoot input
                 if (Input::controller_button_state(ControllerButton::LeftShoulder).pressed 
                         && m_dash_cooldown_timer <= 0.0f)
                 {
-                    // Cancel attack
-                    if (m_attack_timer > 0.0f)
-                    {
-                        stop_attack();
-                    }
-
                     start_dash();
                 }
-                else if (Input::controller_button_state(ControllerButton::RightShoulder).
-                        pressed && m_attack_cooldown_timer <= 0.0f)
+                else if (Input::controller_button_state(ControllerButton::RightShoulder).pressed 
+                        && m_shoot_cooldown_timer <= 0.0f)
                 {
-                    start_attack();
+                    Vec2 shoot_dir;
+                    shoot_dir.x = Input::axis_state(Axis::RightX);
+                    shoot_dir.y = -Input::axis_state(Axis::RightY);
+
+                    if (shoot_dir.x || shoot_dir.y)
+                    {
+                        shoot_dir = shoot_dir.norm();
+                    }
+                    else
+                    {
+                        shoot_dir = m_facing;
+                    }
+
+                    Vec2 bullet_vel = shoot_dir * bullet_speed;
+                    Bullet::create(scene(), m_entity->pos + m_facing * bullet_offset,
+                            bullet_vel, bullet_lifetime, bullet_radius);
+
+                    m_shoot_cooldown_timer = shoot_cooldown;
                 }
 
                 break;
@@ -151,30 +146,16 @@ namespace SB
         m_state = State::Normal;
     }
 
-    void Player::start_attack()
-    {
-        m_attack_timer = attack_time;
-        m_attack_cooldown_timer = attack_cooldown;
-        m_attack_collider->mask = Mask::PlayerAttack;
-        m_attack_collider->visible = true;
-
-        m_attack_collider->bounds.center = m_facing * attack_offset;
-    }
-
-    void Player::stop_attack()
-    {
-        m_attack_collider->visible = false;
-        m_attack_collider->mask = Mask::None;
-        m_state = State::Normal;
-    }
-
     void Player::render(Engine::Renderer* renderer)
     {
         const Color c = m_state == State::Dash ? Color::blue : 
             (m_invincible_timer > 0.0f ? Color::white :
                 (m_dash_cooldown_timer <= 0.0f ? Color::green : Color::red));
 
-        renderer->circ(m_entity->pos, m_collider->bounds.radius, 128, c);
+        const Rect r = m_collider->bounds.offset(m_entity->pos - 
+                (Vec2(m_collider->bounds.w, m_collider->bounds.h) / 2.0f));
+        const Quad q(r, m_collider->rotation);
+        renderer->quad(q, c);
     }
 
     Entity* Player::create(Scene* scene, const Engine::Vec2& pos)
@@ -182,7 +163,7 @@ namespace SB
         Entity* e = scene->add_entity(pos);
         e->add(new Player());
 
-        Collider* c = new CircleCollider(Circ(Vec2(), collider_radius));
+        Collider* c = new BoxCollider(Rect(0.0f, 0.0f, collider_width, collider_height));
         e->add(c);
 
         Mover* m = new Mover();

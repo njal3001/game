@@ -57,10 +57,10 @@ namespace SB
             Player::create(&scene, Vec2(16.0f, 16.0f));
 
             // Create enemies
-            Charger::create(&scene, Vec2(32.0f, 32.0f), 4.0f);
-            Charger::create(&scene, Vec2(64.0f, 64.0f), 4.0f);
-            Charger::create(&scene, Vec2(88.0f, 88.0f), 4.0f);
-            Charger::create(&scene, Vec2(88.0f, 16.0f), 4.0f);
+            Charger::create(&scene, Vec2(32.0f, 32.0f));
+            Charger::create(&scene, Vec2(64.0f, 64.0f));
+            Charger::create(&scene, Vec2(88.0f, 88.0f));
+            Charger::create(&scene, Vec2(88.0f, 16.0f));
 
             // Create walls
             {

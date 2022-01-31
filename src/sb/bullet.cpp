@@ -1,16 +1,31 @@
 #include "sb/bullet.h"
 #include "sb/boxcollider.h"
 #include "sb/mover.h"
+#include "sb/charger.h"
 
 namespace SB
 {
     using namespace Engine;
 
+    Bullet::Bullet(const float lifetime)
+        : m_lifetime(lifetime)
+    {}
+
+    void Bullet::update(const float elapsed)
+    {
+        m_lifetime -= elapsed;
+
+        if (m_lifetime <= 0.0f)
+        {
+            m_entity->destroy();
+        }
+    }
+
     Entity* Bullet::create(Scene* scene, const Vec2& pos, 
-            const Vec2& vel, const float radius)
+            const Vec2& vel, const float lifetime, const float radius)
     {
         Entity* e = scene->add_entity(pos);
-        e->add(new Bullet());
+        e->add(new Bullet(lifetime));
 
         Collider* c = new CircleCollider(Circ(Vec2(), radius));
         c->visible = true;
@@ -21,23 +36,16 @@ namespace SB
         Mover* m = new Mover();
         m->collider = c;
         m->vel = vel;
-        m->stop_mask |= (Mask::PlayerDash | Mask::Player);
+        m->stop_mask |= (Mask::Enemy);
 
         m->on_hit = [](Mover* mover, Collider* other, const Vec2& dir)
         {
-            if (other->mask & (Mask::Solid | Mask::PlayerDash))
+            if (other->mask & Mask::Enemy)
             {
-                mover->entity()->destroy();
-                if (other->mask & Mask::PlayerDash)
-                {
-                    printf("Bullet dash collision!\n");
-                }
+                other->get<Charger>()->hurt(-dir);
             }
-            else if (other->mask & Mask::Player)
-            {
-                mover->entity()->destroy();
-                other->entity()->get<Player>()->hurt();
-            }
+
+            mover->entity()->destroy();
         };
 
         e->add(m);
