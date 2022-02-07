@@ -9,11 +9,15 @@ namespace SB
         : bounds(bounds)
     {}
 
+    Vec2 CircleCollider::pos() const
+    {
+        return m_entity->pos + bounds.center;
+    }
+
     std::vector<Engine::Vec2> CircleCollider::axes(const Collider& other) const
     {
         const Vec2 pos = m_entity->pos + bounds.center;
         const Vec2 diff = pos - other.nearest_vertex(pos);
-        //printf("axis: (%f, %f)\n", diff.norm().x, diff.norm().y);
         return { diff.norm() };
     }
 

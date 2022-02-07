@@ -9,7 +9,7 @@ namespace SB
     using namespace Engine;
 
     Collider::Collider()
-        : mask(Mask::None), trigger_only(false), color(Color::red)
+        : mask(Mask::None), trigger_only(false), is_bounds(false), color(Color::red)
     {
         visible = false;
     }

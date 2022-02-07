@@ -3,6 +3,7 @@
 #include "sb/mover.h"
 #include "sb/player.h"
 #include "sb/animator.h"
+#include "sb/pathfinder.h"
 
 namespace SB
 {
@@ -57,7 +58,10 @@ namespace SB
      {
         auto collider = get<Collider>();
         auto mover = get<Mover>();
+        auto pathfinder = get<PathFinder>();
+
         Player* player = scene()->first<Player>();
+        pathfinder->target = player->entity();
 
         m_state_timer -= elapsed;
         m_invincible_timer -= elapsed;
@@ -79,7 +83,7 @@ namespace SB
             case State::Search:
             {
                 // Appoach player
-                const Vec2 dir = (player->entity()->pos - m_entity->pos).norm();
+                const Vec2 dir = pathfinder->move_dir();
                 mover->vel = Vec2::approach(mover->vel, dir * max_speed, 
                         accel * elapsed);
 
@@ -101,7 +105,7 @@ namespace SB
                 // Start charge
                 if (m_state_timer < 0.0f)
                 {
-                    const Vec2 dir = (player->entity()->pos - m_entity->pos).norm();
+                    const Vec2 dir = pathfinder->move_dir();
                     m_charge_dir = dir;
 
                     m_state_timer = charge_max_time;
@@ -166,10 +170,10 @@ namespace SB
 
     Entity* Charger::create(Scene* scene, const Engine::Vec2& pos)
     {
-        Entity* e = scene->add_entity(pos);
+        Entity *e = scene->add_entity(pos);
         e->add(new Charger());
 
-        Collider* c = new CircleCollider(Circ(Vec2(), collider_radius));
+        Collider *c = new CircleCollider(Circ(Vec2(), collider_radius));
         c->visible = true;
         c->mask = Mask::Enemy;
         e->add(c);
@@ -177,7 +181,7 @@ namespace SB
         c->visible = true;
         c->color = Color::white;
 
-        Mover* m = new Mover();
+        Mover *m = new Mover();
         m->collider = c;
         m->stop_mask |= Mask::Enemy | Mask::Player | Mask::PlayerDash | Mask::PlayerAttack;
 
@@ -187,13 +191,17 @@ namespace SB
             charger->on_hit(other, dir);
         };
 
+        e->add(m);
+
+        PathFinder *pf = new PathFinder();
+        pf->avoid_mask = Mask::Solid | Mask::Enemy | Mask::PlayerAttack;
+        e->add(pf);
+
         /* Animator* a = new Animator("charger.png"); */
         /* a->offset = Vec2(-18.0f, -15.0f); */
         /* e->add(a); */
 
-        e->add(m);
 
         return e;
-
     }
 }

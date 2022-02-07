@@ -62,6 +62,12 @@ namespace SB
             Charger::create(&scene, Vec2(88.0f, 88.0f));
             Charger::create(&scene, Vec2(88.0f, 16.0f));
 
+
+            Rect obst1(32.0f, 64.0f, 16.0f, 16.0f);
+            Rect obst2(128.0f, 64.0f, 64.0f, 16.0f);
+            create_wall(&scene, obst1);
+            create_wall(&scene, obst2);
+
             // Create walls
             {
                 const float thickness = 1000.0f;
@@ -112,7 +118,9 @@ namespace SB
         Entity* e = scene->add_entity(bounds.center());
 
         Collider* c = new BoxCollider(Rect(0.0f, 0.0f, bounds.w, bounds.h));
+        c->visible = true;
         c->mask = Mask::Solid;
+        c->is_bounds = true;
         e->add(c);
 
         return e;

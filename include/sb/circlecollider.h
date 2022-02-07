@@ -13,6 +13,7 @@ namespace SB
         CircleCollider(const Engine::Circ& bounds);
 
         Engine::Vec2 nearest_vertex(const Engine::Vec2& pos) const override;
+        Engine::Vec2 pos() const override;
 
         void render(Engine::Renderer* renderer) override;
 

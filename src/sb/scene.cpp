@@ -8,7 +8,8 @@ namespace SB
     using namespace Engine;
 
     Scene::Scene(const Rect& bounds)
-        : m_collision_resolver(CollisionResolver(this)), bounds(bounds)
+        : bounds(bounds), m_collision_manager(CollisionManager(this)), 
+        m_navigation_manager(NavigationManager(this))
     {}
 
     Scene::~Scene()
@@ -47,6 +48,11 @@ namespace SB
         c_vec.erase(std::find(std::begin(c_vec), std::end(c_vec), component));
     }
 
+    const NavigationManager* Scene::navigation_manager() const
+    {
+        return &m_navigation_manager;
+    }
+
     void Scene::update(float elapsed)
     {
         update_lists();
@@ -55,6 +61,8 @@ namespace SB
         {
             e->update_lists();
         }
+
+        m_navigation_manager.update();
 
         for (auto& c_vec : m_components)
         {
@@ -67,7 +75,7 @@ namespace SB
             }
         }
 
-        m_collision_resolver.update();
+        m_collision_manager.update();
     }
 
     void Scene::update_lists()

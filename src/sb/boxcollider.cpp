@@ -16,6 +16,11 @@ namespace SB
         : bounds(bounds), rotation(rotation)
     {}
 
+    Vec2 BoxCollider::pos() const
+    {
+        return m_entity->pos + Vec2(bounds.x, bounds.y) - (Vec2(bounds.w, bounds.h) / 2.0f);
+    }
+
     std::vector<Vec2> BoxCollider::axes(const Collider& other) const
     {
         const Quad q(bounds, rotation);

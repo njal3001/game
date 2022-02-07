@@ -23,9 +23,11 @@ add_executable(sb
     src/sb/player.cpp
     src/sb/enemy.cpp
     src/sb/bullet.cpp
-    src/sb/collisionresolver.cpp
+    src/sb/collisionmanager.cpp
     src/sb/charger.cpp
     src/sb/animator.cpp
+    src/sb/navigationmanager.cpp
+    src/sb/pathfinder.cpp
 
     src/engine/platform.cpp 
     src/engine/input.cpp 
@@ -52,3 +54,8 @@ add_executable(sb
     )
 
 target_link_libraries(sb ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${FREETYPE_LIBRARIES})
+
+add_custom_target(run
+    COMMAND sb
+    DEPENDS sb
+    WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})

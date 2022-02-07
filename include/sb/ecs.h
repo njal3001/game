@@ -2,7 +2,8 @@
 #include <assert.h>
 #include <vector>
 #include "engine/graphics/renderer.h"
-#include "sb/collisionresolver.h"
+#include "sb/collisionmanager.h"
+#include "sb/navigationmanager.h"
 
 namespace SB
 {
@@ -102,16 +103,16 @@ namespace SB
     public:
         static constexpr int max_component_types = 256;
 
+        // TODO: Implement map class
+        Engine::Rect bounds;
+
     private:
         // TODO: Use unique ptr
         std::vector<Entity*> m_entities;
         std::vector<Entity*> m_to_add;
         std::vector<Component*> m_components[max_component_types];
-        CollisionResolver m_collision_resolver;
-
-    public:
-        // TODO: Implement map class
-        Engine::Rect bounds;
+        CollisionManager m_collision_manager;
+        NavigationManager m_navigation_manager;
 
     public:
         Scene(const Engine::Rect& bounds);
@@ -123,6 +124,8 @@ namespace SB
         // TODO: Let entity be friend and change to private?
         void track_component(Component* component);
         void untrack_component(Component* component);
+
+        const NavigationManager* navigation_manager() const;
 
         void update(float elapsed);
         void render(Engine::Renderer* renderer);
