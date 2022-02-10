@@ -17,11 +17,15 @@ namespace SB
 
         Engine::Vec2 nearest_vertex(const Engine::Vec2& pos) const override;
         Engine::Vec2 pos() const override;
+        Engine::Rect bounding_box() const override;
 
         void render(Engine::Renderer* renderer) override;
 
     protected:
         std::vector<Engine::Vec2> axes(const Collider& other) const override;
         Projection projection(const Engine::Vec2& axis) const override;
+
+    private:
+        Engine::Quad make_quad() const;
     };
 }

@@ -48,7 +48,7 @@ namespace SB
             Renderer renderer;
 
             Rect scene_bounds = Rect(0.0f, 0.0f, 320.0f, 180.0f);
-            Mat4x4 matrix = Mat4x4::create_ortho(scene_bounds.x, scene_bounds.x + scene_bounds.w, 
+            Mat4x4 matrix = Mat4x4::create_ortho(scene_bounds.x, scene_bounds.x + scene_bounds.w,
                     scene_bounds.y, scene_bounds.y + scene_bounds.h, -1.0f, 1.0f);
             Color clear_color(0, 0, 0, 255);
 
@@ -60,33 +60,37 @@ namespace SB
             Charger::create(&scene, Vec2(32.0f, 32.0f));
             Charger::create(&scene, Vec2(64.0f, 64.0f));
             Charger::create(&scene, Vec2(88.0f, 88.0f));
-            Charger::create(&scene, Vec2(88.0f, 16.0f));
+            Charger::create(&scene, Vec2(129.0f, 16.0f));
+            Charger::create(&scene, Vec2(189.0f, 16.0f));
+            Charger::create(&scene, Vec2(200.0f, 16.0f));
+            Charger::create(&scene, Vec2(224.0f, 16.0f));
+            Charger::create(&scene, Vec2(300.0f, 16.0f));
 
 
             Rect obst1(32.0f, 64.0f, 16.0f, 16.0f);
             Rect obst2(128.0f, 64.0f, 64.0f, 16.0f);
-            create_wall(&scene, obst1);
-            create_wall(&scene, obst2);
+            create_wall(&scene, obst1, false);
+            create_wall(&scene, obst2, false);
 
             // Create walls
             {
                 const float thickness = 1000.0f;
 
-                Rect bottom(scene_bounds.x, scene_bounds.y - thickness, 
+                Rect bottom(scene_bounds.x, scene_bounds.y - thickness,
                         scene_bounds.w, thickness);
-                create_wall(&scene, bottom);
+                create_wall(&scene, bottom, true);
 
-                Rect top(scene_bounds.x, scene_bounds.y + scene_bounds.h, 
+                Rect top(scene_bounds.x, scene_bounds.y + scene_bounds.h,
                         scene_bounds.w, thickness);
-                create_wall(&scene, top);
+                create_wall(&scene, top, true);
 
-                Rect left(scene_bounds.x - thickness, scene_bounds.y, 
+                Rect left(scene_bounds.x - thickness, scene_bounds.y,
                         thickness, scene_bounds.h);
-                create_wall(&scene, left);
-                
-                Rect right(scene_bounds.x + scene_bounds.w, scene_bounds.y, 
+                create_wall(&scene, left, true);
+
+                Rect right(scene_bounds.x + scene_bounds.w, scene_bounds.y,
                         thickness, scene_bounds.h);
-                create_wall(&scene, right);
+                create_wall(&scene, right, true);
             }
 
             // Initialize before first update
@@ -113,14 +117,14 @@ namespace SB
         Platform::shutdown();
     }
 
-    Entity* Game::create_wall(Scene* scene, const Rect& bounds)
+    Entity* Game::create_wall(Scene* scene, const Rect& bounds, const bool is_bounds)
     {
         Entity* e = scene->add_entity(bounds.center());
 
         Collider* c = new BoxCollider(Rect(0.0f, 0.0f, bounds.w, bounds.h));
         c->visible = true;
         c->mask = Mask::Solid;
-        c->is_bounds = true;
+        c->is_bounds = is_bounds;
         e->add(c);
 
         return e;

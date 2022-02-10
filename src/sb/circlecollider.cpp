@@ -22,7 +22,7 @@ namespace SB
     }
 
     Collider::Projection CircleCollider::projection(const Engine::Vec2& axis) const
-    {   
+    {
         const Vec2 pos = m_entity->pos + bounds.center;
         const Vec2 front = pos + (axis * bounds.radius);
         const Vec2 back = pos - (axis * bounds.radius);
@@ -36,6 +36,12 @@ namespace SB
     Vec2 CircleCollider::nearest_vertex(const Engine::Vec2& pos) const
     {
         return m_entity->pos + bounds.center;
+    }
+
+    Rect CircleCollider::bounding_box() const
+    {
+        const Vec2 pos = m_entity->pos + bounds.center - Vec2(1.0f, 1.0f) * bounds.radius;
+        return Rect(pos, Vec2(1.0f, 1.0f) * 2 * bounds.radius);
     }
 
     void CircleCollider::render(Engine::Renderer* renderer)

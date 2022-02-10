@@ -12,7 +12,8 @@ namespace SB
     using namespace Engine;
 
     NavigationManager::GridNode::GridNode()
-        : x(0), y(0), g_val(INFINITY), h_val(INFINITY), parent(nullptr) 
+        : x(0), y(0), g_val(INFINITY), h_val(INFINITY), parent(nullptr),
+        state(NavigationManager::GridNode::State::UNEXPLORED)
     {}
 
     float NavigationManager::GridNode::distance(const size_t x, const size_t y)
@@ -21,7 +22,7 @@ namespace SB
     }
 
     NavigationManager::NavigationManager(Scene *scene)
-        : m_grid_width((size_t)(scene->bounds.w / tile_size)), 
+        : m_grid_width((size_t)(scene->bounds.w / tile_size)),
         m_grid_height((size_t)(scene->bounds.h / tile_size)),
         m_scene(scene)
     {
@@ -74,10 +75,8 @@ namespace SB
 
                 std::unordered_map<size_t, GridNode> nodes;
 
-                std::priority_queue<GridNode*, std::vector<GridNode*>, 
+                std::priority_queue<GridNode*, std::vector<GridNode*>,
                     decltype(compare)> open(compare);
-
-                std::unordered_map<size_t, bool> in_open;
 
                 const size_t target_x = pf->target->pos.x / tile_size;
                 const size_t target_y = pf->target->pos.y / tile_size;
@@ -87,7 +86,7 @@ namespace SB
                     const size_t start_x = pf->m_entity->pos.x / tile_size;
                     const size_t start_y = pf->m_entity->pos.y / tile_size;
 
-                    const size_t index = start_x + start_y * m_grid_width;
+                    const size_t index = grid_index(start_x, start_y);
 
                     nodes[index] = GridNode();
 
@@ -104,7 +103,7 @@ namespace SB
                 {
                     GridNode* current = open.top();
                     open.pop();
-                    in_open[current->x + current->y * m_grid_width] = false;
+                    current->state = GridNode::State::EXPLORED;
 
                     // Check if reached target
                     if (current->x == target_x && current->y == target_y)
@@ -125,18 +124,14 @@ namespace SB
                     {
                         for (int dx = -1; dx < 2; dx++)
                         {
-                            const int x = current->x + dx; 
+                            const int x = current->x + dx;
                             const int y  = current->y + dy;
 
-                            if ((x == 0 && y == 0) || x < 0 || x >= (int)m_grid_width || 
-                                    y < 0 || y >= (int)m_grid_height)
-                            {
-                                continue;
-                            }
-
+                            if (x == 0 && y == 0) continue;
+                            if (!can_move(x, y, pf->avoid_mask)) continue;
 
                             GridNode* adj;
-                            const size_t adj_index = x + y * m_grid_width;
+                            const size_t adj_index = grid_index(x, y);
 
                             // Check if adjacent has been visited before
                             if (nodes.find(adj_index) == nodes.end())
@@ -154,19 +149,23 @@ namespace SB
                                 adj = &nodes[adj_index];
                             }
 
-
                             // Found better path to adjacent
                             if (adj->g_val > current->g_val + 1)
                             {
                                 adj->g_val = current->g_val + 1;
                                 adj->parent = current;
 
-                                //  Add to open queue if not in it already
-                                if ((in_open.find(adj_index) != in_open.end()) || 
-                                        !in_open[adj_index])
+                                //  Add to open queue if not explored yet
+                                if (adj->state == GridNode::State::UNEXPLORED)
                                 {
                                     open.emplace(adj);
-                                    in_open[adj_index] = true;
+                                    adj->state = GridNode::State::OPEN;
+                                }
+                                else if (adj->state == GridNode::State::EXPLORED)
+                                {
+                                    // Adjacent node has already been explored, propagate
+                                    // path improvement
+                                    prop_path(&nodes, adj);
                                 }
                             }
                         }
@@ -176,18 +175,58 @@ namespace SB
         }
     }
 
+    void NavigationManager::prop_path(std::unordered_map<size_t, GridNode> *nodes,
+                const GridNode *parent)
+    {
+        for (int dy = -1; dy < 2; dy++)
+        {
+            for (int dx = -1; dx < 2; dx++)
+            {
+                const int x = parent->x + dx;
+                const int y = parent->y + dy;
+
+                if (x == 0 || y == 0) continue;
+                if (!in_bound(x, y)) continue;
+
+                const size_t i = grid_index(x, y);
+                if (nodes->find(i) != nodes->end())
+                {
+                    GridNode *child = &(*nodes)[i];
+                    if (parent->g_val + 1 < child->g_val)
+                    {
+                        child->g_val = parent->g_val + 1;
+                        child->parent = parent;
+                        prop_path(nodes, child);
+                    }
+                }
+            }
+        }
+    }
+
+    size_t NavigationManager::grid_index(const size_t x, const size_t y) const
+    {
+        return x + y * m_grid_width;
+    }
+
     size_t NavigationManager::grid_index(const Engine::Vec2& pos) const
     {
         const size_t x = pos.x / tile_size;
         const size_t y = pos.y / tile_size;
 
-        return x + y * m_grid_width;
+        return grid_index(x, y);
     }
 
-    bool NavigationManager::can_move(const size_t x, const size_t y, 
+    bool NavigationManager::in_bound(const int x, const int y) const
+    {
+        return x >= 0 && x < (int)m_grid_width && y >= 0 && y < (int)m_grid_height;
+    }
+
+    bool NavigationManager::can_move(const int x, const int y,
             const uint32_t avoid_mask) const
     {
-        const size_t i = x + y * m_grid_width;
+        if (!in_bound(x, y)) return false;
+
+        const size_t i = grid_index(x, y);
 
         for (auto c : m_grid[i])
         {

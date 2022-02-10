@@ -24,17 +24,22 @@ namespace SB
     std::vector<Vec2> BoxCollider::axes(const Collider& other) const
     {
         const Quad q(bounds, rotation);
-        return 
+        return
         {
             (q.b - q.a).norm(),
             (q.d - q.a).norm(),
         };
     }
 
-    Collider::Projection BoxCollider::projection(const Vec2& axis) const
+    Quad BoxCollider::make_quad() const
     {
         const Rect rect = bounds.offset(m_entity->pos - (Vec2(bounds.w, bounds.h) / 2.0f));
-        const Quad quad(rect, rotation);
+        return Quad(rect, rotation);
+    }
+
+    Collider::Projection BoxCollider::projection(const Vec2& axis) const
+    {
+        const Quad quad = make_quad();
 
         const float p0 = quad.a.dot(axis);
         const float p1 = quad.b.dot(axis);
@@ -58,8 +63,7 @@ namespace SB
 
     Vec2 BoxCollider::nearest_vertex(const Vec2& pos) const
     {
-        const Rect rect = bounds.offset(m_entity->pos - (Vec2(bounds.w, bounds.h) / 2.0f));
-        const Quad quad(rect, rotation);
+        const Quad quad = make_quad();
 
         Vec2 min_vertex;
         float min_square_diff = INFINITY;
@@ -76,6 +80,34 @@ namespace SB
         }
 
         return min_vertex;
+    }
+
+    Rect BoxCollider::bounding_box() const
+    {
+        // TODO: Slow...
+        const Quad quad = make_quad();
+
+        float min_x = quad.a.x;
+        min_x = Calc::min(min_x, quad.b.x);
+        min_x = Calc::min(min_x, quad.c.x);
+        min_x = Calc::min(min_x, quad.d.x);
+
+        float max_x = quad.a.x;
+        max_x = Calc::max(max_x, quad.b.x);
+        max_x = Calc::max(max_x, quad.c.x);
+        max_x = Calc::max(max_x, quad.d.x);
+
+        float min_y = quad.a.y;
+        min_y = Calc::min(min_y, quad.b.y);
+        min_y = Calc::min(min_y, quad.c.y);
+        min_y = Calc::min(min_y, quad.d.y);
+
+        float max_y = quad.a.y;
+        max_y = Calc::max(max_y, quad.b.y);
+        max_y = Calc::max(max_y, quad.c.y);
+        max_y = Calc::max(max_y, quad.d.y);
+
+        return Rect(min_x, min_y, max_x - min_x, max_y - min_y);
     }
 
     void BoxCollider::render(Renderer* renderer)

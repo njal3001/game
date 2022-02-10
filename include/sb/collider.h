@@ -30,9 +30,9 @@ namespace SB
     public:
         uint32_t mask;
         bool trigger_only;
-        
+
         // TODO: This is a quick fix for making the pathfinder ignore the bounds colliders
-        bool is_bounds; 
+        bool is_bounds;
         Engine::Color color;
 
     protected:
@@ -44,9 +44,10 @@ namespace SB
 
         virtual Engine::Vec2 nearest_vertex(const Engine::Vec2& pos) const = 0;
         virtual Engine::Vec2 pos() const = 0;
+        virtual Engine::Rect bounding_box() const = 0;
 
         bool intersects(const Collider& other) const;
-        
+
         // Returns a vector that pushes this collider out of the other collider
         Engine::Vec2 displace(const Collider& other) const;
 

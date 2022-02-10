@@ -10,7 +10,7 @@ namespace SB
     using namespace Engine;
 
     Charger::Charger()
-        : m_state(State::Search), m_state_timer(0.0f), m_health(max_health), 
+        : m_state(State::Search), m_state_timer(0.0f), m_health(max_health),
         m_invincible_timer(0.0f)
     {}
 
@@ -61,7 +61,7 @@ namespace SB
         auto pathfinder = get<PathFinder>();
 
         Player* player = scene()->first<Player>();
-        pathfinder->target = player->entity();
+        pathfinder->target = player ? player->entity() : nullptr;
 
         m_state_timer -= elapsed;
         m_invincible_timer -= elapsed;
@@ -75,7 +75,7 @@ namespace SB
         {
             case State::Wander:
             {
-                mover->vel = Vec2::approach(mover->vel, Vec2(), 
+                mover->vel = Vec2::approach(mover->vel, Vec2(),
                         accel * elapsed);
 
                 break;
@@ -84,7 +84,7 @@ namespace SB
             {
                 // Appoach player
                 const Vec2 dir = pathfinder->move_dir();
-                mover->vel = Vec2::approach(mover->vel, dir * max_speed, 
+                mover->vel = Vec2::approach(mover->vel, dir * max_speed,
                         accel * elapsed);
 
                 // Check distance to player
@@ -99,7 +99,7 @@ namespace SB
             }
             case State::WindUp:
             {
-                mover->vel = Vec2::approach(mover->vel, Vec2(), 
+                mover->vel = Vec2::approach(mover->vel, Vec2(),
                         accel * elapsed);
 
                 // Start charge
@@ -110,13 +110,13 @@ namespace SB
 
                     m_state_timer = charge_max_time;
                     m_state = State::Charge;
-                } 
+                }
 
                 break;
             }
             case State::Charge:
             {
-                mover->vel = Vec2::approach(mover->vel, m_charge_dir * charge_speed, 
+                mover->vel = Vec2::approach(mover->vel, m_charge_dir * charge_speed,
                         charge_accel * elapsed);
 
                 const Vec2 pdir = player->entity()->pos - m_entity->pos;
@@ -136,7 +136,7 @@ namespace SB
             }
             case State::Rest:
             {
-                mover->vel = Vec2::approach(mover->vel, Vec2(), 
+                mover->vel = Vec2::approach(mover->vel, Vec2(),
                         rest_deaccel * elapsed);
 
                 // Stop charge if timed out or if missed player
@@ -149,7 +149,7 @@ namespace SB
             }
             case State::Hurt:
             {
-                mover->vel = Vec2::approach(mover->vel, Vec2(), 
+                mover->vel = Vec2::approach(mover->vel, Vec2(),
                         knockback_deaccel * elapsed);
 
                 if (m_state_timer <= 0.0f)
@@ -159,7 +159,7 @@ namespace SB
             }
         }
 
-        const Color c = 
+        const Color c =
             m_state == State::Search ? Color::green : (
                     m_state == State::WindUp ? Color::blue : (
                         m_state == State::Charge ? Color::red : Color::white));
