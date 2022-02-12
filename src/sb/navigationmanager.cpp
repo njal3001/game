@@ -22,12 +22,10 @@ namespace SB
     }
 
     NavigationManager::NavigationManager(Scene *scene)
-        : m_grid_width((size_t)(scene->bounds.w / tile_size)),
-        m_grid_height((size_t)(scene->bounds.h / tile_size)),
-        m_scene(scene)
+        : m_scene(scene)
     {
-        m_grid.resize(m_grid_width * m_grid_height);
-        for (size_t i = 0; i < m_grid_width * m_grid_height; i++)
+        m_grid.resize(scene->width() * scene->height());
+        for (size_t i = 0; i < scene->width() * scene->height(); i++)
         {
             m_grid.emplace_back();
         }
@@ -35,23 +33,37 @@ namespace SB
 
     void NavigationManager::update()
     {
+        // TODO: Unecessary to rebuild every frame
         // Rebuild collider grid
-        std::vector<Collider*> colliders;
-        m_scene->all(&colliders);
+        std::vector<Collider*> solids;
+        m_scene->all(&solids, Mask::Solid);
 
         // Clear grid
-        for (size_t i = 0; i < m_grid_width * m_grid_height; i++)
+        for (size_t i = 0; i < m_scene->width() * m_scene->height(); i++)
         {
-            m_grid[i].clear();
+            m_grid[i] = false;
         }
 
-        // Add colliders to grid
-        for (auto c : colliders)
+        // Mark solid tiles in grid
+        for (auto c : solids)
         {
-            if (!c->is_bounds)
+            const Rect bounds = c->bounding_box();
+
+            const size_t start_x = bounds.x / m_scene->tile_size();
+            const size_t end_x = (bounds.x + bounds.w) / m_scene->tile_size();
+            const size_t start_y = bounds.y / m_scene->tile_size();
+            const size_t end_y = (bounds.y + bounds.h) / m_scene->tile_size();
+
+            if (!in_bound(start_x, start_y) || !in_bound(end_x, end_y)) continue;
+
+            for (size_t x = start_x; x <= end_x; x++)
             {
-                const size_t i = grid_index(c->pos());
-                m_grid[i].push_back(c);
+                for (size_t y = start_y; y <= end_y; y++)
+                {
+                    printf("tile: (%d, %d)\n", (int)x, (int)y);
+                    const size_t index = grid_index(x, y);
+                    m_grid[index] = true;
+                }
             }
         }
 
@@ -78,13 +90,13 @@ namespace SB
                 std::priority_queue<GridNode*, std::vector<GridNode*>,
                     decltype(compare)> open(compare);
 
-                const size_t target_x = pf->target->pos.x / tile_size;
-                const size_t target_y = pf->target->pos.y / tile_size;
+                const size_t target_x = pf->target->pos.x / m_scene->tile_size();
+                const size_t target_y = pf->target->pos.y / m_scene->tile_size();
 
                 // Add starting node
                 {
-                    const size_t start_x = pf->m_entity->pos.x / tile_size;
-                    const size_t start_y = pf->m_entity->pos.y / tile_size;
+                    const size_t start_x = pf->m_entity->pos.x / m_scene->tile_size();
+                    const size_t start_y = pf->m_entity->pos.y / m_scene->tile_size();
 
                     const size_t index = grid_index(start_x, start_y);
 
@@ -128,7 +140,7 @@ namespace SB
                             const int y  = current->y + dy;
 
                             if (x == 0 && y == 0) continue;
-                            if (!can_move(x, y, pf->avoid_mask)) continue;
+                            if (!can_move(x, y)) continue;
 
                             GridNode* adj;
                             const size_t adj_index = grid_index(x, y);
@@ -205,34 +217,72 @@ namespace SB
 
     size_t NavigationManager::grid_index(const size_t x, const size_t y) const
     {
-        return x + y * m_grid_width;
+        return x + y * m_scene->width();
     }
 
     size_t NavigationManager::grid_index(const Engine::Vec2& pos) const
     {
-        const size_t x = pos.x / tile_size;
-        const size_t y = pos.y / tile_size;
+        const size_t x = pos.x / m_scene->tile_size();
+        const size_t y = pos.y / m_scene->tile_size();
 
         return grid_index(x, y);
     }
 
     bool NavigationManager::in_bound(const int x, const int y) const
     {
-        return x >= 0 && x < (int)m_grid_width && y >= 0 && y < (int)m_grid_height;
+        return x >= 0 && x < (int)m_scene->width() && y >= 0 && y < (int)m_scene->height();
     }
 
-    bool NavigationManager::can_move(const int x, const int y,
-            const uint32_t avoid_mask) const
+    bool NavigationManager::can_move(const int x, const int y) const
     {
         if (!in_bound(x, y)) return false;
 
         const size_t i = grid_index(x, y);
 
-        for (auto c : m_grid[i])
+        return !m_grid[i];
+    }
+
+    void NavigationManager::render_grid(Renderer* renderer)
+    {
+        std::vector<Collider*> solids;
+        m_scene->all(&solids, Mask::Solid);
+
+        // Mark solid tiles in grid
+        for (auto c : solids)
         {
-            if (c->mask & avoid_mask) return false;
+            const Rect bounds = c->bounding_box();
+
+            const size_t start_x = bounds.x / m_scene->tile_size();
+            const size_t end_x = (bounds.x + bounds.w) / m_scene->tile_size();
+            const size_t start_y = bounds.y / m_scene->tile_size();
+            const size_t end_y = (bounds.y + bounds.h) / m_scene->tile_size();
+
+            if (!in_bound(start_x, start_y) || !in_bound(end_x, end_y)) continue;
+
+            for (size_t x = start_x; x <= end_x; x++)
+            {
+                for (size_t y = start_y; y <= end_y; y++)
+                {
+                    const Rect r(x * m_scene->tile_size(), y * m_scene->tile_size(), m_scene->tile_size(), m_scene->tile_size());
+                    renderer->rect(r, Color::white);
+                }
+            }
         }
 
-        return true;
+        /* bool draw = true; */
+        /* for (size_t x = 0; x < m_scene->width(); x++) */
+        /* { */
+        /*     for (size_t y = 0; y < m_scene->width(); y++) */
+        /*     { */
+        /*         if (draw) */
+        /*         { */
+        /*             const Rect r(x * m_scene->tile_size(), y * m_scene->tile_size(), m_scene->tile_size(), m_scene->tile_size()); */
+        /*             renderer->rect(r, Color::white); */
+        /*         } */
+
+        /*         draw = !draw; */
+        /*     } */
+
+        /* } */
     }
 }

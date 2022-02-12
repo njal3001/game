@@ -7,9 +7,9 @@ namespace SB
 {
     using namespace Engine;
 
-    Scene::Scene(const Rect& bounds)
-        : bounds(bounds), m_collision_manager(CollisionManager(this)), 
-        m_navigation_manager(NavigationManager(this))
+    Scene::Scene(const int tile_size, const int width, const int height)
+        : m_tile_size(tile_size), m_width(width), m_height(height),
+        m_collision_manager(CollisionManager(this)), m_navigation_manager(NavigationManager(this))
     {}
 
     Scene::~Scene()
@@ -118,6 +118,8 @@ namespace SB
                 }
             }
         }
+
+        m_navigation_manager.render_grid(renderer);
     }
 
     void Scene::all(std::vector<Collider*>* out, const uint32_t mask) const
@@ -133,5 +135,20 @@ namespace SB
                 out->push_back(collider);
             }
         }
+    }
+
+    size_t Scene::tile_size() const
+    {
+        return m_tile_size;
+    }
+
+    size_t Scene::width() const
+    {
+        return m_width;
+    }
+
+    size_t Scene::height() const
+    {
+        return m_height;
     }
 }

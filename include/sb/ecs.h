@@ -103,10 +103,11 @@ namespace SB
     public:
         static constexpr int max_component_types = 256;
 
-        // TODO: Implement map class
-        Engine::Rect bounds;
-
     private:
+        int m_tile_size;
+        int m_width;
+        int m_height;
+
         // TODO: Use unique ptr
         std::vector<Entity*> m_entities;
         std::vector<Entity*> m_to_add;
@@ -115,7 +116,7 @@ namespace SB
         NavigationManager m_navigation_manager;
 
     public:
-        Scene(const Engine::Rect& bounds);
+        Scene(const int tile_size, const int width, const int height);
         ~Scene();
 
         Entity* add_entity(const Engine::Vec2& pos);
@@ -137,6 +138,10 @@ namespace SB
         void all(std::vector<T*>* out) const;
 
         void all(std::vector<Collider*>* out, const uint32_t mask) const;
+
+        size_t tile_size() const;
+        size_t width() const;
+        size_t height() const;
 
     private:
         void update_lists();

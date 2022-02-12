@@ -11,7 +11,6 @@ namespace SB
 
     public:
         Entity* target;
-        uint32_t avoid_mask;
 
     private:
         float m_refresh_timer;

@@ -35,8 +35,8 @@ namespace SB
             return Vec2();
         }
 
-        const Vec2 target = m_path[m_path_index] * NavigationManager::tile_size + 
-            Vec2(0.5f, 0.5f) * NavigationManager::tile_size;
+        const Vec2 target = m_path[m_path_index] * scene()->tile_size();
+            Vec2(0.5f, 0.5f) * scene()->tile_size();
 
         return (target - m_entity->pos).norm();
     }

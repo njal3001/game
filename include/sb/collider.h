@@ -30,9 +30,6 @@ namespace SB
     public:
         uint32_t mask;
         bool trigger_only;
-
-        // TODO: This is a quick fix for making the pathfinder ignore the bounds colliders
-        bool is_bounds;
         Engine::Color color;
 
     protected:

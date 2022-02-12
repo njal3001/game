@@ -194,7 +194,6 @@ namespace SB
         e->add(m);
 
         PathFinder *pf = new PathFinder();
-        pf->avoid_mask = Mask::Solid | Mask::Enemy | Mask::PlayerAttack;
         e->add(pf);
 
         /* Animator* a = new Animator("charger.png"); */

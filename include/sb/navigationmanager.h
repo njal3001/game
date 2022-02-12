@@ -1,4 +1,5 @@
 #pragma once
+#include "engine/graphics/renderer.h"
 #include "engine/maths/vec2.h"
 #include <cstddef>
 #include <cstdint>
@@ -32,15 +33,9 @@ namespace SB
             float distance(const size_t x, const size_t y);
         };
 
-    public:
-        static constexpr float tile_size = 16.0f;
-
     private:
         static constexpr float refresh_time = 0.5f;
-
-        const size_t m_grid_width;
-        const size_t m_grid_height;
-        std::vector<std::vector<Collider*>> m_grid;
+        std::vector<bool> m_grid;
 
         Scene *m_scene;
 
@@ -50,11 +45,12 @@ namespace SB
         void update();
         size_t grid_index(const Engine::Vec2& pos) const;
 
+        void render_grid(Engine::Renderer* renderer);
+
     private:
         size_t grid_index(const size_t x, const size_t y) const;
         bool in_bound(const int x, const int y) const;
-        bool can_move(const int x, const int y,
-            const uint32_t avoid_mask) const;
+        bool can_move(const int x, const int y) const;
         void prop_path(std::unordered_map<size_t, GridNode> *nodes,
                 const GridNode *parent);
     };

@@ -9,7 +9,7 @@ namespace SB
     using namespace Engine;
 
     Collider::Collider()
-        : mask(Mask::None), trigger_only(false), is_bounds(false), color(Color::red)
+        : mask(Mask::None), trigger_only(false), color(Color::red)
     {
         visible = false;
     }
@@ -46,7 +46,7 @@ namespace SB
     {
         float min_overlap = INFINITY;
         Vec2 dis_axis;
-        
+
         const Collider* c1 = this;
         const Collider* c2 = &other;
 
@@ -72,7 +72,7 @@ namespace SB
                 if (overlap < min_overlap)
                 {
                     min_overlap = overlap;
-                    
+
                     // TODO: Probably cleaner way to do this
                     // Find the push out direction
                     dis_axis = axis * (i ? -1.0f : 1.0f);
