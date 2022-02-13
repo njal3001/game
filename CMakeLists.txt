@@ -9,29 +9,18 @@ find_package(Freetype REQUIRED)
 
 include_directories(include ${SDL2_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS})
 
-add_executable(sb 
-    src/main.cpp 
+add_executable(sb
+    src/main.cpp
 
     src/sb/game.cpp
-    src/sb/collider.cpp
-    src/sb/boxcollider.cpp
-    src/sb/circlecollider.cpp
     src/sb/scene.cpp
     src/sb/entity.cpp
     src/sb/component.cpp
-    src/sb/mover.cpp
-    src/sb/player.cpp
-    src/sb/enemy.cpp
-    src/sb/bullet.cpp
-    src/sb/collisionmanager.cpp
-    src/sb/charger.cpp
-    src/sb/animator.cpp
-    src/sb/navigationmanager.cpp
-    src/sb/pathfinder.cpp
+    src/sb/tilemap.cpp
 
-    src/engine/platform.cpp 
-    src/engine/input.cpp 
-    src/engine/log.cpp 
+    src/engine/platform.cpp
+    src/engine/input.cpp
+    src/engine/log.cpp
 
     src/engine/maths/vec2.cpp
     src/engine/maths/mat4x4.cpp
@@ -41,7 +30,7 @@ add_executable(sb
     src/engine/maths/circ.cpp
     src/engine/maths/line.cpp
     src/engine/maths/quad.cpp
-    
+
     src/engine/graphics/graphics.cpp
     src/engine/graphics/color.cpp
     src/engine/graphics/renderer.cpp

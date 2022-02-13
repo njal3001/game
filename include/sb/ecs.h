@@ -2,8 +2,7 @@
 #include <assert.h>
 #include <vector>
 #include "engine/graphics/renderer.h"
-#include "sb/collisionmanager.h"
-#include "sb/navigationmanager.h"
+#include "sb/tilemap.h"
 
 namespace SB
 {
@@ -96,48 +95,38 @@ namespace SB
         void update_lists();
     };
 
-    class Collider;
-
     class Scene
     {
     public:
         static constexpr int max_component_types = 256;
 
-    private:
-        int m_tile_size;
-        int m_width;
-        int m_height;
+        const Tilemap *tilemap;
 
+    private:
         // TODO: Use unique ptr
         std::vector<Entity*> m_entities;
         std::vector<Entity*> m_to_add;
         std::vector<Component*> m_components[max_component_types];
-        CollisionManager m_collision_manager;
-        NavigationManager m_navigation_manager;
 
     public:
-        Scene(const int tile_size, const int width, const int height);
+        Scene(const Tilemap *tilemap);
         ~Scene();
 
         Entity* add_entity(const Engine::Vec2& pos);
-        void remove_entity(Entity* entity);
+        void remove_entity(Entity *entity);
 
         // TODO: Let entity be friend and change to private?
-        void track_component(Component* component);
-        void untrack_component(Component* component);
-
-        const NavigationManager* navigation_manager() const;
+        void track_component(Component *component);
+        void untrack_component(Component *component);
 
         void update(float elapsed);
-        void render(Engine::Renderer* renderer);
+        void render(Engine::Renderer *renderer);
 
         template<class T>
         T* first() const;
 
         template<class T>
-        void all(std::vector<T*>* out) const;
-
-        void all(std::vector<Collider*>* out, const uint32_t mask) const;
+        void all(std::vector<T*> *out) const;
 
         size_t tile_size() const;
         size_t width() const;
@@ -155,7 +144,7 @@ namespace SB
     }
 
     template <class T>
-    void Entity::add(T* component)
+    void Entity::add(T *component)
     {
         assert(m_scene);
 

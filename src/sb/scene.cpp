@@ -1,15 +1,12 @@
 #include "sb/ecs.h"
 #include <algorithm>
-#include "sb/collider.h"
-#include "sb/enemy.h"
 
 namespace SB
 {
     using namespace Engine;
 
-    Scene::Scene(const int tile_size, const int width, const int height)
-        : m_tile_size(tile_size), m_width(width), m_height(height),
-        m_collision_manager(CollisionManager(this)), m_navigation_manager(NavigationManager(this))
+    Scene::Scene(const Tilemap *tilemap)
+        : tilemap(tilemap)
     {}
 
     Scene::~Scene()
@@ -48,11 +45,6 @@ namespace SB
         c_vec.erase(std::find(std::begin(c_vec), std::end(c_vec), component));
     }
 
-    const NavigationManager* Scene::navigation_manager() const
-    {
-        return &m_navigation_manager;
-    }
-
     void Scene::update(float elapsed)
     {
         update_lists();
@@ -61,8 +53,6 @@ namespace SB
         {
             e->update_lists();
         }
-
-        m_navigation_manager.update();
 
         for (auto& c_vec : m_components)
         {
@@ -74,8 +64,6 @@ namespace SB
                 }
             }
         }
-
-        m_collision_manager.update();
     }
 
     void Scene::update_lists()
@@ -118,37 +106,5 @@ namespace SB
                 }
             }
         }
-
-        m_navigation_manager.render_grid(renderer);
-    }
-
-    void Scene::all(std::vector<Collider*>* out, const uint32_t mask) const
-    {
-        const uint8_t type = Component::Types::id<Collider>();
-        auto& comp_vec = m_components[type];
-
-        for (Component* comp : comp_vec)
-        {
-            auto collider = (Collider*)comp;
-            if (collider->alive() && (collider->mask & mask))
-            {
-                out->push_back(collider);
-            }
-        }
-    }
-
-    size_t Scene::tile_size() const
-    {
-        return m_tile_size;
-    }
-
-    size_t Scene::width() const
-    {
-        return m_width;
-    }
-
-    size_t Scene::height() const
-    {
-        return m_height;
     }
 }
