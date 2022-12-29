@@ -42,7 +42,7 @@ add_executable(sb
     src/engine/graphics/font.cpp
     )
 
-target_link_libraries(sb ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${FREETYPE_LIBRARIES})
+target_link_libraries(sb ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} GLEW::GLEW ${FREETYPE_LIBRARIES})
 
 add_custom_target(run
     COMMAND sb

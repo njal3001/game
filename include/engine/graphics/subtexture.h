@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <array>
 #include "engine/maths/rect.h"
 #include "engine/graphics/texture.h"
 
